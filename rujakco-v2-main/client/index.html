@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>RUJAK.Co — Rujak Buah Premium Segar & Sambal Mete</title>
+    <meta name="description" content="RUJAK.Co — Pengalaman rasa Nusantara. Rujak buah premium segar dengan sambal mete. Bekasi & Jakarta." />
+    <meta name="theme-color" content="#1B5E20" />
+    <link rel="icon" type="image/webp" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
+    <link rel="apple-touch-icon" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <!-- CHANGED: /src/main.tsx → ./src/main.tsx -->
+    <script type="module" src="./src/main.tsx"></script>
+    
+    <!-- Analytics: only inject if env vars are set -->
+    <script type="module">
+      const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
+      const websiteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
+      if (endpoint && websiteId) {
+        const script = document.createElement('script');
+        script.defer = true;
+        script.src = `${endpoint}/umami`;
+        script.setAttribute('data-website-id', websiteId);
+        document.head.appendChild(script);
+      }
+    </script>
+  </body>
+</html>

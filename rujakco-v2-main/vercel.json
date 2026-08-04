@@ -1,0 +1,10 @@
+{
+  "buildCommand": "vite build",
+  "outputDirectory": "dist/public",
+  "rewrites": [
+    { "source": "/api/trpc/:path*", "destination": "/api" },
+    { "source": "/api/oauth/callback", "destination": "/api" },
+    { "source": "/manus-storage/:path*", "destination": "/api" },
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+  ]
+}
