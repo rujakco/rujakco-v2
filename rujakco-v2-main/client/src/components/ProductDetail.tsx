@@ -69,7 +69,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-            className="fixed inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 z-50 w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="fixed inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 z-50 w-full max-w-2xl bg-white rounded-[24px] elevation-4 overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E5E0] sticky top-0 bg-white z-10">
@@ -208,7 +208,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                 </div>
                 <button
                   onClick={handleAddToCart}
-                  className="flex items-center gap-2 px-6 py-3 bg-forest text-white rounded-full font-semibold hover:bg-forest-light transition-all active:scale-95"
+                  className="btn-premium-forest text-[15px]"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Tambah ke Reservasi
