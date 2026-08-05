@@ -26,26 +26,27 @@ import {
   Coins,
 } from "lucide-react";
 
-// Hero carousel â€” foto produk existing. Struktur mengikuti banner promo
+// Hero carousel — foto produk existing. Struktur mengikuti banner promo
 // Fore (full-bleed, copy tebal, dot indicator, bell dekoratif).
+// Pakai foto yang sudah terbukti load di product grid (production).
 const heroSlides = [
   {
-    image: getProductById("rujak-mahkota")?.image,
+    image: getProductById("rujak-segar")?.image,
     eyebrow: "Fresh Setiap Hari",
     title: "Rujak Buah Segar\nDiracik Saat Pesan",
-    caption: "100% buah lokal Â· sambal khas Nusantara",
-  },
-  {
-    image: getProductById("tampah-nusantara")?.image,
-    eyebrow: "Untuk Acara Bersama",
-    title: "Tampah Nusantara\nSatu Nampan untuk Semua",
-    caption: "8â€“10 porsi Â· delapan buah Â· dua sambal",
+    caption: "100% buah lokal · sambal khas Nusantara",
   },
   {
     image: getProductById("rujak-gaco")?.image,
     eyebrow: "Signature Andalan",
     title: "Rujak Gaco\nEnam Buah, Sambal Mete",
     caption: "Paling banyak dipesan di RUJAK.Co",
+  },
+  {
+    image: getProductById("tampah-nusantara")?.image,
+    eyebrow: "Untuk Acara Bersama",
+    title: "Tampah Nusantara\nSatu Nampan untuk Semua",
+    caption: "8–10 porsi · delapan buah · dua sambal",
   },
 ] as const;
 
@@ -136,47 +137,55 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-cream text-ink font-sans pb-24">
-      {/* Header desktop only â€” mobile mengikuti pola app Fore (tanpa top bar) */}
+      {/* Header desktop only — mobile app-like (tanpa top bar) */}
       <Header />
 
-      <main className="md:pt-24 max-w-md md:max-w-2xl mx-auto">
-        {/* â”€â”€ Hero full-bleed (mobile) â”€â”€ */}
-        <section id="hero" className="relative scroll-mt-24">
-          <div className="relative overflow-hidden min-h-[280px] md:min-h-[300px] md:mx-4 md:rounded-[20px] md:shadow-sm">
-            <AnimatePresence mode="wait">
+      <main className="md:pt-24">
+        {/* ── Hero FULL-BLEED: tepi kiri–kanan–atas, tanpa radius di mobile (pola Fore) ── */}
+        <section id="hero" className="relative scroll-mt-0 w-full">
+          <div
+            className="relative w-full overflow-hidden bg-forest
+              min-h-[300px] sm:min-h-[320px]
+              rounded-none
+              md:max-w-2xl md:mx-auto md:rounded-[20px] md:shadow-sm"
+          >
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={heroIndex}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.35 }}
                 className="absolute inset-0"
               >
-                {heroSlides[heroIndex].image && (
+                {heroSlides[heroIndex].image ? (
                   <img
                     src={heroSlides[heroIndex].image}
                     alt=""
-                    className="w-full h-full object-cover scale-105"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
                   />
-                )}
-                {/* Overlay lebih ringan di atas, pekat di bawah â€” baca teks jelas seperti poster Fore */}
-                <div className="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent" />
+                ) : null}
+                <div className="absolute inset-0 bg-gradient-to-t from-forest/95 via-forest/45 to-forest/15" />
               </motion.div>
             </AnimatePresence>
 
             <button
+              type="button"
               aria-label="Notifikasi"
-              className="absolute top-3.5 right-3.5 z-10 w-10 h-10 rounded-full bg-black/25 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/35 transition-colors"
+              className="absolute top-3.5 right-3.5 z-10 w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white"
             >
               <Bell className="w-4.5 h-4.5" />
             </button>
 
-            <div className="relative px-5 pt-16 pb-16 min-h-[280px] md:min-h-[300px] flex flex-col justify-end text-white">
+            <div className="relative z-[1] px-5 pt-14 pb-[4.5rem] min-h-[300px] sm:min-h-[320px] flex flex-col justify-end text-white">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase text-mango mb-2 w-fit">
                 <Sparkles className="w-3.5 h-3.5" />
                 {heroSlides[heroIndex].eyebrow}
               </span>
-              <h1 className="font-display text-[26px] sm:text-[28px] font-extrabold leading-[1.15] tracking-tight mb-1.5 whitespace-pre-line">
+              <h1 className="font-display text-[26px] sm:text-[28px] font-extrabold leading-[1.15] tracking-tight mb-1.5 whitespace-pre-line drop-shadow-sm">
                 {heroSlides[heroIndex].title}
               </h1>
               <p className="text-[13px] font-medium text-white/90 max-w-[92%]">
@@ -187,6 +196,7 @@ export default function Home() {
                 {heroSlides.map((_, i) => (
                   <button
                     key={i}
+                    type="button"
                     onClick={() => setHeroIndex(i)}
                     aria-label={`Slide ${i + 1}`}
                     className={`h-1.5 rounded-full transition-all ${
@@ -198,8 +208,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Greeting card â€” overlap tepi bawah hero, pola Fore */}
-          <div className="relative z-10 -mt-9 px-4">
+          {/* Greeting — overlap bawah hero, konten tetap max-w seperti body */}
+          <div className="relative z-10 -mt-10 max-w-md md:max-w-2xl mx-auto px-4">
             <div className="bg-white rounded-[18px] border border-paper-border px-5 py-4 shadow-[0_10px_28px_-10px_rgba(27,94,32,0.14)]">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -210,17 +220,16 @@ export default function Home() {
                     Mau rujak segar yang mana hari ini?
                   </p>
                 </div>
-                {/* Coin cluster dekoratif ala Fore */}
                 <div className="flex -space-x-1.5 shrink-0 pt-0.5" aria-hidden="true">
-                  <span className="w-7 h-7 rounded-full bg-mango/90 border-2 border-white flex items-center justify-center text-[11px] shadow-sm">
-                    ðŸª™
-                  </span>
-                  <span className="w-7 h-7 rounded-full bg-mango border-2 border-white flex items-center justify-center text-[11px] shadow-sm">
-                    ðŸª™
-                  </span>
-                  <span className="w-7 h-7 rounded-full bg-mango/80 border-2 border-white flex items-center justify-center text-[11px] shadow-sm">
-                    ðŸª™
-                  </span>
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="w-7 h-7 rounded-full bg-mango border-2 border-white flex items-center justify-center shadow-sm"
+                      style={{ opacity: 1 - i * 0.08 }}
+                    >
+                      <Coins className="w-3.5 h-3.5 text-ink" />
+                    </span>
+                  ))}
                 </div>
               </div>
 
@@ -238,8 +247,9 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="px-4">
-          {/* â”€â”€ CTA 2 kolom: Pesan Menu + Delivery â”€â”€ */}
+        {/* Konten di bawah hero — dibatasi lebar mobile app */}
+        <div className="max-w-md md:max-w-2xl mx-auto px-4">
+          {/* ── CTA 2 kolom: Pesan Menu + Delivery ── */}
           <section className="mt-6 mb-7">
             <h2 className="font-display text-[16px] font-bold text-ink tracking-tight mb-3">
               Pesan RUJAK.Co Sekarang?
@@ -281,7 +291,7 @@ export default function Home() {
             </div>
           </section>
 
-          {/* â”€â”€ Spesial Untukmu â€” grid 2Ã—2 â”€â”€ */}
+          {/* ── Spesial Untukmu — grid 2×2 ── */}
           <section className="mb-7">
             <h2 className="font-display text-[16px] font-bold text-ink tracking-tight mb-3">
               Spesial Untukmu di RUJAK.Co
@@ -318,7 +328,7 @@ export default function Home() {
             </div>
           </section>
 
-          {/* â”€â”€ Butuh Bantuan? â€” bar WA ala Fore â”€â”€ */}
+          {/* ── Butuh Bantuan? — bar WA ala Fore ── */}
           <section className="mb-8">
             <h2 className="font-display text-[16px] font-bold text-ink tracking-tight mb-3">
               Butuh Bantuan?
@@ -339,7 +349,7 @@ export default function Home() {
             </a>
           </section>
 
-          {/* â”€â”€ Menu + filter + product grid â”€â”€ */}
+          {/* ── Menu + filter + product grid ── */}
           <section id="products" className="scroll-mt-24">
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-display text-[16px] font-bold text-ink tracking-tight">
