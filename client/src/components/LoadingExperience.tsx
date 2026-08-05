@@ -3,100 +3,106 @@ import { useEffect, useState } from "react";
 
 const steps = [
   {
-    emoji: "🥭",
-    title: "Memilih Mangga Terbaik",
-    subtitle: "Buah segar dipilih setiap pagi."
+    title: "Memilih buah terbaik",
+    subtitle: "Buah segar dipilih setiap pagi.",
+    icon: "🥭",
   },
   {
-    emoji: "🌶️",
-    title: "Meracik Sambal Rahasia",
-    subtitle: "Perpaduan pedas, manis, dan asam yang khas."
+    title: "Meracik sambal khas",
+    subtitle: "Perpaduan pedas, manis, dan asam yang sempurna.",
+    icon: "🌶️",
   },
   {
-    emoji: "🥜",
-    title: "Menambahkan Kacang Sangrai",
-    subtitle: "Aroma gurih untuk rasa yang lebih kaya."
+    title: "Menyiapkan pengalaman terbaik",
+    subtitle: "Sebentar lagi kamu masuk ke Rujak.co.",
+    icon: "✨",
   },
-  {
-    emoji: "✨",
-    title: "Pengalaman Siap Dinikmati",
-    subtitle: "Sebentar lagi kamu masuk ke Rujak.co."
-  }
 ];
 
 export default function LoadingExperience() {
-  const [step, setStep] = useState(0);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setStep((s) => Math.min(s + 1, steps.length - 1));
-    }, 950);
+    const timer = setInterval(() => {
+      setIndex((prev) =>
+        prev < steps.length - 1 ? prev + 1 : prev
+      );
+    }, 1200);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(timer);
   }, []);
 
-  const progress = ((step + 1) / steps.length) * 100;
+  const progress = ((index + 1) / steps.length) * 100;
 
   return (
     <motion.div
-      className="fixed inset-0 z-[9998] bg-[#082E21] flex flex-col justify-center items-center px-8"
+      className="fixed inset-0 z-[9998] bg-[#082E21] flex flex-col items-center justify-center px-6"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
     >
+      <motion.img
+        src="/assets/brand/logo.webp"
+        alt="RUJAK.CO"
+        className="w-24 h-24"
+        animate={{
+          scale: [1, 1.05, 1],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 2.5,
+        }}
+      />
+
       <AnimatePresence mode="wait">
-
         <motion.div
-          key={step}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -24 }}
-          transition={{ duration: .45 }}
-          className="text-center"
+          key={index}
+          className="mt-10 text-center"
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          exit={{
+            opacity: 0,
+            y: -20,
+          }}
+          transition={{
+            duration: 0.35,
+          }}
         >
-          <motion.div
-            animate={{
-              scale: [1, 1.12, 1],
-              rotate: [0, 6, -6, 0]
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 2.8
-            }}
-            className="text-7xl"
-          >
-            {steps[step].emoji}
-          </motion.div>
+          <div className="text-5xl">
+            {steps[index].icon}
+          </div>
 
-          <h2 className="mt-8 text-white text-2xl font-bold">
-            {steps[step].title}
+          <h2 className="mt-6 text-white text-2xl font-semibold">
+            {steps[index].title}
           </h2>
 
-          <p className="mt-3 text-white/70 max-w-sm">
-            {steps[step].subtitle}
+          <p className="mt-2 text-white/70">
+            {steps[index].subtitle}
           </p>
-
         </motion.div>
-
       </AnimatePresence>
 
-      <div className="w-64 mt-16 h-2 rounded-full bg-white/10 overflow-hidden">
-
+      <div className="w-64 mt-12 h-2 rounded-full bg-white/10 overflow-hidden">
         <motion.div
           className="h-full bg-[#C5A059]"
           animate={{
-            width: `${progress}%`
+            width: `${progress}%`,
           }}
           transition={{
-            duration: .7
+            duration: 0.5,
           }}
         />
-
       </div>
 
-      <p className="mt-4 text-white/45 text-sm">
-        Menyiapkan pengalaman terbaik...
+      <p className="text-white/50 text-sm mt-4">
+        Menyiapkan aplikasi...
       </p>
-
     </motion.div>
   );
 }
