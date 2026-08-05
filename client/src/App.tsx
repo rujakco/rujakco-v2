@@ -2,60 +2,106 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+
 import ErrorBoundary from "./components/ErrorBoundary";
 import Splash from "./components/Splash";
+import LoadingExperience from "./components/LoadingExperience";
+import Onboarding from "./components/Onboarding";
+
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
 import { DeliveryProvider } from "./contexts/DeliveryContext";
+
 import Home from "./pages/Home";
 import OrderTracking from "./pages/OrderTracking";
 import Admin from "./pages/Admin";
+
 import { useAppInitialization } from "./hooks/useAppInitialization";
 import { useServiceWorker } from "./hooks/useServiceWorker";
 
 function Router() {
-  // useAppInitialization needs wouter's routing context (useLocation),
-  // so it's called here rather than at the top of App().
   useAppInitialization();
 
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/lacak" component={OrderTracking} />
       <Route path="/admin" component={Admin} />
       <Route path="/404" component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
+type StartupState =
+  | "splash"
+  | "loading"
+  | "onboarding"
+  | "home";
 
 function App() {
   useServiceWorker();
-  const [showSplash, setShowSplash] = useState(true);
+
+  const [startup, setStartup] =
+    useState<StartupState>("splash");
+
+  useEffect(() => {
+    if (startup === "loading") {
+      const timer = setTimeout(() => {
+        const firstOpen =
+          !localStorage.getItem("rujak-onboarding");
+
+        if (firstOpen) {
+          setStartup("onboarding");
+        } else {
+          setStartup("home");
+        }
+      }, 3800);
+
+      return () => clearTimeout(timer);
+    }
+  }, [startup]);
 
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <CartProvider>
           <DeliveryProvider>
             <TooltipProvider>
               <Toaster />
-              <AnimatePresence>
-                {showSplash && <Splash onFinish={() => setShowSplash(false)} />}
+
+              <AnimatePresence mode="wait">
+
+                {startup === "splash" && (
+                  <Splash
+                    onFinish={() =>
+                      setStartup("loading")
+                    }
+                  />
+                )}
+
+                {startup === "loading" && (
+                  <LoadingExperience />
+                )}
+
+                {startup === "onboarding" && (
+                  <Onboarding
+                    onFinish={() => {
+                      localStorage.setItem(
+                        "rujak-onboarding",
+                        "done"
+                      );
+
+                      setStartup("home");
+                    }}
+                  />
+                )}
+
               </AnimatePresence>
-              <Router />
+
+              {startup === "home" && <Router />}
             </TooltipProvider>
           </DeliveryProvider>
         </CartProvider>
