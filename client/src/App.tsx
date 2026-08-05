@@ -2,7 +2,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
+import Splash from "./components/Splash";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
 import { DeliveryProvider } from "./contexts/DeliveryContext";
@@ -37,6 +40,7 @@ function Router() {
 
 function App() {
   useServiceWorker();
+  const [showSplash, setShowSplash] = useState(true);
 
   return (
     <ErrorBoundary>
@@ -48,6 +52,9 @@ function App() {
           <DeliveryProvider>
             <TooltipProvider>
               <Toaster />
+              <AnimatePresence>
+                {showSplash && <Splash onFinish={() => setShowSplash(false)} />}
+              </AnimatePresence>
               <Router />
             </TooltipProvider>
           </DeliveryProvider>
