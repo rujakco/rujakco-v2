@@ -1,9 +1,3 @@
-/*
- * RUJAK.Co — Experience Layer: Bottom Navigation
- * Mobile app-style fixed bottom bar, mirroring the Fore Coffee pattern:
- * Home / Menu / Cart (with live badge) / Lacak Pesanan.
- */
-
 import { useLocation } from "wouter";
 import { Home as HomeIcon, UtensilsCrossed, ShoppingBag, PackageSearch } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -57,22 +51,23 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-paper-border"
+      className="bottom-nav fixed bottom-0 left-0 right-0 z-40"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="max-w-md mx-auto grid grid-cols-4">
+      <div className="max-w-md mx-auto grid grid-cols-4 h-full items-center">
         {items.map((item) => {
           const Icon = item.icon;
+          const isActive = item.active;
           return (
             <button
               key={item.id}
               onClick={item.onClick}
-              className="relative flex flex-col items-center justify-center gap-1 py-2.5 min-h-[56px]"
+              className="relative flex flex-col items-center justify-center gap-1"
             >
               <span className="relative">
                 <Icon
-                  className={`w-5 h-5 transition-colors ${item.active ? "text-forest" : "text-ink-muted"}`}
-                  strokeWidth={item.active ? 2.4 : 2}
+                  className={`bottom-nav-icon ${isActive ? "bottom-nav-active" : "text-ink-muted"}`}
+                  strokeWidth={isActive ? 2.4 : 2}
                 />
                 {item.badge && (
                   <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-chili text-white text-[10px] font-bold flex items-center justify-center">
@@ -81,7 +76,7 @@ export default function BottomNav() {
                 )}
               </span>
               <span
-                className={`text-[11px] font-medium transition-colors ${item.active ? "text-forest" : "text-ink-muted"}`}
+                className={`bottom-nav-label ${isActive ? "bottom-nav-active" : "text-ink-muted"}`}
               >
                 {item.label}
               </span>
