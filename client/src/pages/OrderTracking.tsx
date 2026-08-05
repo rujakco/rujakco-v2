@@ -5,11 +5,10 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Package, MapPin, Clock, Phone, AlertCircle, Loader2, CheckCircle } from 'lucide-react';
+import { Package, MapPin, AlertCircle, Loader2, CheckCircle, ChevronLeft, Store, Bike } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/data/products';
 import { getOrderByCodeAndPin } from '@/lib/supabase-client';
@@ -122,188 +121,213 @@ export default function OrderTracking() {
 
   if (order) {
     const statusInfo = STATUS_LABELS[order.status];
+    const orderedAt = new Date(order.created_at);
+    const totalItems = order.items.reduce((sum, item) => sum + item.qty, 0);
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-sage/20 to-white py-12 px-4 pb-28">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
-          >
-            <h1 className="font-display text-3xl lg:text-4xl font-medium text-ink mb-2">
-              Lacak Pesananmu
+      <div className="min-h-screen bg-cream pb-28">
+        {/* Top bar — back + title, ala "Detail Pesanan" Fore */}
+        <div className="sticky top-0 z-10 bg-cream/95 backdrop-blur-md border-b border-paper-border">
+          <div className="max-w-2xl mx-auto px-4 h-14 flex items-center">
+            <button
+              onClick={handleReset}
+              aria-label="Kembali"
+              className="w-9 h-9 -ml-2 rounded-full flex items-center justify-center text-ink hover:bg-paper transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <h1 className="flex-1 text-center font-display text-base font-semibold text-ink pr-9">
+              Detail Pesanan
             </h1>
-            <p className="text-ink-muted">Order ID: {order.order_code}</p>
-          </motion.div>
+          </div>
+        </div>
 
-          {/* Status Card */}
+        <div className="max-w-2xl mx-auto px-4">
+          {/* Status stepper */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-            className="mb-8"
-          >
-            <Card className="p-6 md:p-8 bg-gradient-to-br from-white to-sage/10 border-sage/30">
-              <div className="mb-5">
-                <StatusStepper status={order.status} />
-              </div>
-              <div className="text-center">
-                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-3 ${statusInfo.color}`}>
-                  {statusInfo.icon}
-                  <span className="font-semibold">{statusInfo.label}</span>
-                </div>
-              </div>
-              <p className="text-ink-muted text-sm text-center">
-                Dipesan pada {new Date(order.created_at).toLocaleDateString('id-ID', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </p>
-            </Card>
-          </motion.div>
-
-          {/* Order Details */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-6"
+            className="pt-5 pb-4"
           >
-            {/* Recipient Info */}
-            <Card className="p-6 border-sage/20">
-              <h3 className="font-display text-lg font-semibold text-ink mb-4">Penerima</h3>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-forest mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-ink-muted">Nama</p>
-                    <p className="font-medium text-ink">{order.customer_name}</p>
-                  </div>
+            <StatusStepper status={order.status} />
+          </motion.div>
+
+          {/* Cancelled banner — flat inline pink strip, ala Fore */}
+          {order.status === "cancelled" ? (
+            <div className="mb-4 px-4 py-3 rounded-xl bg-chili/10 text-center">
+              <p className="text-sm text-chili font-medium">Pesanan telah dibatalkan oleh pelanggan</p>
+            </div>
+          ) : (
+            <div className={`mb-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold ${statusInfo.color}`}>
+              {statusInfo.icon}
+              {statusInfo.label}
+            </div>
+          )}
+
+          <div className="h-2 -mx-4 bg-paper" />
+
+          {/* Lokasi Pengiriman — timeline dua titik, ala Fore */}
+          <section className="py-5">
+            <h2 className="font-display text-base font-semibold text-ink mb-4">Lokasi Pengiriman</h2>
+            <div className="flex gap-3">
+              <div className="flex flex-col items-center pt-0.5">
+                <div className="w-8 h-8 rounded-full bg-sage/40 flex items-center justify-center shrink-0">
+                  <Store className="w-4 h-4 text-forest" />
                 </div>
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-forest mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-ink-muted">Nomor HP</p>
-                    <p className="font-medium text-ink">{order.customer_phone}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-forest mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-ink-muted">Alamat</p>
-                    <p className="font-medium text-ink">{order.customer_address}</p>
-                    {order.distance_km && (
-                      <p className="text-sm text-ink-muted mt-1">Jarak: {order.distance_km} km</p>
-                    )}
-                  </div>
+                <div className="w-px flex-1 border-l border-dashed border-paper-border my-1" />
+                <div className="w-8 h-8 rounded-full bg-chili/10 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-chili" />
                 </div>
               </div>
-            </Card>
-
-            {/* Items */}
-            <Card className="p-6 border-sage/20">
-              <h3 className="font-display text-lg font-semibold text-ink mb-4">Pesanan</h3>
-              <div className="space-y-3">
-                {order.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center py-2 border-b border-sage/10 last:border-0">
-                    <div>
-                      <p className="font-medium text-ink">{item.name}</p>
-                      {item.customSelection && (
-                        <p className="text-sm text-ink-muted">
-                          {item.customSelection.fruits.join(", ")} · {item.customSelection.sauce}
-                        </p>
-                      )}
-                      {item.spiceLevel && (
-                        <p className="text-sm text-ink-muted">Level Pedas: {item.spiceLevel}/5</p>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium text-ink">x{item.qty}</p>
-                      <p className="text-sm text-ink-muted">{formatCurrency(item.price * item.qty)}</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex-1 pb-1">
+                <p className="font-medium text-sm text-ink">Dapur RUJAK.Co, Bekasi</p>
+                <div className="h-6" />
+                <p className="font-medium text-sm text-ink">{order.customer_name}</p>
+                <p className="text-sm text-ink-muted mt-0.5">
+                  {order.customer_address}
+                  {order.district ? `, ${order.district}` : ""}
+                </p>
+                {order.distance_km != null && (
+                  <p className="text-xs text-ink-muted mt-1">Jarak: {order.distance_km} km</p>
+                )}
               </div>
-            </Card>
+            </div>
+          </section>
 
-            {/* Summary */}
-            <Card className="p-6 border-sage/20 bg-gradient-to-br from-forest/5 to-sage/10">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
+          <div className="h-2 -mx-4 bg-paper" />
+
+          {/* Metode Pengiriman */}
+          <section className="py-5">
+            <h2 className="font-display text-base font-semibold text-ink mb-4">Metode Pengiriman</h2>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-paper flex items-center justify-center shrink-0">
+                <Bike className="w-4.5 h-4.5 text-ink-soft" />
+              </div>
+              <span className="text-sm font-medium text-ink">{order.shipping_provider}</span>
+            </div>
+            {order.preorder_delivery_date ? (
+              <p className="text-xs text-chili font-medium mt-3">
+                Tanggal Pre-Order: {order.preorder_delivery_date}
+              </p>
+            ) : (
+              <p className="text-xs text-ink-muted mt-3">Estimasi: {order.delivery_time}</p>
+            )}
+            {order.notes && (
+              <div className="mt-3 p-3 bg-paper rounded-xl">
+                <p className="text-xs text-ink-muted mb-1">Catatan:</p>
+                <p className="text-sm text-ink">{order.notes}</p>
+              </div>
+            )}
+          </section>
+
+          <div className="h-2 -mx-4 bg-paper" />
+
+          {/* Detail Pesanan — compact item rows, ala Fore */}
+          <section className="py-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display text-base font-semibold text-ink">Detail Pesanan</h2>
+              <span className="text-xs text-ink-muted">Total item: {totalItems}</span>
+            </div>
+            <div className="space-y-4">
+              {order.items.map((item, idx) => (
+                <div key={idx} className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-sage/30 flex items-center justify-center shrink-0">
+                    <Package className="w-5 h-5 text-forest" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm text-ink truncate">{item.name}</p>
+                    <p className="text-xs text-ink-muted mt-0.5 truncate">
+                      {item.customSelection
+                        ? `${item.customSelection.fruits.join(", ")} · ${item.customSelection.sauce}`
+                        : item.spiceLevel
+                          ? `Level Pedas ${item.spiceLevel}/5`
+                          : "—"}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-medium text-ink">{formatCurrency(item.price)}</p>
+                    <p className="text-xs text-ink-muted">{item.qty}×</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="h-2 -mx-4 bg-paper" />
+
+          {/* Rincian Pembayaran */}
+          <section className="py-5">
+            <h2 className="font-display text-base font-semibold text-ink mb-4">Rincian Pembayaran</h2>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-ink-muted">Total Pembayaran</span>
+              <span className="font-display text-lg font-semibold text-ink">{formatCurrency(order.total)}</span>
+            </div>
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-sm text-ink-muted">QRIS</span>
+              {!!order.points_earned && (
+                <span className="text-sm font-medium text-forest">+{order.points_earned} Poin</span>
+              )}
+            </div>
+            {(order.voucher_code || !!order.points_redeemed) && (
+              <div className="mt-3 pt-3 border-t border-paper-border space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
                   <span className="text-ink-muted">Subtotal</span>
-                  <span className="font-medium text-ink">{formatCurrency(order.subtotal)}</span>
+                  <span className="text-ink">{formatCurrency(order.subtotal)}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-ink-muted">Ongkir ({order.shipping_provider})</span>
-                  <span className="font-medium text-ink">{formatCurrency(order.shipping_cost)}</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-ink-muted">Ongkir</span>
+                  <span className="text-ink">{formatCurrency(order.shipping_cost)}</span>
                 </div>
                 {order.voucher_code && (
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between text-xs">
                     <span className="text-ink-muted">Voucher ({order.voucher_code})</span>
-                    <span className="font-medium text-mango">-{formatCurrency(order.discount_amount || 0)}</span>
+                    <span className="text-mango">-{formatCurrency(order.discount_amount || 0)}</span>
                   </div>
                 )}
                 {!!order.points_redeemed && (
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between text-xs">
                     <span className="text-ink-muted">Poin Dipakai ({order.points_redeemed})</span>
-                    <span className="font-medium text-forest">-{formatCurrency(order.loyalty_discount_amount || 0)}</span>
+                    <span className="text-forest">-{formatCurrency(order.loyalty_discount_amount || 0)}</span>
                   </div>
                 )}
-                <div className="border-t border-sage/20 pt-3 flex justify-between items-center">
-                  <span className="font-semibold text-ink">Total</span>
-                  <span className="font-display text-xl font-semibold text-forest">
-                    {formatCurrency(order.total)}
-                  </span>
-                </div>
-                {!!order.points_earned && (
-                  <p className="text-xs text-forest font-medium mt-2">⭐ Kamu dapat {order.points_earned} poin dari pesanan ini</p>
-                )}
               </div>
-            </Card>
+            )}
+          </section>
 
-            {/* Delivery Info */}
-            <Card className="p-6 border-sage/20">
-              <h3 className="font-display text-lg font-semibold text-ink mb-4">Pengantaran</h3>
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-forest flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-ink-muted">Estimasi Pengantaran</p>
-                  <p className="font-medium text-ink">{order.delivery_time}</p>
-                </div>
-              </div>
-              {order.preorder_delivery_date && (
-                <div className="flex items-center gap-3 mt-3">
-                  <Clock className="w-5 h-5 text-chili flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-ink-muted">Tanggal Pengiriman Pre-Order</p>
-                    <p className="font-medium text-ink">{order.preorder_delivery_date}</p>
-                  </div>
-                </div>
-              )}
-              {order.notes && (
-                <div className="mt-4 p-3 bg-sage/10 rounded-lg">
-                  <p className="text-sm text-ink-muted mb-1">Catatan:</p>
-                  <p className="text-sm text-ink">{order.notes}</p>
-                </div>
-              )}
-            </Card>
+          <div className="h-2 -mx-4 bg-paper" />
 
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <Button onClick={handleReset} variant="outline" className="flex-1">
-                Cari Pesanan Lain
-              </Button>
-              <Button className="flex-1 bg-forest hover:bg-forest/90">
-                Hubungi Kami
-              </Button>
+          {/* Footer info — ID / waktu / metode pemesanan, ala Fore */}
+          <section className="py-5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-ink-muted">ID Pesanan</span>
+              <span className="text-sm font-medium text-ink font-mono">#{order.order_code}</span>
             </div>
-          </motion.div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-ink-muted">Waktu Pemesanan</span>
+              <span className="text-sm font-medium text-ink">
+                {orderedAt.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}{" "}
+                {orderedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-ink-muted">Metode Pemesanan</span>
+              <span className="text-sm font-medium text-ink">Delivery via Aplikasi</span>
+            </div>
+          </section>
+
+          {/* Actions */}
+          <div className="pb-8 space-y-3">
+            <Button
+              onClick={() => window.open("https://wa.me/6289677161680", "_blank")}
+              variant="outline"
+              className="w-full border-forest text-forest hover:bg-forest/5 rounded-full h-11"
+            >
+              Butuh Bantuan?
+            </Button>
+            <Button onClick={handleReset} variant="ghost" className="w-full text-ink-muted hover:text-ink">
+              Cari Pesanan Lain
+            </Button>
+          </div>
         </div>
         <BottomNav />
       </div>
