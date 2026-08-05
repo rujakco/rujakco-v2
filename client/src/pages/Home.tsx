@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import CartDrawer from "@/components/CartDrawer";
 import CheckoutEnhanced from "@/components/CheckoutEnhanced";
-import { products, formatCurrency } from "@/data/products";
+import { products, formatCurrency, getProductById } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { useLocation } from "wouter";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Sparkles,
   Truck,
@@ -19,11 +20,47 @@ import {
   Plus,
 } from "lucide-react";
 
+// Hero carousel slides — reuses existing product photography (no new
+// assets needed). Swap `image`/copy per slide later once dedicated
+// campaign photography exists; structure already matches Fore's rotating
+// promo banner (image + dot indicators).
+const heroSlides = [
+  {
+    image: getProductById("rujak-mahkota")?.image,
+    eyebrow: "Fresh Setiap Hari",
+    title: "Rujak & asinan buah segar,\ndiracik saat kamu pesan.",
+    caption: "100% buah lokal pilihan, sambal khas Nusantara.",
+  },
+  {
+    image: getProductById("tampah-nusantara")?.image,
+    eyebrow: "Untuk Acara Bersama",
+    title: "Tampah Nusantara,\nsatu nampan untuk semua.",
+    caption: "8–10 porsi, delapan jenis buah, dua sambal khas.",
+  },
+  {
+    image: getProductById("rujak-gaco")?.image,
+    eyebrow: "Racikan Andalan",
+    title: "Rujak Gaco,\nenam buah, sambal mete.",
+    caption: "Signature RUJAK.Co yang paling banyak dipesan.",
+  },
+] as const;
+
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [heroIndex, setHeroIndex] = useState(0);
   const { addToCart, toggleCart, state } = useCart();
   const [, navigate] = useLocation();
   const userName = state.userName && state.userName !== "Tamu" ? state.userName : null;
+
+  // Auto-rotate every 5s, pauses implicitly whenever the tab isn't
+  // visible (setInterval just keeps counting, harmless — the effect
+  // re-creates on mount so this never leaks across route changes).
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setHeroIndex((i) => (i + 1) % heroSlides.length);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const categories = [
     { id: "all", label: "Semua" },
@@ -40,6 +77,8 @@ export default function Home() {
       icon: ChefHat,
       title: "Custom Bowl",
       subtitle: "Racik bowl rujakmu sendiri",
+      iconBg: "bg-mango/15",
+      iconColor: "text-mango",
       onClick: () => {
         const product = products.find((p) => p.id === "custom-bowl");
         if (product) {
@@ -52,6 +91,8 @@ export default function Home() {
       icon: Users,
       title: "Tampah Nusantara",
       subtitle: "Untuk acara & momen bersama",
+      iconBg: "bg-forest/10",
+      iconColor: "text-forest",
       onClick: () => {
         const product = products.find((p) => p.id === "tampah-nusantara");
         if (product) {
@@ -64,12 +105,16 @@ export default function Home() {
       icon: Share2,
       title: "RUJAKferral",
       subtitle: "Bagikan kode, dapatkan hadiah",
+      iconBg: "bg-chili/10",
+      iconColor: "text-chili",
       onClick: () => {},
     },
     {
       icon: Gift,
       title: "RUJAK.Gift",
       subtitle: "Kirim kesegaran ke orang terdekat",
+      iconBg: "bg-sage",
+      iconColor: "text-forest",
       onClick: () => {},
     },
   ];
@@ -79,21 +124,52 @@ export default function Home() {
       <Header />
 
       <main className="pt-20 md:pt-24 max-w-md md:max-w-2xl mx-auto px-4">
-        {/* Hero banner ala carousel promo Fore */}
+        {/* Hero banner — auto-rotating carousel ala Fore, foto produk asli */}
         <section className="mt-2 mb-4">
-          <div className="relative rounded-3xl overflow-hidden bg-forest text-white p-6 min-h-[168px] flex flex-col justify-center shadow-sm">
-            <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" />
-            <div className="relative">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium tracking-wide uppercase text-mango mb-2">
+          <div className="relative rounded-3xl overflow-hidden min-h-[220px] shadow-sm">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={heroIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="absolute inset-0"
+              >
+                {heroSlides[heroIndex].image && (
+                  <img
+                    src={heroSlides[heroIndex].image}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-forest/95 via-forest/60 to-forest/20" />
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="relative p-6 min-h-[220px] flex flex-col justify-end text-white">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium tracking-wide uppercase text-mango mb-2 w-fit">
                 <Sparkles className="w-3.5 h-3.5" />
-                Fresh Setiap Hari
+                {heroSlides[heroIndex].eyebrow}
               </span>
-              <h1 className="font-display text-2xl font-semibold leading-tight mb-1">
-                Rujak &amp; asinan buah segar,
-                <br />
-                diracik saat kamu pesan.
+              <h1 className="font-display text-2xl font-semibold leading-tight mb-1 whitespace-pre-line">
+                {heroSlides[heroIndex].title}
               </h1>
-              <p className="text-sm text-white/80">100% buah lokal pilihan, sambal khas Nusantara.</p>
+              <p className="text-sm text-white/85">{heroSlides[heroIndex].caption}</p>
+
+              {/* Dot indicators ala Fore */}
+              <div className="flex items-center gap-1.5 mt-4">
+                {heroSlides.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setHeroIndex(i)}
+                    aria-label={`Slide ${i + 1}`}
+                    className={`h-1.5 rounded-full transition-all ${
+                      i === heroIndex ? "w-5 bg-white" : "w-1.5 bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -147,8 +223,8 @@ export default function Home() {
                   onClick={f.onClick}
                   className="text-left rounded-2xl border border-paper-border bg-white p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
-                  <div className="w-9 h-9 rounded-full bg-forest/10 flex items-center justify-center mb-3">
-                    <Icon className="w-4.5 h-4.5 text-forest" />
+                  <div className={`w-9 h-9 rounded-full ${f.iconBg} flex items-center justify-center mb-3`}>
+                    <Icon className={`w-4.5 h-4.5 ${f.iconColor}`} />
                   </div>
                   <p className="font-semibold text-sm text-ink leading-snug">{f.title}</p>
                   <p className="text-xs text-ink-muted mt-0.5 leading-snug">{f.subtitle}</p>
