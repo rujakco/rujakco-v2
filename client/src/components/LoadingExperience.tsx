@@ -1,83 +1,102 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const messages = [
-  "Memilih buah terbaik...",
-  "Meracik sambal khas...",
-  "Menyiapkan pengalaman terbaik...",
+const steps = [
+  {
+    emoji: "🥭",
+    title: "Memilih Mangga Terbaik",
+    subtitle: "Buah segar dipilih setiap pagi."
+  },
+  {
+    emoji: "🌶️",
+    title: "Meracik Sambal Rahasia",
+    subtitle: "Perpaduan pedas, manis, dan asam yang khas."
+  },
+  {
+    emoji: "🥜",
+    title: "Menambahkan Kacang Sangrai",
+    subtitle: "Aroma gurih untuk rasa yang lebih kaya."
+  },
+  {
+    emoji: "✨",
+    title: "Pengalaman Siap Dinikmati",
+    subtitle: "Sebentar lagi kamu masuk ke Rujak.co."
+  }
 ];
 
 export default function LoadingExperience() {
-  const [index, setIndex] = useState(0);
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % messages.length);
-    }, 1200);
+      setStep((s) => Math.min(s + 1, steps.length - 1));
+    }, 950);
 
     return () => clearInterval(interval);
   }, []);
 
+  const progress = ((step + 1) / steps.length) * 100;
+
   return (
     <motion.div
-      className="fixed inset-0 z-[9999] bg-[#082E21] flex flex-col items-center justify-center text-white"
+      className="fixed inset-0 z-[9998] bg-[#082E21] flex flex-col justify-center items-center px-8"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6 }}
     >
-      <motion.img
-        src="/assets/brand/logo.webp"
-        alt="Rujak.co"
-        className="w-24 h-24 object-contain"
-        animate={{
-          scale: [1, 1.06, 1],
-          rotate: [0, 2, -2, 0],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 3,
-          ease: "easeInOut",
-        }}
-      />
+      <AnimatePresence mode="wait">
 
-      <motion.h1
-        className="mt-6 text-2xl font-bold tracking-wide"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        RUJAK.CO
-      </motion.h1>
-
-      <p className="text-green-100 mt-2 text-sm">
-        Indonesia dalam Satu Wadah
-      </p>
-
-      <div className="h-10 mt-10 flex items-center">
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={messages[index]}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -14 }}
-            transition={{ duration: 0.35 }}
-            className="text-green-50 text-base"
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -24 }}
+          transition={{ duration: .45 }}
+          className="text-center"
+        >
+          <motion.div
+            animate={{
+              scale: [1, 1.12, 1],
+              rotate: [0, 6, -6, 0]
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 2.8
+            }}
+            className="text-7xl"
           >
-            {messages[index]}
-          </motion.p>
-        </AnimatePresence>
-      </div>
+            {steps[step].emoji}
+          </motion.div>
 
-      <div className="w-56 h-1.5 rounded-full bg-white/15 overflow-hidden mt-8">
+          <h2 className="mt-8 text-white text-2xl font-bold">
+            {steps[step].title}
+          </h2>
+
+          <p className="mt-3 text-white/70 max-w-sm">
+            {steps[step].subtitle}
+          </p>
+
+        </motion.div>
+
+      </AnimatePresence>
+
+      <div className="w-64 mt-16 h-2 rounded-full bg-white/10 overflow-hidden">
+
         <motion.div
           className="h-full bg-[#C5A059]"
-          initial={{ width: 0 }}
-          animate={{ width: "100%" }}
+          animate={{
+            width: `${progress}%`
+          }}
           transition={{
-            duration: 3.8,
-            ease: "linear",
+            duration: .7
           }}
         />
+
       </div>
+
+      <p className="mt-4 text-white/45 text-sm">
+        Menyiapkan pengalaman terbaik...
+      </p>
+
     </motion.div>
   );
 }
