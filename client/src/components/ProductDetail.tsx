@@ -97,11 +97,11 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
             className="fixed inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 z-50 w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E5E0] sticky top-0 bg-white z-10">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-paper-border sticky top-0 bg-white z-10">
               <h2 className="font-display text-lg font-semibold text-ink">Detail Produk</h2>
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-[#E8E5E0] transition-colors"
+                className="p-2 rounded-full hover:bg-paper transition-colors"
               >
                 <X className="w-5 h-5 text-ink-muted" />
               </button>
@@ -145,7 +145,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                   <label className="text-sm font-medium text-ink mb-3 block">Ukuran</label>
                   <div className="grid grid-cols-2 gap-2">
                     {product.variants.map((variant) => (
-                      <button key={variant.id} onClick={() => setVariantId(variant.id)} className={`px-4 py-3 rounded-xl border text-left transition-all ${variantId === variant.id ? "border-forest bg-forest/5" : "border-[#E8E5E0] bg-white hover:border-forest/30"}`}>
+                      <button key={variant.id} onClick={() => setVariantId(variant.id)} className={`px-4 py-3 rounded-xl border text-left transition-all ${variantId === variant.id ? "border-forest bg-forest/5" : "border-paper-border bg-white hover:border-forest/30"}`}>
                         <span className="block text-sm font-semibold text-ink">{variant.label}</span>
                         <span className="block text-xs text-forest mt-1">{formatCurrency(variant.price)}</span>
                       </button>
@@ -155,7 +155,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
               )}
 
               {product.ingredients && (
-                <div className="mb-6 p-4 rounded-xl border border-[#E8E5E0]">
+                <div className="mb-6 p-4 rounded-xl border border-paper-border">
                   <p className="text-sm font-medium text-ink mb-2">Isi</p>
                   <p className="text-sm text-ink-muted leading-relaxed">{product.ingredients.join(" · ")}</p>
                   {product.sauce && <p className="text-sm text-ink-muted mt-2"><span className="font-medium text-ink">Sambal/kuah:</span> {product.sauce}</p>}
@@ -164,7 +164,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
               )}
 
               {product.customOptions && (
-                <div className="mb-6 p-4 rounded-xl border border-[#E8E5E0]">
+                <div className="mb-6 p-4 rounded-xl border border-paper-border">
                   <label className="text-sm font-medium text-ink mb-1 block">
                     Pilih buah <span className="text-chili">*</span>
                   </label>
@@ -178,7 +178,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                           type="button"
                           onClick={() => toggleFruit(fruit)}
                           className={`px-3 py-2 rounded-full border text-sm transition-all ${
-                            active ? "border-forest bg-forest/10 text-forest font-medium" : "border-[#E8E5E0] bg-white text-ink hover:border-forest/30"
+                            active ? "border-forest bg-forest/10 text-forest font-medium" : "border-paper-border bg-white text-ink hover:border-forest/30"
                           }`}
                         >
                           {fruit}
@@ -200,7 +200,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                           type="button"
                           onClick={() => setSelectedSauce(sauce)}
                           className={`px-3 py-2 rounded-full border text-sm transition-all ${
-                            active ? "border-forest bg-forest/10 text-forest font-medium" : "border-[#E8E5E0] bg-white text-ink hover:border-forest/30"
+                            active ? "border-forest bg-forest/10 text-forest font-medium" : "border-paper-border bg-white text-ink hover:border-forest/30"
                           }`}
                         >
                           {sauce}
@@ -233,7 +233,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                         className={`w-10 h-10 rounded-full font-semibold text-sm transition-all ${
                           spiceLevel === level
                             ? "bg-chili text-white scale-110"
-                            : "bg-white border border-[#E8E5E0] text-ink hover:border-chili/50"
+                            : "bg-white border border-paper-border text-ink hover:border-chili/50"
                         }`}
                       >
                         {level}
@@ -254,14 +254,14 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="w-10 h-10 rounded-full bg-white border border-[#E8E5E0] flex items-center justify-center hover:border-forest/50 transition-colors"
+                    className="w-10 h-10 rounded-full bg-white border border-paper-border flex items-center justify-center hover:border-forest/50 transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="text-2xl font-semibold w-12 text-center">{qty}</span>
                   <button
                     onClick={() => setQty(qty + 1)}
-                    className="w-10 h-10 rounded-full bg-white border border-[#E8E5E0] flex items-center justify-center hover:border-forest/50 transition-colors"
+                    className="w-10 h-10 rounded-full bg-white border border-paper-border flex items-center justify-center hover:border-forest/50 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
