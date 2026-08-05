@@ -21,10 +21,6 @@ import {
   Bell,
 } from "lucide-react";
 
-// Hero carousel slides — reuses existing product photography (no new
-// assets needed). Swap `image`/copy per slide later once dedicated
-// campaign photography exists; structure already matches Fore's rotating
-// promo banner (image + dot indicators).
 const heroSlides = [
   {
     image: getProductById("rujak-mahkota")?.image,
@@ -53,9 +49,6 @@ export default function Home() {
   const [, navigate] = useLocation();
   const userName = state.userName && state.userName !== "Tamu" ? state.userName : null;
 
-  // Auto-rotate every 5s, pauses implicitly whenever the tab isn't
-  // visible (setInterval just keeps counting, harmless — the effect
-  // re-creates on mount so this never leaks across route changes).
   useEffect(() => {
     const timer = window.setInterval(() => {
       setHeroIndex((i) => (i + 1) % heroSlides.length);
@@ -126,7 +119,7 @@ export default function Home() {
       <Header />
 
       <main className="pt-3 md:pt-24 max-w-md md:max-w-2xl mx-auto px-4">
-        {/* Hero banner — auto-rotating carousel ala Fore, foto produk asli */}
+        {/* Hero banner */}
         <section id="hero" className="mt-2 relative scroll-mt-24">
           <div className="relative rounded-3xl overflow-hidden min-h-[220px] shadow-sm">
             <AnimatePresence mode="wait">
@@ -149,7 +142,6 @@ export default function Home() {
               </motion.div>
             </AnimatePresence>
 
-            {/* Floating notification bell, ala Fore — decorative, no notification system wired yet */}
             <button
               aria-label="Notifikasi"
               className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-ink/25 backdrop-blur-md flex items-center justify-center text-white hover:bg-ink/35 transition-colors"
@@ -167,7 +159,6 @@ export default function Home() {
               </h1>
               <p className="text-sm text-white/85">{heroSlides[heroIndex].caption}</p>
 
-              {/* Dot indicators ala Fore */}
               <div className="flex items-center gap-1.5 mt-4">
                 {heroSlides.map((_, i) => (
                   <button
@@ -183,9 +174,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Greeting card — sengaja menumpuk di tepi bawah hero, ala Fore */}
+          {/* Greeting card — sekarang pakai .greeting-card */}
           <div className="relative z-10 -mt-8 mx-2">
-            <div className="bg-white rounded-2xl border border-paper-border p-5 shadow-md">
+            <div className="greeting-card">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="font-display text-lg font-medium text-ink">
@@ -209,7 +200,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Quick actions ala Pick Up / Delivery Fore */}
+        {/* Quick actions */}
         <section className="mt-6 mb-8">
           <h2 className="font-display text-base font-semibold text-ink mb-3">Pesan RUJAK.Co Sekarang?</h2>
           <div className="grid grid-cols-2 gap-3">
@@ -238,7 +229,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Spesial Untukmu — feature grid ala Fore, pola 2-2-1 */}
+        {/* Spesial Untukmu */}
         <section className="mb-8">
           <h2 className="font-display text-base font-semibold text-ink mb-3">Spesial Untukmu di RUJAK.Co</h2>
           <div className="grid grid-cols-2 gap-3">
@@ -269,8 +260,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Kategori pill tabs */}
-        <section id="products" className="scroll-mt-24">
+        {/* Produk — dengan class .section & gap 18px */}
+        <section id="products" className="section scroll-mt-24">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-display text-base font-semibold text-ink">Menu RUJAK.Co</h2>
           </div>
@@ -290,8 +281,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Product grid ala kartu Fore */}
-          <div className="grid grid-cols-2 gap-3 mt-3 mb-10">
+          <div className="grid grid-cols-2 gap-[18px] mt-3 mb-10">
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
