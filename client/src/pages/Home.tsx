@@ -174,7 +174,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Greeting card — sekarang pakai .greeting-card */}
+          {/* Greeting card — pakai kelas .greeting-card */}
           <div className="relative z-10 -mt-8 mx-2">
             <div className="greeting-card">
               <div className="flex items-start justify-between gap-3">
@@ -260,7 +260,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Produk — dengan class .section & gap 18px */}
+        {/* Produk — kelas .section & gap 18px */}
         <section id="products" className="section scroll-mt-24">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-display text-base font-semibold text-ink">Menu RUJAK.Co</h2>
@@ -281,6 +281,7 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Ganti gap-3 menjadi gap-[18px] */}
           <div className="grid grid-cols-2 gap-[18px] mt-3 mb-10">
             {filteredProducts.map((product) => (
               <div
