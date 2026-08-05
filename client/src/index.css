@@ -1,147 +1,148 @@
+/* ===========================================================
+   RUJAK DESIGN SYSTEM V3
+   Inspired by Fore Coffee
+   =========================================================== */
+
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* ---------- Radius ---------- */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+
+  /* ---------- Warna (mapping ke variabel baru) ---------- */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--green);
+  --color-primary-foreground: white;
+  --color-secondary: var(--green-100);
+  --color-secondary-foreground: var(--green);
+  --color-muted: var(--surface-soft);
+  --color-muted-foreground: var(--text-light);
+  --color-accent: var(--gold);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--red);
+  --color-destructive-foreground: white;
   --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --font-display: var(--font-heading);  /* Manrope */
-  --font-sans: var(--font-body);        /* Inter */
-  --color-cream: oklch(0.99 0.005 90);
-  --color-forest: oklch(0.35 0.12 150);
-  --color-forest-light: oklch(0.45 0.12 150);
-  --color-mango: oklch(0.75 0.15 70);
-  --color-chili: oklch(0.55 0.2 25);
-  --color-sage: oklch(0.92 0.02 150);
-  --color-warm-gray: oklch(0.7 0.01 60);
-  --color-paper: oklch(0.97 0.005 90);
-  --color-paper-border: oklch(0.93 0.01 90);
-  --color-ink: oklch(0.15 0.01 60);
-  --color-ink-soft: oklch(0.35 0.01 60);
-  --color-ink-muted: oklch(0.5 0.01 60);
-  --color-success: oklch(0.55 0.15 150);
+  --color-input: var(--border);
+  --color-ring: var(--green);
+  --color-chart-1: var(--green);
+  --color-chart-2: var(--gold);
+  --color-chart-3: var(--orange);
+  --color-chart-4: var(--green-100);
+  --color-chart-5: var(--green-500);
+  --color-sidebar: var(--surface-soft);
+  --color-sidebar-foreground: var(--text);
+  --color-sidebar-primary: var(--green);
+  --color-sidebar-primary-foreground: white;
+  --color-sidebar-accent: var(--green-100);
+  --color-sidebar-accent-foreground: var(--green);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--green);
 
-  /* Warna baru dari variabel :root */
-  --color-bg: var(--bg);
-  --color-surface: var(--surface);
-  --color-green: var(--green);
+  /* Utility warna kustom (biar komponen tetap jalan) */
+  --color-forest: var(--green);
+  --color-forest-light: var(--green-500);
+  --color-mango: var(--orange);
+  --color-chili: var(--red);
+  --color-sage: var(--green-100);
+  --color-cream: var(--bg);
+  --color-paper: var(--surface-soft);
+  --color-paper-border: var(--border);
+  --color-ink: var(--text);
+  --color-ink-soft: var(--text-soft);
+  --color-ink-muted: var(--text-light);
+  --color-success: var(--green-600);
 
-  --sp-1: 0.25rem;
-  --sp-2: 0.5rem;
-  --sp-3: 0.75rem;
-  --sp-4: 1rem;
-  --sp-5: 1.25rem;
-  --sp-6: 1.5rem;
+  /* Font */
+  --font-display: var(--font-heading);
+  --font-sans: var(--font-body);
+
+  /* Spacing tambahan (jika diperlukan) */
+  --sp-1: var(--space-1);
+  --sp-2: var(--space-2);
+  --sp-3: var(--space-3);
+  --sp-4: var(--space-4);
+  --sp-5: var(--space-5);
+  --sp-6: var(--space-6);
   --sp-8: 2rem;
   --sp-10: 2.5rem;
   --sp-12: 3rem;
   --sp-16: 4rem;
   --sp-20: 5rem;
   --sp-24: 6rem;
-  --fs-xs: 0.75rem;
-  --fs-sm: 0.875rem;
-  --fs-md: 1rem;
-  --fs-lg: 1.125rem;
-  --fs-xl: 1.25rem;
-  --fs-2xl: 1.5rem;
-  --fs-3xl: 2rem;
-  --fs-4xl: 2.5rem;
-  --fs-5xl: 3rem;
-  --fs-6xl: 3.5rem;
-  --fw-light: 300;
-  --fw-normal: 400;
-  --fw-medium: 500;
-  --fw-semibold: 600;
-  --fw-bold: 700;
-  --lh-tight: 1.2;
-  --lh-snug: 1.35;
-  --lh-normal: 1.6;
-  --lh-relaxed: 1.75;
 }
 
 :root {
-  /* ---------- Variabel Tailwind lama ---------- */
-  --radius: 0.75rem;
-  --background: oklch(0.99 0.005 90);
-  --foreground: oklch(0.15 0.01 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.01 60);
-  --primary: oklch(0.35 0.12 150);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.92 0.02 150);
-  --secondary-foreground: oklch(0.25 0.1 150);
-  --muted: oklch(0.97 0.005 90);
-  --muted-foreground: oklch(0.5 0.01 60);
-  --accent: oklch(0.75 0.15 70);
-  --accent-foreground: oklch(0.15 0.01 60);
-  --destructive: oklch(0.55 0.2 25);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.93 0.01 90);
-  --input: oklch(0.93 0.01 90);
-  --ring: oklch(0.35 0.12 150);
-  --chart-1: oklch(0.35 0.12 150);
-  --chart-2: oklch(0.75 0.15 70);
-  --chart-3: oklch(0.55 0.2 25);
-  --chart-4: oklch(0.92 0.02 150);
-  --chart-5: oklch(0.5 0.15 150);
-  --sidebar: oklch(0.97 0.005 90);
-  --sidebar-foreground: oklch(0.15 0.01 60);
-  --sidebar-accent: oklch(0.92 0.02 150);
-  --sidebar-accent-foreground: oklch(0.15 0.01 60);
-  --sidebar-border: oklch(0.93 0.01 90);
-  --sidebar-ring: oklch(0.35 0.12 150);
-  --sidebar-primary: oklch(0.35 0.12 150);
-  --sidebar-primary-foreground: oklch(1 0 0);
+  /* ===========================
+     COLORS
+     =========================== */
+  --bg: #F7F7F4;
+  --surface: #FFFFFF;
+  --surface-soft: #FCFCFA;
 
-  /* ---------- Variabel baru ---------- */
+  --green: #145A3A;
+  --green-600: #1B6A49;
+  --green-500: #2F8A5E;
+  --green-100: #EEF7F1;
+
+  --gold: #C89A43;
+  --orange: #E89B43;
+  --red: #D84B4B;
+
+  --text: #1F1F1F;
+  --text-soft: #666666;
+  --text-light: #9B9B9B;
+
+  --border: #ECECEC;
+
+  /* ===========================
+     FONT
+     =========================== */
   --font-heading: 'Manrope', sans-serif;
   --font-body: 'Inter', sans-serif;
 
-  --bg: #F8F8F6;
-  --surface: #FFFFFF;
-  --green: #1B6A49;
+  /* ===========================
+     RADIUS
+     =========================== */
+  --radius-xs: 10px;
+  --radius-sm: 14px;
+  --radius-md: 18px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
 
-  --radius-banner: 28px;
-  --radius-card: 20px;
+  /* Tailwind radius mengikuti --radius-md */
+  --radius: var(--radius-md);
 
-  --shadow-card: 0 2px 8px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.06);
+  /* ===========================
+     SHADOW
+     =========================== */
+  --shadow-xs: 0 1px 4px rgba(0,0,0,.03);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.06);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,.08);
+
+  /* ===========================
+     SPACING
+     =========================== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
 }
 
 @layer base {
@@ -150,9 +151,14 @@
   }
 
   body {
-    font-family: var(--font-body);
+    margin: 0;
     background: var(--bg);
-    color: #222;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   button:not(:disabled),
@@ -167,28 +173,59 @@
     @apply cursor-pointer;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1 {
     font-family: var(--font-heading);
-    line-height: var(--lh-tight);
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1px;
+    margin: 0;
   }
 
-  h1, h2, h3, h4 {
+  h2 {
+    font-family: var(--font-heading);
+    font-size: 30px;
     font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+
+  h3 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+
+  /* Global button reset */
+  button {
+    font-family: var(--font-body);
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:active {
+    transform: scale(0.97);
   }
 }
 
 @layer components {
+  /* Container utility (jika masih digunakan) */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
     padding-left: 1rem;
     padding-right: 1rem;
-  }
-
-  .flex {
-    min-height: 0;
-    min-width: 0;
   }
 
   @media (min-width: 640px) {
@@ -206,89 +243,98 @@
     }
   }
 
-  .font-display {
-    font-family: var(--font-display);
+  /* Global card */
+  .card {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
   }
 
-  .text-cream { color: var(--color-cream); }
-  .text-forest { color: var(--color-forest); }
-  .text-mango { color: var(--color-mango); }
-  .text-chili { color: var(--color-chili); }
-  .bg-forest { background-color: var(--color-forest); }
-  .bg-forest-light { background-color: var(--color-forest-light); }
-  .bg-mango { background-color: var(--color-mango); }
-  .bg-chili { background-color: var(--color-chili); }
-  .bg-sage { background-color: var(--color-sage); }
-  .bg-paper { background-color: var(--color-paper); }
-  .bg-cream { background-color: var(--color-cream); }
-
-  /* Utility variabel baru */
-  .bg-bg { background-color: var(--bg); }
-  .bg-surface { background-color: var(--surface); }
-  .text-green { color: var(--green); }
-  .bg-green { background-color: var(--green); }
-  .shadow-card { box-shadow: var(--shadow-card); }
-  .rounded-banner { border-radius: var(--radius-banner); }
-  .rounded-card { border-radius: var(--radius-card); }
-
-  /* Card component sesuai permintaan */
-  .card {
-    background: #fff;                 /* bisa juga var(--surface) */
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    border: 1px solid #ECECEC;
-    transition: 0.25s;
+  .card:hover {
+    box-shadow: var(--shadow-md);
   }
 
   .card:active {
-    transform: scale(0.98);
+    transform: scale(0.985);
   }
 
-  .overline {
-    font-family: var(--font-sans);
-    font-size: var(--fs-xs);
-    font-weight: var(--fw-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--color-forest);
-    margin-bottom: var(--sp-2);
+  /* Chip component */
+  .chip {
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: white;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
   }
 
-  .section-padding {
-    padding-top: var(--sp-20);
-    padding-bottom: var(--sp-20);
+  /* Fade-up animation */
+  .fade-up {
+    animation: fadeUp 0.45s ease;
   }
 
-  @media (min-width: 768px) {
-    .section-padding {
-      padding-top: var(--sp-24);
-      padding-bottom: var(--sp-24);
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
     }
   }
 
-  .text-ink { color: var(--color-ink); }
-  .text-ink-soft { color: var(--color-ink-soft); }
-  .text-ink-muted { color: var(--color-ink-muted); }
-  .text-success { color: var(--color-success); }
-  .bg-success { background-color: var(--color-success); }
+  /* Gambar responsif */
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* ===========================
+   SECTION & GRID (global)
+   =========================== */
+section {
+  padding-top: 32px;
+  padding-bottom: 12px;
+}
+
+/* Grid override khusus untuk yang tidak pakai Tailwind */
+.grid {
+  display: grid;
+  gap: 18px;
+}
+
+/* ===========================
+   SCROLLBAR CUSTOM
+   =========================== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DDD;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #BBB;
 }
 
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-paper);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-warm-gray);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ink-muted);
 }
