@@ -21,17 +21,17 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-cream">
-      {/* Background — bright food photography with lighter overlay */}
+    <section className="hero hero-light min-h-screen flex items-center bg-cream">
+      {/* Background image — tetap menggunakan opacity‑60 */}
       <div className="absolute inset-0">
         <img
           src={heroConfig.image}
           alt={heroConfig.tagline}
           className="w-full h-full object-cover opacity-60"
         />
-        {/* Bright gradient — cream on left fading to image on right */}
-        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/80 to-cream/20" />
       </div>
+
+      {/* Overlay sudah ditangani oleh .hero::after (dengan varian light) — tidak perlu div manual */}
 
       {/* Decorative fruit accents */}
       <div className="absolute top-12 right-8 w-20 h-20 bg-mango/20 rounded-full blur-2xl" />
@@ -54,7 +54,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-ink font-light leading-tight mb-6 whitespace-pre-line"
+            className="hero-title text-ink mb-6 whitespace-pre-line"
           >
             {heroConfig.title}
           </motion.h1>
