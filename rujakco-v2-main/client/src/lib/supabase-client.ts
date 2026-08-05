@@ -150,3 +150,74 @@ export async function getReceiptPublicUrl(fileName: string): Promise<string | nu
   const { data } = client.storage.from("receipts").getPublicUrl(fileName);
   return data.publicUrl;
 }
+
+// Active vouchers (Task 7). Deliberately fails soft: if the `vouchers`
+// table doesn't exist yet (e.g. this deploy hasn't run the migration in
+// docs/vouchers-table.sql), checkout must keep working with zero discount
+// rather than break — a voucher promo is additive, never load-bearing.
+export async function getActiveVouchers() {
+  const client = await getSupabaseClient();
+  if (!client) return [];
+
+  try {
+    const { data, error } = await client
+      .from("vouchers")
+      .select("code, discount_percent, valid_until, min_subtotal, is_active")
+      .eq("is_active", true);
+
+    if (error) {
+      console.warn("[Vouchers] Could not load vouchers (table may not exist yet):", error);
+      return [];
+    }
+    return data ?? [];
+  } catch (err) {
+    console.warn("[Vouchers] Failed to reach Supabase for vouchers:", err);
+    return [];
+  }
+}
+
+// Loyalty points (Task 8). Same fail-soft posture as vouchers: no
+// `loyalty_points` table yet (docs/loyalty-points-table.sql not run) means
+// customers just see a 0 balance and can't redeem — checkout itself must
+// never break because of this.
+export async function getLoyaltyPoints(phone: string): Promise<number> {
+  const client = await getSupabaseClient();
+  if (!client || !phone) return 0;
+
+  try {
+    const { data, error } = await client
+      .from("loyalty_points")
+      .select("points")
+      .eq("phone", phone)
+      .maybeSingle();
+
+    if (error) {
+      console.warn("[Loyalty] Could not load points (table may not exist yet):", error);
+      return 0;
+    }
+    return data?.points ?? 0;
+  } catch (err) {
+    console.warn("[Loyalty] Failed to reach Supabase for points:", err);
+    return 0;
+  }
+}
+
+// Adds (or, with a negative delta, redeems) loyalty points for a phone
+// number via the atomic `adjust_loyalty_points` RPC (see the migration —
+// avoids a read-then-write race between concurrent orders). Best-effort:
+// called after an order is already confirmed, so a failure here must
+// never undo or block the order itself, only log a warning.
+export async function adjustLoyaltyPoints(phone: string, delta: number): Promise<void> {
+  if (!phone || delta === 0) return;
+  const client = await getSupabaseClient();
+  if (!client) return;
+
+  try {
+    const { error } = await client.rpc("adjust_loyalty_points", { p_phone: phone, p_delta: delta });
+    if (error) {
+      console.warn("[Loyalty] Could not adjust points (table/function may not exist yet):", error);
+    }
+  } catch (err) {
+    console.warn("[Loyalty] Failed to reach Supabase to adjust points:", err);
+  }
+}

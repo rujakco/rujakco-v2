@@ -55,7 +55,7 @@ export default function CartDrawer() {
             className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-white shadow-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E5E0]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-paper-border">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-forest" />
                 <h2 className="font-display text-lg font-semibold text-ink">Reservasi</h2>
@@ -65,7 +65,7 @@ export default function CartDrawer() {
               </div>
               <button
                 onClick={() => toggleCart(false)}
-                className="p-2 rounded-full hover:bg-[#E8E5E0] transition-colors"
+                className="p-2 rounded-full hover:bg-paper transition-colors"
                 aria-label="Tutup keranjang"
               >
                 <X className="w-5 h-5 text-ink-muted" />
@@ -76,14 +76,14 @@ export default function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-6 py-4">
               {state.items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center">
-                  <ShoppingBag className="w-12 h-12 text-[#E8E5E0] mb-4" />
+                  <ShoppingBag className="w-12 h-12 text-paper-border mb-4" />
                   <p className="text-ink-muted text-sm">Keranjang masih kosong</p>
                   <p className="text-ink-muted/60 text-xs mt-1">Tambah produk dari menu kami</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {state.items.map((item) => (
-                    <div key={item.cartKey} className="flex gap-4 pb-4 border-b border-[#E8E5E0] last:border-0">
+                    <div key={item.cartKey} className="flex gap-4 pb-4 border-b border-paper-border last:border-0">
                       <img
                         src={item.product.image}
                         alt={item.product.name}
@@ -94,6 +94,11 @@ export default function CartDrawer() {
                           {item.product.name}
                         </h3>
                         {item.variant && <p className="text-xs text-ink-muted mt-0.5">{item.variant.label}</p>}
+                        {item.customSelection && (
+                          <p className="text-xs text-ink-muted mt-0.5">
+                            {item.customSelection.fruits.join(", ")} · {item.customSelection.sauce}
+                          </p>
+                        )}
                         {item.product.spiceLevel && <p className="text-xs text-ink-muted mt-0.5">Pedas Level {item.spiceLevel}/5</p>}
                         <p className="text-forest font-semibold text-sm mt-1">
                           {formatCurrency(item.product.price)}
@@ -101,14 +106,14 @@ export default function CartDrawer() {
                         <div className="flex items-center gap-2 mt-2">
                           <button
                             onClick={() => updateQty(item.cartKey, Math.max(1, item.qty - 1))}
-                            className="w-7 h-7 rounded-full bg-[#E8E5E0] flex items-center justify-center hover:bg-forest/10 transition-colors"
+                            className="w-7 h-7 rounded-full bg-paper flex items-center justify-center hover:bg-forest/10 transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
                           <span className="text-sm font-medium w-6 text-center">{item.qty}</span>
                           <button
                             onClick={() => updateQty(item.cartKey, item.qty + 1)}
-                            className="w-7 h-7 rounded-full bg-[#E8E5E0] flex items-center justify-center hover:bg-forest/10 transition-colors"
+                            className="w-7 h-7 rounded-full bg-paper flex items-center justify-center hover:bg-forest/10 transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -129,7 +134,7 @@ export default function CartDrawer() {
 
             {/* Footer */}
             {state.items.length > 0 && (
-              <div className="px-6 py-4 border-t border-[#E8E5E0] bg-[#FEFDF8]">
+              <div className="px-6 py-4 border-t border-paper-border bg-paper">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-ink-muted">Subtotal</span>
                   <span className="font-medium">{formatCurrency(

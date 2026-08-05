@@ -24,12 +24,18 @@ interface Order {
   customer_phone: string;
   customer_address: string;
   district: string;
-  items: Array<{ name: string; qty: number; spiceLevel: number; price: number }>;
+  items: Array<{ name: string; qty: number; spiceLevel: number; price: number; customSelection?: { fruits: string[]; sauce: string } }>;
   subtotal: number;
   shipping_cost: number;
+  voucher_code?: string;
+  discount_amount?: number;
+  points_earned?: number;
+  points_redeemed?: number;
+  loyalty_discount_amount?: number;
   total: number;
   shipping_provider: string;
   delivery_time: string;
+  preorder_delivery_date?: string;
   notes: string;
   status: OrderStatus;
   created_at: string;
@@ -273,7 +279,9 @@ export default function Admin() {
 
                 <div className="flex items-center gap-1.5 text-xs text-ink-muted mb-1">
                   <Package className="w-3.5 h-3.5 flex-shrink-0" />
-                  {(o.items || []).map((i) => `${i.name} x${i.qty}`).join(" • ")}
+                  {(o.items || [])
+                    .map((i) => `${i.name} x${i.qty}${i.customSelection ? ` (${i.customSelection.fruits.join("/")} · ${i.customSelection.sauce})` : ""}`)
+                    .join(" • ")}
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-ink-muted mb-1">
                   <Phone className="w-3.5 h-3.5 flex-shrink-0" />
@@ -287,9 +295,26 @@ export default function Admin() {
                   <Clock className="w-3.5 h-3.5 flex-shrink-0" />
                   {o.delivery_time} · {o.shipping_provider}
                 </div>
+                {o.preorder_delivery_date && (
+                  <div className="flex items-center gap-1.5 text-xs text-chili font-medium mb-3">
+                    <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                    Pre-order untuk tanggal: {o.preorder_delivery_date}
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <p className="font-display text-lg font-bold text-forest">{formatCurrency(o.total)}</p>
+                  <div>
+                    <p className="font-display text-lg font-bold text-forest">{formatCurrency(o.total)}</p>
+                    {o.voucher_code && (
+                      <p className="text-[11px] text-mango">Voucher {o.voucher_code} (-{formatCurrency(o.discount_amount || 0)})</p>
+                    )}
+                    {(o.points_redeemed || o.points_earned) ? (
+                      <p className="text-[11px] text-forest">
+                        {o.points_redeemed ? `Pakai ${o.points_redeemed} poin (-${formatCurrency(o.loyalty_discount_amount || 0)}) · ` : ""}
+                        +{o.points_earned || 0} poin
+                      </p>
+                    ) : null}
+                  </div>
                   <select
                     value={o.status}
                     onChange={(e) => handleStatusChange(o.order_code, e.target.value as OrderStatus)}

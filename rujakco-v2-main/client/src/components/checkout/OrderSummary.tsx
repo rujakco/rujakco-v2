@@ -20,7 +20,7 @@ export default function OrderSummary({ items }: OrderSummaryProps) {
       {items.map((item) => (
         <div
           key={item.cartKey}
-          className="flex justify-between py-2 border-b border-[#E8E5E0] last:border-0"
+          className="flex justify-between py-2 border-b border-paper-border last:border-0"
         >
           <div>
             <p className="text-sm font-medium text-ink">{item.product.name}</p>
@@ -28,6 +28,11 @@ export default function OrderSummary({ items }: OrderSummaryProps) {
               x{item.qty}
               {item.variant ? ` • ${item.variant.label}` : ""} • Pedas {item.spiceLevel}/5
             </p>
+            {item.customSelection && (
+              <p className="text-xs text-ink-muted">
+                {item.customSelection.fruits.join(", ")} · {item.customSelection.sauce}
+              </p>
+            )}
           </div>
           <span className="text-sm font-semibold">{formatCurrency(item.product.price * item.qty)}</span>
         </div>

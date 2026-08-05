@@ -21,7 +21,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[92vh] lg:min-h-screen flex items-center overflow-hidden bg-cream">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-cream">
       {/* Background — bright food photography with lighter overlay */}
       <div className="absolute inset-0">
         <img
@@ -31,8 +31,6 @@ export default function Hero() {
         />
         {/* Bright gradient — cream on left fading to image on right */}
         <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/80 to-cream/20" />
-        {/* Subtle depth layer — grounds the composition without darkening the bright palette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-cream/40 via-transparent to-transparent" />
       </div>
 
       {/* Decorative fruit accents */}
@@ -41,7 +39,7 @@ export default function Hero() {
       <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-chili/15 rounded-full blur-xl" />
 
       {/* Content */}
-      <div className="container relative z-10 pt-28 pb-20 lg:pt-36 lg:pb-32">
+      <div className="container relative z-10 pt-28 pb-16 lg:pt-36 lg:pb-28">
         <div className="max-w-2xl">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -56,7 +54,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-ink font-light leading-[1.08] tracking-tight mb-6 whitespace-pre-line"
+            className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-ink font-light leading-tight mb-6 whitespace-pre-line"
           >
             {heroConfig.title}
           </motion.h1>
@@ -78,13 +76,13 @@ export default function Hero() {
           >
             <button
               onClick={scrollToProducts}
-              className="btn-premium-forest text-[15px]"
+              className="px-6 py-3 bg-forest text-white font-semibold rounded-full hover:bg-forest-light transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-forest/20"
             >
               {heroConfig.ctaPrimary.text}
             </button>
             <button
               onClick={scrollToProducts}
-              className="btn-premium-secondary text-[15px]"
+              className="px-6 py-3 bg-white text-ink border border-[#E8E5E0] rounded-full hover:border-forest/30 hover:shadow-md transition-all"
             >
               {heroConfig.ctaSecondary.text}
             </button>
@@ -100,7 +98,7 @@ export default function Hero() {
               const Icon = iconMap[["leaf", "timer", "flame"][i]] || Leaf;
               return (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white elevation-1 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center">
                     <Icon className="w-5 h-5 text-forest" />
                   </div>
                   <div>
@@ -121,7 +119,7 @@ export default function Hero() {
         transition={{ duration: 0.5, delay: 1.2 }}
         className="absolute bottom-8 right-4 sm:right-8 lg:right-16 z-10"
       >
-        <div className="chip-float px-5 py-3 flex items-center gap-3">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl px-5 py-3 shadow-xl flex items-center gap-3 border border-[#E8E5E0]">
           <div className="w-8 h-8 bg-sage rounded-full flex items-center justify-center">
             <Leaf className="w-4 h-4 text-forest" />
           </div>

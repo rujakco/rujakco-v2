@@ -37,7 +37,7 @@ export default function Header() {
             : "bg-cream/60 backdrop-blur-md"
         }`}
       >
-        <div className="container flex items-center justify-between h-[68px] lg:h-[76px]">
+        <div className="container flex items-center justify-between h-16 lg:h-20">
           {/* Logo — prominent brand mark */}
           <button
             onClick={() => scrollTo("hero")}
@@ -64,7 +64,7 @@ export default function Header() {
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className="relative text-sm font-medium text-ink-soft hover:text-forest transition-colors py-1 after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-forest after:transition-all after:duration-300 hover:after:w-full"
+                className="text-sm font-medium text-ink-soft hover:text-forest transition-colors"
               >
                 {item.label}
               </button>
@@ -80,7 +80,7 @@ export default function Header() {
             )}
             <button
               onClick={() => toggleCart()}
-              className="relative btn-premium-forest !h-10 !px-4 gap-2 text-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-forest text-white rounded-full text-sm font-medium hover:bg-forest-light transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-forest/20"
             >
               <ShoppingCart className="w-4 h-4" />
               <span className="hidden sm:inline">Reservasi</span>
@@ -88,7 +88,7 @@ export default function Header() {
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-chili text-white text-xs font-bold rounded-full flex items-center justify-center elevation-1"
+                  className="absolute -top-1 -right-1 w-5 h-5 bg-chili text-white text-xs font-bold rounded-full flex items-center justify-center"
                 >
                   {itemCount}
                 </motion.span>

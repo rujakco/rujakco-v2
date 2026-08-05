@@ -1,200 +1,245 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Header from "@/components/Header";
+import BottomNav from "@/components/BottomNav";
 import CartDrawer from "@/components/CartDrawer";
 import CheckoutEnhanced from "@/components/CheckoutEnhanced";
-import { products } from "@/data/products";
+import { products, formatCurrency } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
-import { Sparkles, ArrowRight, ShieldCheck, Truck, Clock, Heart, Star } from "lucide-react";
+import { useLocation } from "wouter";
+import {
+  Sparkles,
+  Truck,
+  Clock,
+  ShieldCheck,
+  ChefHat,
+  Gift,
+  Users,
+  Share2,
+  PackageSearch,
+  Plus,
+} from "lucide-react";
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [selectedProduct, setSelectedProduct] = useState(products[0]);
-  const { addToCart, toggleCart } = useCart();
+  const { addToCart, toggleCart, state } = useCart();
+  const [, navigate] = useLocation();
+  const userName = state.userName && state.userName !== "Tamu" ? state.userName : null;
 
   const categories = [
-    { id: "all", label: "Semua Menu" },
-    { id: "rujak", label: "Rujak Buah Segar" },
-    { id: "tampah", label: "Tampah Nusantara" },
-    { id: "drink", label: "Artisan Drinks" },
+    { id: "all", label: "Semua" },
+    { id: "rujak", label: "Rujak Buah" },
+    { id: "asinan", label: "Asinan" },
+    { id: "salad", label: "Salad Buah" },
   ];
 
-  const filteredProducts = activeCategory === "all" 
-    ? products 
-    : products.filter(p => p.category === activeCategory || activeCategory === "rujak");
+  const filteredProducts =
+    activeCategory === "all" ? products : products.filter((p) => p.type === activeCategory);
+
+  const featureGrid = [
+    {
+      icon: ChefHat,
+      title: "Custom Bowl",
+      subtitle: "Racik bowl rujakmu sendiri",
+      onClick: () => {
+        const product = products.find((p) => p.id === "custom-bowl");
+        if (product) {
+          addToCart(product);
+          toggleCart(true);
+        }
+      },
+    },
+    {
+      icon: Users,
+      title: "Tampah Nusantara",
+      subtitle: "Untuk acara & momen bersama",
+      onClick: () => {
+        const product = products.find((p) => p.id === "tampah-nusantara");
+        if (product) {
+          addToCart(product);
+          toggleCart(true);
+        }
+      },
+    },
+    {
+      icon: Share2,
+      title: "RUJAKferral",
+      subtitle: "Bagikan kode, dapatkan hadiah",
+      onClick: () => {},
+    },
+    {
+      icon: Gift,
+      title: "RUJAK.Gift",
+      subtitle: "Kirim kesegaran ke orang terdekat",
+      onClick: () => {},
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#072d25] text-[#faf8f5] selection:bg-[#2e6f5d] selection:text-white font-sans">
-      {/* Header Navigasi */}
+    <div className="min-h-screen bg-cream text-ink font-sans pb-24">
       <Header />
 
-      {/* Hero Section dengan Nuansa Contemporary Tropical Editorial */}
-      <section className="relative pt-8 pb-16 px-4 md:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#114b3e] text-[#a3e6cb] text-xs font-medium tracking-wide mb-4 border border-[#1f6353]">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Contemporary Tropical Editorial</span>
+      <main className="pt-20 md:pt-24 max-w-md md:max-w-2xl mx-auto px-4">
+        {/* Hero banner ala carousel promo Fore */}
+        <section className="mt-2 mb-4">
+          <div className="relative rounded-3xl overflow-hidden bg-forest text-white p-6 min-h-[168px] flex flex-col justify-center shadow-sm">
+            <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" />
+            <div className="relative">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium tracking-wide uppercase text-mango mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                Fresh Setiap Hari
+              </span>
+              <h1 className="font-display text-2xl font-semibold leading-tight mb-1">
+                Rujak &amp; asinan buah segar,
+                <br />
+                diracik saat kamu pesan.
+              </h1>
+              <p className="text-sm text-white/80">100% buah lokal pilihan, sambal khas Nusantara.</p>
+            </div>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-[#faf8f5] mb-4">
-            Rasa Indonesia. <br />
-            <span className="text-[#a3e6cb] font-serif italic font-normal">Disajikan dengan cara yang modern.</span>
-          </h1>
-          <p className="text-[#d1cdc7] text-sm md:text-base">
-            Pengalaman menikmati buah segar dan bumbu rujak autentik nusantara dalam balutan estetika modern yang bersih dan berkelas.
-          </p>
-        </div>
+        </section>
 
-        {/* Pill Tabs Navigasi Kategori (Inspirasi UI Modern) */}
-        <div className="flex justify-center gap-2 md:gap-3 overflow-x-auto pb-4 mb-8 no-scrollbar">
-          {categories.map((cat) => (
+        {/* Greeting card */}
+        <section className="mb-6">
+          <div className="bg-white rounded-2xl border border-paper-border p-5 shadow-sm">
+            <p className="font-display text-lg font-medium text-ink">
+              {userName ? `Hai, ${userName}!` : "Selamat datang!"}
+            </p>
+            <p className="text-sm text-ink-muted mt-0.5">Mau rujak segar yang mana hari ini?</p>
+          </div>
+        </section>
+
+        {/* Quick actions ala Pick Up / Delivery Fore */}
+        <section className="mb-8">
+          <h2 className="font-display text-base font-semibold text-ink mb-3">Pesan RUJAK.Co Sekarang?</h2>
+          <div className="grid grid-cols-2 gap-3">
             <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-5 py-2.5 rounded-full text-xs md:text-sm font-medium transition-all duration-300 whitespace-nowrap ${
-                activeCategory === cat.id
-                  ? "bg-[#faf8f5] text-[#072d25] shadow-lg scale-105 font-semibold"
-                  : "bg-[#0f3d32] text-[#d1cdc7] hover:bg-[#165243] border border-[#19594a]"
-              }`}
+              onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}
+              className="text-left rounded-2xl border border-sage bg-sage/20 p-4 hover:bg-sage/30 transition-colors"
             >
-              {cat.label}
+              <div className="w-9 h-9 rounded-full bg-forest/10 flex items-center justify-center mb-3">
+                <Truck className="w-4.5 h-4.5 text-forest" />
+              </div>
+              <p className="font-semibold text-sm text-ink">Antar ke Rumah</p>
+              <p className="text-xs text-ink-muted mt-0.5">Diantar segar &amp; tepat waktu</p>
             </button>
-          ))}
-        </div>
-
-        {/* Showcase Utama: Floating Card ala Referensi UI */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-[#0b382e] p-6 md:p-10 rounded-3xl border border-[#165243] shadow-2xl relative overflow-hidden">
-          
-          {/* Kolom Visual / Gambar Produk */}
-          <div className="lg:col-span-7 relative flex justify-center items-center">
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#072d25]/50 to-transparent rounded-2xl pointer-events-none" />
-            <div className="relative w-full max-w-md h-[380px] md:h-[420px] rounded-2xl overflow-hidden shadow-xl border border-[#1b5e4f] bg-[#09332a]">
-              <img
-                src={selectedProduct.image || "/assets/products/rujak-gaco-hd.webp"}
-                alt={selectedProduct.name}
-                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute top-4 left-4 bg-[#072d25]/80 backdrop-blur-md px-3 py-1 rounded-full text-xs text-[#a3e6cb] border border-[#1f6353]">
-                {selectedProduct.category || "Fresh & Authentic"}
+            <button
+              onClick={() => navigate("/lacak")}
+              className="text-left rounded-2xl border border-paper-border bg-white p-4 hover:bg-paper transition-colors"
+            >
+              <div className="w-9 h-9 rounded-full bg-mango/15 flex items-center justify-center mb-3">
+                <PackageSearch className="w-4.5 h-4.5 text-mango" />
               </div>
-            </div>
+              <p className="font-semibold text-sm text-ink">Lacak Pesanan</p>
+              <p className="text-xs text-ink-muted mt-0.5">Cek status pesananmu</p>
+            </button>
           </div>
+        </section>
 
-          {/* Kolom Informasi / Floating Card Content (Ivory/White Card) */}
-          <div className="lg:col-span-5 bg-[#faf8f5] text-[#1c1917] p-6 md:p-8 rounded-2xl shadow-xl flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#2e6f5d]">
-                  Signature Selection
-                </span>
-                <button className="text-stone-400 hover:text-red-500 transition-colors">
-                  <Heart className="w-5 h-5" />
+        {/* Spesial Untukmu — feature grid ala Fore */}
+        <section className="mb-8">
+          <h2 className="font-display text-base font-semibold text-ink mb-3">Spesial Untukmu di RUJAK.Co</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {featureGrid.map((f) => {
+              const Icon = f.icon;
+              return (
+                <button
+                  key={f.title}
+                  onClick={f.onClick}
+                  className="text-left rounded-2xl border border-paper-border bg-white p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                >
+                  <div className="w-9 h-9 rounded-full bg-forest/10 flex items-center justify-center mb-3">
+                    <Icon className="w-4.5 h-4.5 text-forest" />
+                  </div>
+                  <p className="font-semibold text-sm text-ink leading-snug">{f.title}</p>
+                  <p className="text-xs text-ink-muted mt-0.5 leading-snug">{f.subtitle}</p>
                 </button>
-              </div>
+              );
+            })}
+          </div>
+        </section>
 
-              <h2 className="text-2xl md:text-3xl font-bold text-[#072d25] mb-2">
-                {selectedProduct.name}
-              </h2>
-
-              <div className="text-xl md:text-2xl font-bold text-[#2e6f5d] mb-4">
-                Rp {selectedProduct.price?.toLocaleString("id-ID") || "75.000"}
-              </div>
-
-              <p className="text-stone-600 text-sm leading-relaxed mb-6">
-                {selectedProduct.description || "Dibuat dari pilihan buah tropis segar harian disandingkan dengan racikan sambal rahasia warisan Nusantara yang menggugah selera."}
-              </p>
-
-              {/* Lapisan Cerita Nusantara (Subtle Storytelling) */}
-              <div className="bg-stone-100 p-3.5 rounded-xl border border-stone-200 mb-6 text-xs text-stone-600">
-                <span className="font-semibold text-[#072d25] block mb-1">🌿 Cerita di Balik Rasa:</span>
-                Buah dipetik langsung dari petani lokal pilihan dengan tingkat kematangan optimal untuk menghasilkan sensasi segar maksimal.
-              </div>
-            </div>
-
-            <div className="space-y-3">
+        {/* Kategori pill tabs */}
+        <section id="products" className="scroll-mt-24">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-display text-base font-semibold text-ink">Menu RUJAK.Co</h2>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-3 mb-1 no-scrollbar">
+            {categories.map((cat) => (
               <button
-                onClick={() => {
-                  addToCart(selectedProduct);
-                  toggleCart(true);
-                }}
-                className="w-full py-3.5 px-6 rounded-xl bg-[#072d25] text-white font-medium hover:bg-[#0b4237] transition-all flex items-center justify-center gap-2 shadow-lg"
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                  activeCategory === cat.id
+                    ? "bg-forest text-white shadow-sm"
+                    : "bg-white text-ink-soft border border-paper-border"
+                }`}
               >
-                <span>Pesan Sekarang</span>
-                <ArrowRight className="w-4 h-4" />
+                {cat.label}
               </button>
-            </div>
+            ))}
           </div>
 
-        </div>
-
-        {/* Carousel / Daftar Pilihan Menu Lainnya */}
-        <div className="mt-16">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <h3 className="text-xl font-bold text-[#faf8f5]">Pilihan Menu Lainnya</h3>
-              <p className="text-xs text-[#d1cdc7]">Eksplorasi ragam kesegaran tropis khas RUJAK.Co</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Product grid ala kartu Fore */}
+          <div className="grid grid-cols-2 gap-3 mt-3 mb-10">
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                onClick={() => setSelectedProduct(product)}
-                className={`cursor-pointer bg-[#0b382e] p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${
-                  selectedProduct.id === product.id
-                    ? "border-[#a3e6cb] shadow-lg ring-2 ring-[#a3e6cb]/20"
-                    : "border-[#165243] hover:border-[#1f6353]"
-                }`}
+                className="bg-white rounded-2xl border border-paper-border overflow-hidden hover:shadow-md transition-shadow"
               >
-                <div className="h-36 rounded-xl overflow-hidden mb-3 bg-[#072d25]">
+                <div className="h-28 bg-sage/30">
                   <img
-                    src={product.image || "/assets/products/rujak-gaco-thumb.webp"}
+                    src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
-                <h4 className="font-semibold text-sm text-[#faf8f5] truncate">{product.name}</h4>
-                <p className="text-xs text-[#a3e6cb] mt-1 font-medium">
-                  Rp {product.price?.toLocaleString("id-ID")}
-                </p>
+                <div className="p-3">
+                  <p className="font-medium text-sm text-ink truncate">{product.name}</p>
+                  <p className="text-xs text-ink-muted mt-0.5 line-clamp-1">{product.category}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-sm font-semibold text-forest">{formatCurrency(product.price)}</span>
+                    <button
+                      onClick={() => {
+                        addToCart(product);
+                        toggleCart(true);
+                      }}
+                      aria-label={`Tambah ${product.name} ke keranjang`}
+                      className="w-7 h-7 rounded-full bg-forest text-white flex items-center justify-center hover:bg-forest-light transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Keunggulan Layanan (Trust Badges) */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-[#165243]">
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#0b382e]/50 border border-[#165243]">
-            <div className="p-3 rounded-xl bg-[#114b3e] text-[#a3e6cb]">
-              <Clock className="w-6 h-6" />
+        {/* Trust badges */}
+        <section className="grid grid-cols-1 gap-3 pb-6">
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-paper-border">
+            <div className="w-10 h-10 rounded-xl bg-sage/40 flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5 text-forest" />
             </div>
             <div>
-              <h5 className="font-semibold text-sm text-[#faf8f5]">Freshly Made Daily</h5>
-              <p className="text-xs text-[#d1cdc7]">Diracik langsung setiap hari setelah pesanan masuk.</p>
+              <p className="font-semibold text-sm text-ink">Freshly Made Daily</p>
+              <p className="text-xs text-ink-muted">Diracik langsung setelah pesanan masuk.</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#0b382e]/50 border border-[#165243]">
-            <div className="p-3 rounded-xl bg-[#114b3e] text-[#a3e6cb]">
-              <Truck className="w-6 h-6" />
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-paper-border">
+            <div className="w-10 h-10 rounded-xl bg-sage/40 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5 text-forest" />
             </div>
             <div>
-              <h5 className="font-semibold text-sm text-[#faf8f5]">Pengiriman Cepat</h5>
-              <p className="text-xs text-[#d1cdc7]">Menjaga kesegaran buah sampai di tangan Anda.</p>
+              <p className="font-semibold text-sm text-ink">100% Buah Lokal Pilihan</p>
+              <p className="text-xs text-ink-muted">Mendukung petani buah nusantara berkualitas tinggi.</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#0b382e]/50 border border-[#165243]">
-            <div className="p-3 rounded-xl bg-[#114b3e] text-[#a3e6cb]">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h5 className="font-semibold text-sm text-[#faf8f5]">100% Buah Lokal Pilihan</h5>
-              <p className="text-xs text-[#d1cdc7]">Mendukung petani buah nusantara berkualitas tinggi.</p>
-            </div>
-          </div>
-        </div>
+        </section>
+      </main>
 
-      </section>
-
-      {/* Cart Drawer & Checkout Modals */}
+      <BottomNav />
       <CartDrawer />
       <CheckoutEnhanced />
     </div>

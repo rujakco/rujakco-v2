@@ -124,3 +124,22 @@ export const tampahNusantaraConfig = {
   preorderDays: 3,
   price: 200000,
 } as const;
+
+// Loyalty points (Task 8, phase 1). Customers are identified by phone
+// number — there's no real customer login/auth in this app yet, so this
+// is the same trust level as the rest of checkout (see docs/loyalty-points-table.sql
+// for the honesty caveat: an anon Supabase key can't cryptographically
+// prevent a determined client from tampering with its own balance).
+//
+// earnRatePerRupiah: owner-confirmed — 1 point per Rp1.000 of subtotal.
+// pointValueRupiah / minPointsToRedeem: NOT explicitly confirmed with the
+// owner — defaulted to a ~10% effective cashback rate (1 point = Rp100)
+// with a Rp5.000-worth minimum before redemption is offered, so a single
+// small order can't be redeemed away to nothing. Adjust here if the owner
+// wants a different rate; every screen that shows points reads from this
+// one config object.
+export const loyaltyConfig = {
+  earnPointsPerRupiah: 1 / 1000, // 1 point per Rp1.000 spent (subtotal)
+  pointValueRupiah: 100, // 1 point = Rp100 when redeemed
+  minPointsToRedeem: 50, // = Rp5.000 worth, so redemption isn't trivial
+} as const;

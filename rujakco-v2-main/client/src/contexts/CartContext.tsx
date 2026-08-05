@@ -28,12 +28,18 @@ export interface Product {
   preorderDays?: number;
 }
 
+export interface CustomBowlSelection {
+  fruits: string[];
+  sauce: string;
+}
+
 export interface CartItem {
   cartKey: string;
   product: Product;
   variant?: ProductVariant;
   qty: number;
   spiceLevel: number;
+  customSelection?: CustomBowlSelection;
 }
 
 export interface CartState {
@@ -48,7 +54,7 @@ export interface CartState {
 const DELIVERY_COST = 8000;
 
 type CartAction =
-  | { type: "ADD_TO_CART"; payload: { product: Product; variant?: ProductVariant; qty: number; spiceLevel: number } }
+  | { type: "ADD_TO_CART"; payload: { product: Product; variant?: ProductVariant; qty: number; spiceLevel: number; customSelection?: CustomBowlSelection } }
   | { type: "REMOVE_FROM_CART"; payload: string }
   | { type: "UPDATE_QTY"; payload: { cartKey: string; qty: number } }
   | { type: "CLEAR_CART" }
@@ -70,8 +76,16 @@ const initialState: CartState = {
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "ADD_TO_CART": {
-      const { product, variant, qty, spiceLevel } = action.payload;
-      const cartKey = `${product.id}:${variant?.id ?? "default"}:spice-${spiceLevel}`;
+      const { product, variant, qty, spiceLevel, customSelection } = action.payload;
+      // Custom Bowl selections are part of what makes a cart line unique —
+      // two bowls with different fruit/sauce picks must NOT merge into one
+      // line, or the second selection silently overwrites/vanishes into
+      // the first's qty. Sort fruits so selection order doesn't fragment
+      // otherwise-identical picks into separate lines.
+      const customKey = customSelection
+        ? `:custom-${[...customSelection.fruits].sort().join(",")}-${customSelection.sauce}`
+        : "";
+      const cartKey = `${product.id}:${variant?.id ?? "default"}:spice-${spiceLevel}${customKey}`;
       const existing = state.items.find((item) => item.cartKey === cartKey);
       if (existing) {
         return {
@@ -84,7 +98,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       const selectedProduct = variant ? { ...product, price: variant.price } : product;
       return {
         ...state,
-        items: [...state.items, { cartKey, product: selectedProduct, variant, qty, spiceLevel }],
+        items: [...state.items, { cartKey, product: selectedProduct, variant, qty, spiceLevel, customSelection }],
       };
     }
     case "REMOVE_FROM_CART":
@@ -115,7 +129,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 
 interface CartContextType {
   state: CartState;
-  addToCart: (product: Product, qty?: number, spiceLevel?: number, variant?: ProductVariant) => void;
+  addToCart: (product: Product, qty?: number, spiceLevel?: number, variant?: ProductVariant, customSelection?: CustomBowlSelection) => void;
   removeFromCart: (cartKey: string) => void;
   updateQty: (cartKey: string, qty: number) => void;
   clearCart: () => void;
@@ -134,8 +148,8 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  const addToCart = useCallback((product: Product, qty = 1, spiceLevel = 3, variant?: ProductVariant) => {
-    dispatch({ type: "ADD_TO_CART", payload: { product, qty, spiceLevel, variant } });
+  const addToCart = useCallback((product: Product, qty = 1, spiceLevel = 3, variant?: ProductVariant, customSelection?: CustomBowlSelection) => {
+    dispatch({ type: "ADD_TO_CART", payload: { product, qty, spiceLevel, variant, customSelection } });
   }, []);
   const removeFromCart = useCallback((cartKey: string) => dispatch({ type: "REMOVE_FROM_CART", payload: cartKey }), []);
   const updateQty = useCallback((cartKey: string, qty: number) => dispatch({ type: "UPDATE_QTY", payload: { cartKey, qty } }), []);

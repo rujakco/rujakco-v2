@@ -88,7 +88,7 @@ export default function DeliverySection({
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Masukkan alamat lengkap pengantaran..."
           disabled={isLoading}
-          className="w-full px-4 py-3 rounded-xl border border-[#E8E5E0] text-sm focus:outline-none focus:border-forest/50 focus:ring-2 focus:ring-forest/10 resize-none disabled:opacity-50"
+          className="w-full px-4 py-3 rounded-xl border border-paper-border text-sm focus:outline-none focus:border-forest/50 focus:ring-2 focus:ring-forest/10 resize-none disabled:opacity-50"
           rows={3}
         />
         {deliveryCtx.state.userDistance != null && (
@@ -120,7 +120,7 @@ export default function DeliverySection({
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-left transition-all disabled:opacity-50 ${
                   deliveryOption === opt.id
                     ? "border-forest bg-forest/5"
-                    : "border-[#E8E5E0] hover:border-forest/30"
+                    : "border-paper-border hover:border-forest/30"
                 }`}
               >
                 <div>

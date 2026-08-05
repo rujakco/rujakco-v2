@@ -82,7 +82,10 @@ export function createWhatsAppMessage(
   shippingCost: number,
   total: number,
   shippingProvider: string,
-  distance: number | null
+  distance: number | null,
+  preorderDeliveryDate?: string,
+  voucher?: { code: string; discountAmount: number },
+  loyalty?: { pointsEarned: number; pointsRedeemed: number; redemptionValue: number }
 ): string {
   const distance_str = distance ? `${distance} km` : '—';
 
@@ -94,6 +97,9 @@ export function createWhatsAppMessage(
   msg += `📍 *Alamat:* ${customerAddress}\n\n`;
   msg += `🗺️ *Jarak:* ${distance_str}\n`;
   msg += `🕒 *Pengantaran:* ${deliveryTime}\n`;
+  if (preorderDeliveryDate) {
+    msg += `🗓️ *Tanggal Pre-Order (Tampah Nusantara):* ${preorderDeliveryDate}\n`;
+  }
   msg += `📝 *Catatan:* ${notes || 'Tidak ada catatan'}\n`;
   msg += `🚚 *Kurir:* ${shippingProvider}\n\n`;
   msg += `📦 *Pesanan:*\n`;
@@ -102,11 +108,24 @@ export function createWhatsAppMessage(
     const spiceText = item.spiceLevel ? ` (Lv ${item.spiceLevel})` : '';
     const variantText = item.variant ? ` (${item.variant.label})` : '';
     msg += `• ${item.product.name}${variantText}${spiceText} x${item.qty} = ${formatCurrency(item.product.price * item.qty)}\n`;
+    if (item.customSelection) {
+      msg += `   Buah: ${item.customSelection.fruits.join(', ')}\n`;
+      msg += `   Sambal: ${item.customSelection.sauce}\n`;
+    }
   });
 
   msg += `\n💵 *Subtotal:* ${formatCurrency(subtotal)}\n`;
   msg += `🛵 *Ongkir:* ${formatCurrency(shippingCost)}\n`;
+  if (voucher) {
+    msg += `🎟️ *Voucher ${voucher.code}:* -${formatCurrency(voucher.discountAmount)}\n`;
+  }
+  if (loyalty && loyalty.pointsRedeemed > 0) {
+    msg += `⭐ *Poin Dipakai (${loyalty.pointsRedeemed} poin):* -${formatCurrency(loyalty.redemptionValue)}\n`;
+  }
   msg += `💰 *TOTAL TRANSFER:* *${formatCurrency(total)}*\n\n`;
+  if (loyalty && loyalty.pointsEarned > 0) {
+    msg += `⭐ *Poin didapat dari pesanan ini:* ${loyalty.pointsEarned} poin\n\n`;
+  }
   msg += `📎 _Mohon lampirkan bukti transfer dan struk reservasi Anda._`;
 
   return msg;
@@ -131,6 +150,9 @@ export function formatOrderSummary(
   let summary = 'Pesanan Anda:\n';
   items.forEach((item) => {
     summary += `• ${item.product.name}${item.variant ? ` (${item.variant.label})` : ''} x${item.qty}\n`;
+    if (item.customSelection) {
+      summary += `  (${item.customSelection.fruits.join(', ')} · ${item.customSelection.sauce})\n`;
+    }
   });
   summary += `\nSubtotal: ${formatCurrency(subtotal)}\n`;
   summary += `Ongkir: ${formatCurrency(shippingCost)}\n`;

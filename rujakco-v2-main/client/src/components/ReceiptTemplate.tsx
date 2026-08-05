@@ -22,6 +22,7 @@ interface ReceiptTemplateProps {
   customerPhone: string;
   customerAddress: string;
   deliveryTime: string;
+  preorderDeliveryDate?: string;
   notes: string;
   items: CartItem[];
   subtotal: number;
@@ -29,6 +30,8 @@ interface ReceiptTemplateProps {
   shippingLabel: string;
   total: number;
   haversineUsed?: boolean;
+  appliedVoucher?: { code: string; discountAmount: number } | null;
+  loyalty?: { pointsEarned: number; pointsRedeemed: number; redemptionValue: number };
   /** Set false to render a text-only fallback (no logo/QRIS <img>), used
    * when the CDN doesn't return CORS headers html2canvas needs to export
    * a canvas containing those cross-origin images. */
@@ -48,6 +51,7 @@ export default function ReceiptTemplate({
   customerPhone,
   customerAddress,
   deliveryTime,
+  preorderDeliveryDate,
   notes,
   items,
   subtotal,
@@ -55,6 +59,8 @@ export default function ReceiptTemplate({
   shippingLabel,
   total,
   haversineUsed,
+  appliedVoucher,
+  loyalty,
   includeImages = true,
   visible = false,
 }: ReceiptTemplateProps) {
@@ -133,6 +139,9 @@ export default function ReceiptTemplate({
           <div className="flex justify-between"><span className="text-ink-muted">No. Telepon</span><span className="font-medium">{customerPhone}</span></div>
           <div className="flex justify-between gap-3"><span className="text-ink-muted flex-shrink-0">Alamat Tujuan</span><span className="font-medium text-right">{customerAddress}</span></div>
           <div className="flex justify-between"><span className="text-ink-muted">Waktu Antar</span><span className="font-medium">{deliveryTime}</span></div>
+          {preorderDeliveryDate ? (
+            <div className="flex justify-between"><span className="text-ink-muted">Tanggal Pre-Order</span><span className="font-semibold text-chili">{preorderDeliveryDate}</span></div>
+          ) : null}
           <div className="flex justify-between"><span className="text-ink-muted">Metode Kurir</span><span className="font-semibold text-forest">{shippingLabel}</span></div>
           {notes ? <div className="flex justify-between gap-3"><span className="text-ink-muted flex-shrink-0">Catatan</span><span className="text-right">{notes}</span></div> : null}
           {haversineUsed ? (
@@ -145,12 +154,19 @@ export default function ReceiptTemplate({
       <div className="mb-3 border-t border-dashed border-[#ccc] pt-2.5">
         <p className="text-[11px] font-bold uppercase tracking-wide text-forest mb-1.5">Rincian Sajian Fresh-Prep</p>
         {items.map((item) => (
-          <div key={item.product.id} className="mb-1.5">
+          // BUG FIX: was keyed on item.product.id, which collides once two
+          // Custom Bowl lines with different fruit/sauce picks share the
+          // same product id — React silently drops/merges the duplicate
+          // key. cartKey is unique per line (see CartContext).
+          <div key={item.cartKey} className="mb-1.5">
             <div className="flex justify-between text-xs">
               <span className="font-semibold">{item.product.name}{item.spiceLevel ? ` [Lv ${item.spiceLevel}]` : ""}</span>
               <span className="font-semibold">{formatCurrency(item.product.price * item.qty)}</span>
             </div>
             <p className="text-[10px] text-ink-muted">{item.qty} pcs x {formatCurrency(item.product.price)}</p>
+            {item.customSelection && (
+              <p className="text-[10px] text-ink-muted">{item.customSelection.fruits.join(", ")} · {item.customSelection.sauce}</p>
+            )}
           </div>
         ))}
       </div>
@@ -161,10 +177,22 @@ export default function ReceiptTemplate({
         <div className="text-xs space-y-1">
           <div className="flex justify-between"><span className="text-ink-muted">Subtotal Produk</span><span>{formatCurrency(subtotal)}</span></div>
           <div className="flex justify-between"><span className="text-ink-muted">Ongkos Kirim</span><span>{formatCurrency(shippingCost)}</span></div>
+          {appliedVoucher ? (
+            <div className="flex justify-between"><span className="text-ink-muted">Voucher {appliedVoucher.code}</span><span className="text-mango">-{formatCurrency(appliedVoucher.discountAmount)}</span></div>
+          ) : null}
+          {loyalty && loyalty.pointsRedeemed > 0 ? (
+            <div className="flex justify-between"><span className="text-ink-muted">Poin Dipakai ({loyalty.pointsRedeemed})</span><span className="text-forest">-{formatCurrency(loyalty.redemptionValue)}</span></div>
+          ) : null}
           <div className="flex justify-between border-t border-dashed border-[#ccc] mt-1 pt-1"><span className="text-ink-muted">Metode Bayar</span><span>QRIS Otomatis</span></div>
           <div className="flex justify-between font-bold text-sm pt-1"><span>Total Tagihan</span><span className="text-forest">{formatCurrency(total)}</span></div>
         </div>
       </div>
+
+      {loyalty && loyalty.pointsEarned > 0 ? (
+        <p className="text-center text-[10px] text-forest font-semibold mb-3">
+          ⭐ Kamu akan dapat {loyalty.pointsEarned} poin dari pesanan ini
+        </p>
+      ) : null}
 
       {/* Trust badge */}
       <div className="bg-[#FAF8F2] border border-mango/30 rounded-xl p-3 mb-3 text-left">

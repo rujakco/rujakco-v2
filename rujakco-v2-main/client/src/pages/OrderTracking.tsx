@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/data/products';
 import { getOrderByCodeAndPin } from '@/lib/supabase-client';
+import StatusStepper from '@/components/StatusStepper';
+import BottomNav from '@/components/BottomNav';
 
 interface OrderData {
   order_code: string;
@@ -27,12 +29,19 @@ interface OrderData {
     qty: number;
     spiceLevel: number;
     price: number;
+    customSelection?: { fruits: string[]; sauce: string };
   }>;
   subtotal: number;
   shipping_cost: number;
+  voucher_code?: string;
+  discount_amount?: number;
+  points_earned?: number;
+  points_redeemed?: number;
+  loyalty_discount_amount?: number;
   total: number;
   shipping_provider: string;
   delivery_time: string;
+  preorder_delivery_date?: string;
   notes: string;
   status: 'pending_payment' | 'paid' | 'prepping' | 'delivering' | 'completed' | 'cancelled';
   created_at: string;
@@ -115,7 +124,7 @@ export default function OrderTracking() {
     const statusInfo = STATUS_LABELS[order.status];
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-sage/20 to-white py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-sage/20 to-white py-12 px-4 pb-28">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <motion.div
@@ -136,12 +145,17 @@ export default function OrderTracking() {
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <Card className="p-8 text-center bg-gradient-to-br from-white to-sage/10 border-sage/30">
-              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 ${statusInfo.color}`}>
-                {statusInfo.icon}
-                <span className="font-semibold">{statusInfo.label}</span>
+            <Card className="p-6 md:p-8 bg-gradient-to-br from-white to-sage/10 border-sage/30">
+              <div className="mb-5">
+                <StatusStepper status={order.status} />
               </div>
-              <p className="text-ink-muted text-sm">
+              <div className="text-center">
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-3 ${statusInfo.color}`}>
+                  {statusInfo.icon}
+                  <span className="font-semibold">{statusInfo.label}</span>
+                </div>
+              </div>
+              <p className="text-ink-muted text-sm text-center">
                 Dipesan pada {new Date(order.created_at).toLocaleDateString('id-ID', {
                   weekday: 'long',
                   year: 'numeric',
@@ -200,6 +214,11 @@ export default function OrderTracking() {
                   <div key={idx} className="flex justify-between items-center py-2 border-b border-sage/10 last:border-0">
                     <div>
                       <p className="font-medium text-ink">{item.name}</p>
+                      {item.customSelection && (
+                        <p className="text-sm text-ink-muted">
+                          {item.customSelection.fruits.join(", ")} · {item.customSelection.sauce}
+                        </p>
+                      )}
                       {item.spiceLevel && (
                         <p className="text-sm text-ink-muted">Level Pedas: {item.spiceLevel}/5</p>
                       )}
@@ -224,12 +243,27 @@ export default function OrderTracking() {
                   <span className="text-ink-muted">Ongkir ({order.shipping_provider})</span>
                   <span className="font-medium text-ink">{formatCurrency(order.shipping_cost)}</span>
                 </div>
+                {order.voucher_code && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-ink-muted">Voucher ({order.voucher_code})</span>
+                    <span className="font-medium text-mango">-{formatCurrency(order.discount_amount || 0)}</span>
+                  </div>
+                )}
+                {!!order.points_redeemed && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-ink-muted">Poin Dipakai ({order.points_redeemed})</span>
+                    <span className="font-medium text-forest">-{formatCurrency(order.loyalty_discount_amount || 0)}</span>
+                  </div>
+                )}
                 <div className="border-t border-sage/20 pt-3 flex justify-between items-center">
                   <span className="font-semibold text-ink">Total</span>
                   <span className="font-display text-xl font-semibold text-forest">
                     {formatCurrency(order.total)}
                   </span>
                 </div>
+                {!!order.points_earned && (
+                  <p className="text-xs text-forest font-medium mt-2">⭐ Kamu dapat {order.points_earned} poin dari pesanan ini</p>
+                )}
               </div>
             </Card>
 
@@ -243,6 +277,15 @@ export default function OrderTracking() {
                   <p className="font-medium text-ink">{order.delivery_time}</p>
                 </div>
               </div>
+              {order.preorder_delivery_date && (
+                <div className="flex items-center gap-3 mt-3">
+                  <Clock className="w-5 h-5 text-chili flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-ink-muted">Tanggal Pengiriman Pre-Order</p>
+                    <p className="font-medium text-ink">{order.preorder_delivery_date}</p>
+                  </div>
+                </div>
+              )}
               {order.notes && (
                 <div className="mt-4 p-3 bg-sage/10 rounded-lg">
                   <p className="text-sm text-ink-muted mb-1">Catatan:</p>
@@ -262,12 +305,13 @@ export default function OrderTracking() {
             </div>
           </motion.div>
         </div>
+        <BottomNav />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sage/20 to-white py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-sage/20 to-white py-12 px-4 pb-28">
       <div className="max-w-md mx-auto">
         {/* Header */}
         <motion.div
@@ -359,6 +403,7 @@ export default function OrderTracking() {
           </p>
         </motion.div>
       </div>
+      <BottomNav />
     </div>
   );
 }

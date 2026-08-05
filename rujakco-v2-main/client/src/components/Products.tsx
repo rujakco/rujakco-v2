@@ -42,12 +42,11 @@ function ProductCard({ product, index, onDetailClick }: { product: Product; inde
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.08, ease: [0.23, 1, 0.32, 1] }}
-      className={`product-card group relative overflow-hidden transition-all duration-300 hover:-translate-y-1.5 ${
+      className={`group relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
         isPremium
-          ? "bg-gradient-to-br from-sage/60 to-sage/20 border border-forest/10 hover:border-forest/20"
-          : "bg-white border border-[#E8E5E0] hover:border-forest/20"
+          ? "bg-gradient-to-br from-sage/60 to-sage/20 border border-forest/10 shadow-sm hover:shadow-xl hover:border-forest/20"
+          : "bg-white border border-[#E8E5E0] hover:border-forest/20 hover:shadow-xl"
       }`}
-      style={{ transitionTimingFunction: "var(--ease-premium)" }}
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden cursor-pointer" onClick={handleImageClick}>
@@ -57,7 +56,7 @@ function ProductCard({ product, index, onDetailClick }: { product: Product; inde
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {product.tag && (
-          <span className={`absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm elevation-1 ${
+          <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${
             badgeColors[product.tag] || "bg-white/90 text-forest"
           }`}>
             {getBadgeLabel(product.tag)}
@@ -105,12 +104,11 @@ function ProductCard({ product, index, onDetailClick }: { product: Product; inde
           </span>
           <button
             onClick={handleAdd}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-95 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 active:scale-95 ${
               isPremium
-                ? "bg-forest text-white hover:bg-forest-light elevation-1"
+                ? "bg-forest text-white hover:bg-forest-light shadow-sm"
                 : "bg-forest/5 text-forest hover:bg-forest hover:text-white border border-forest/15"
             }`}
-            style={{ transitionTimingFunction: "var(--ease-premium)" }}
           >
             <ShoppingCart className="w-3.5 h-3.5" />
             Tambah
@@ -146,19 +144,18 @@ export default function Products() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
                 filter === f
-                  ? "bg-forest text-white elevation-2"
+                  ? "bg-forest text-white shadow-md"
                   : "bg-white text-ink-soft border border-[#E8E5E0] hover:border-forest/30"
               }`}
-              style={{ transitionTimingFunction: "var(--ease-premium)" }}
             >
               {f === "all" ? "Semua" : f === "rujak" ? "Rujak" : f === "asinan" ? "Asinan" : "Salad"}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {filtered.map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} onDetailClick={setSelectedProduct} />
           ))}

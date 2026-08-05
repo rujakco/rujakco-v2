@@ -21,6 +21,7 @@ interface UploadReceiptProps {
   customerPhone: string;
   address: string;
   deliveryTime: string;
+  preorderDeliveryDate?: string;
   notes: string;
   items: CartItem[];
   subtotal: number;
@@ -28,6 +29,8 @@ interface UploadReceiptProps {
   shippingLabel: string;
   total: number;
   haversineUsed: boolean;
+  appliedVoucher?: { code: string; discountAmount: number } | null;
+  loyalty?: { pointsEarned: number; pointsRedeemed: number; redemptionValue: number };
   isLoading: boolean;
   onBack: () => void;
   onConfirm: () => void;
@@ -42,6 +45,7 @@ export default function UploadReceipt({
   customerPhone,
   address,
   deliveryTime,
+  preorderDeliveryDate,
   notes,
   items,
   subtotal,
@@ -49,6 +53,8 @@ export default function UploadReceipt({
   shippingLabel,
   total,
   haversineUsed,
+  appliedVoucher,
+  loyalty,
   isLoading,
   onBack,
   onConfirm,
@@ -57,7 +63,7 @@ export default function UploadReceipt({
     <>
       {/* Preview Struk — same markup that gets captured to PNG,
           just rendered inline instead of off-screen. */}
-      <div className="px-6 py-4 max-h-[60vh] overflow-y-auto bg-[#FEFDF8]">
+      <div className="px-6 py-4 max-h-[60vh] overflow-y-auto bg-paper">
         <ReceiptTemplate
           elementId={RECEIPT_ELEMENT_ID}
           orderCode={orderCode}
@@ -66,6 +72,7 @@ export default function UploadReceipt({
           customerPhone={customerPhone}
           customerAddress={address}
           deliveryTime={deliveryTime}
+          preorderDeliveryDate={preorderDeliveryDate}
           notes={notes}
           items={items}
           subtotal={subtotal}
@@ -73,6 +80,8 @@ export default function UploadReceipt({
           shippingLabel={shippingLabel}
           total={total}
           haversineUsed={haversineUsed}
+          appliedVoucher={appliedVoucher}
+          loyalty={loyalty}
           visible
         />
       </div>
@@ -86,6 +95,7 @@ export default function UploadReceipt({
         customerPhone={customerPhone}
         customerAddress={address}
         deliveryTime={deliveryTime}
+        preorderDeliveryDate={preorderDeliveryDate}
         notes={notes}
         items={items}
         subtotal={subtotal}
@@ -93,13 +103,15 @@ export default function UploadReceipt({
         shippingLabel={shippingLabel}
         total={total}
         haversineUsed={haversineUsed}
+        appliedVoucher={appliedVoucher}
+        loyalty={loyalty}
         includeImages={false}
       />
-      <div className="px-6 py-4 border-t border-[#E8E5E0] bg-[#FEFDF8] flex gap-3">
+      <div className="px-6 py-4 border-t border-paper-border bg-paper flex gap-3">
         <button
           onClick={onBack}
           disabled={isLoading}
-          className="flex-1 py-3 rounded-full border border-[#E8E5E0] text-sm font-medium text-ink-muted hover:bg-white transition-all disabled:opacity-50"
+          className="flex-1 py-3 rounded-full border border-paper-border text-sm font-medium text-ink-muted hover:bg-white transition-all disabled:opacity-50"
         >
           Kembali
         </button>

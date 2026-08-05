@@ -10,16 +10,17 @@
  * split out into presentational components.
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { formatCurrency } from "@/data/products";
+import { formatCurrency, loyaltyConfig } from "@/data/products";
 import { homepageConfig } from "@/data/homepage";
 import { toast } from "sonner";
-import { getSupabaseClient, saveOrder, sendReceiptToTelegram } from "@/lib/supabase-client";
+import { getSupabaseClient, saveOrder, sendReceiptToTelegram, getActiveVouchers, getLoyaltyPoints, adjustLoyaltyPoints } from "@/lib/supabase-client";
 import { queueOfflineOrder } from "@/utils/supabase";
 import { generateOrderCode, generatePIN, createWhatsAppMessage, isSubtotalTrustworthy } from "@/lib/order-utils";
+import { validateTampahDeliveryDate, pickBestVoucher, calculatePointsEarned, calculateRedemption, type Voucher } from "@/data/orderValidation";
 import { calculateShipping } from "@/lib/shipping-utils";
 import { useDelivery } from "@/contexts/DeliveryContext";
 import { generateReceiptPNG } from "@/lib/receipt";
@@ -40,6 +41,33 @@ export default function CheckoutEnhanced() {
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<"form" | "confirm" | "payment">("form");
   const [pendingOrder, setPendingOrder] = useState<{ orderCode: string; accessPin: string } | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState("");
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [loyaltyBalance, setLoyaltyBalance] = useState(0);
+  const [redeemPoints, setRedeemPoints] = useState(false);
+
+  // Fetch active vouchers once per time the checkout modal opens (not on
+  // every re-render/keystroke) — fails soft to an empty list, see
+  // getActiveVouchers() in supabase-client.ts.
+  useEffect(() => {
+    if (!state.checkoutOpen) return;
+    getActiveVouchers().then(setVouchers);
+  }, [state.checkoutOpen]);
+
+  // Look up the phone number's loyalty balance, debounced so it doesn't
+  // fire on every keystroke while the customer is still typing. Only
+  // bothers once the number looks plausibly complete (≥10 digits) —
+  // matches Indonesian mobile number length, avoids a query per digit.
+  useEffect(() => {
+    if (!state.checkoutOpen || customerPhone.replace(/\D/g, "").length < 10) {
+      setLoyaltyBalance(0);
+      return;
+    }
+    const timer = setTimeout(() => {
+      getLoyaltyPoints(customerPhone).then(setLoyaltyBalance);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [state.checkoutOpen, customerPhone]);
 
   // Dynamic shipping: use the real distance once resolved via useDelivery;
   // fall back to the static config cost so checkout still works before the
@@ -62,10 +90,36 @@ export default function CheckoutEnhanced() {
 
   const selectedDelivery = homepageConfig.delivery.options.find((o) => o.id === deliveryOption);
 
+  // Pre-order (H-3) items — currently only Tampah Nusantara, but driven by
+  // `preorderDays` on the product so any future pre-order SKU picks this up
+  // automatically. If multiple pre-order items are ever in the same cart,
+  // use the longest lead time so the picked date satisfies all of them.
+  const preorderItems = state.items.filter((i) => (i.product.preorderDays ?? 0) > 0);
+  const hasPreorderItem = preorderItems.length > 0;
+  const preorderDays = hasPreorderItem ? Math.max(...preorderItems.map((i) => i.product.preorderDays!)) : 0;
+  const preorderMinDate = hasPreorderItem ? validateTampahDeliveryDate(new Date(), new Date(), preorderDays).minDate : undefined;
+  const deliveryDateValidation =
+    hasPreorderItem && deliveryDate ? validateTampahDeliveryDate(new Date(deliveryDate), new Date(), preorderDays) : null;
+  const deliveryDateError = deliveryDateValidation && !deliveryDateValidation.valid ? deliveryDateValidation.reason : undefined;
+  const preorderProductName = hasPreorderItem
+    ? preorderItems.map((i) => i.product.name).join(" & ")
+    : undefined;
+
   const subtotal = state.items.reduce((s, i) => s + i.product.price * i.qty, 0);
   const shippingCost = shippingResult?.cost ?? homepageConfig.delivery.cost;
   const shippingLabel = shippingResult?.label ?? selectedDelivery?.name ?? "Reguler";
-  const total = subtotal + shippingCost;
+  // "1 voucher terbaik untukmu" — auto-applied, best-for-customer voucher
+  // for the current subtotal. No manual code entry (Task 7 phase 1 scope).
+  const appliedVoucher = pickBestVoucher(vouchers, subtotal);
+  const discountAmount = appliedVoucher?.discountAmount ?? 0;
+  // Loyalty redemption is opt-in (toggle in CheckoutForm) and capped so it
+  // can never make the total go negative — see calculateRedemption().
+  const maxRedeemableValue = subtotal + shippingCost - discountAmount;
+  const redemption = redeemPoints
+    ? calculateRedemption(loyaltyBalance, loyaltyConfig.pointValueRupiah, loyaltyConfig.minPointsToRedeem, maxRedeemableValue)
+    : { pointsRedeemed: 0, redemptionValue: 0 };
+  const pointsEarned = calculatePointsEarned(subtotal, loyaltyConfig.earnPointsPerRupiah);
+  const total = subtotal + shippingCost - discountAmount - redemption.redemptionValue;
 
   const handleSelectDeliveryOption = (id: string) => {
     setDeliveryOption(id);
@@ -90,6 +144,20 @@ export default function CheckoutEnhanced() {
       setError("Mohon isi alamat pengantaran");
       toast.error("Mohon isi alamat pengantaran");
       return;
+    }
+    if (hasPreorderItem) {
+      if (!deliveryDate) {
+        const msg = `Mohon pilih tanggal pengiriman untuk ${preorderProductName}`;
+        setError(msg);
+        toast.error(msg);
+        return;
+      }
+      const dateCheck = validateTampahDeliveryDate(new Date(deliveryDate), new Date(), preorderDays);
+      if (!dateCheck.valid) {
+        setError(dateCheck.reason || "Tanggal pengiriman tidak valid");
+        toast.error(dateCheck.reason || "Tanggal pengiriman tidak valid");
+        return;
+      }
     }
 
     setError(null);
@@ -184,12 +252,19 @@ export default function CheckoutEnhanced() {
           qty: item.qty,
           spiceLevel: item.spiceLevel,
           price: item.product.price,
+          ...(item.customSelection ? { customSelection: item.customSelection } : {}),
         })),
         subtotal,
         shipping_cost: shippingCost,
+        ...(appliedVoucher ? { voucher_code: appliedVoucher.code, discount_amount: discountAmount } : {}),
+        ...(redemption.pointsRedeemed > 0
+          ? { points_redeemed: redemption.pointsRedeemed, loyalty_discount_amount: redemption.redemptionValue }
+          : {}),
+        points_earned: pointsEarned,
         total,
         shipping_provider: shippingLabel,
         delivery_time: selectedDelivery?.eta || "Besok Pagi",
+        ...(hasPreorderItem ? { preorder_delivery_date: deliveryDate } : {}),
         notes: notes.trim() || "",
         status: "pending_payment" as const,
         created_at: new Date().toISOString(),
@@ -210,6 +285,14 @@ export default function CheckoutEnhanced() {
         queueOfflineOrder(orderData);
       }
 
+      // Best-effort loyalty points update — never blocks or fails the
+      // order itself (see adjustLoyaltyPoints in supabase-client.ts).
+      // Net change: points earned from this order minus points redeemed.
+      const netPointsDelta = pointsEarned - redemption.pointsRedeemed;
+      if (netPointsDelta !== 0) {
+        adjustLoyaltyPoints(customerPhone.trim(), netPointsDelta);
+      }
+
       // Format and send WhatsApp message
       const message = createWhatsAppMessage(
         orderCode,
@@ -224,7 +307,10 @@ export default function CheckoutEnhanced() {
         shippingCost,
         total,
         shippingLabel,
-        deliveryCtx.state.userDistance
+        deliveryCtx.state.userDistance,
+        hasPreorderItem ? deliveryDate : undefined,
+        appliedVoucher ? { code: appliedVoucher.code, discountAmount } : undefined,
+        { pointsEarned, pointsRedeemed: redemption.pointsRedeemed, redemptionValue: redemption.redemptionValue }
       );
       const waUrl = `https://wa.me/${homepageConfig.contact.whatsapp}?text=${encodeURIComponent(message)}`;
 
@@ -259,6 +345,13 @@ export default function CheckoutEnhanced() {
       setNotes("");
       setStep("form");
       setPendingOrder(null);
+      // BUG FIX (found while wiring loyalty): deliveryDate/redeemPoints
+      // were never reset after a successful order, so re-opening checkout
+      // for a second order kept the previous pre-order date and the
+      // "pakai poin" toggle still checked against a stale (pre-fetch)
+      // balance until the debounced phone lookup ran again.
+      setDeliveryDate("");
+      setRedeemPoints(false);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Terjadi kesalahan";
       setError(errorMsg);
@@ -295,14 +388,14 @@ export default function CheckoutEnhanced() {
             className="fixed inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 z-50 w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E5E0]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-paper-border">
               <h2 className="font-display text-lg font-semibold text-ink">
                 {step === "form" ? "Checkout" : step === "confirm" ? "Konfirmasi Pesanan" : "Pembayaran QRIS"}
               </h2>
               <button
                 onClick={closeModal}
                 disabled={isLoading}
-                className="p-2 rounded-full hover:bg-[#E8E5E0] transition-colors disabled:opacity-50"
+                className="p-2 rounded-full hover:bg-paper transition-colors disabled:opacity-50"
               >
                 <X className="w-5 h-5 text-ink-muted" />
               </button>
@@ -316,12 +409,15 @@ export default function CheckoutEnhanced() {
                 customerPhone={customerPhone}
                 address={address}
                 deliveryTime={selectedDelivery?.eta || "Besok Pagi"}
+                preorderDeliveryDate={hasPreorderItem ? deliveryDate : undefined}
                 notes={notes}
                 items={state.items}
                 subtotal={subtotal}
                 shippingCost={shippingCost}
                 shippingLabel={shippingLabel}
                 total={total}
+                appliedVoucher={appliedVoucher}
+                loyalty={{ pointsEarned, pointsRedeemed: redemption.pointsRedeemed, redemptionValue: redemption.redemptionValue }}
                 haversineUsed={deliveryCtx.state.haversineUsed}
                 isLoading={isLoading}
                 onBack={() => setStep("form")}
@@ -335,6 +431,13 @@ export default function CheckoutEnhanced() {
                 error={error}
                 isLoading={isLoading}
                 total={total}
+                appliedVoucher={appliedVoucher}
+                loyaltyBalance={loyaltyBalance}
+                minPointsToRedeem={loyaltyConfig.minPointsToRedeem}
+                redeemPoints={redeemPoints}
+                setRedeemPoints={setRedeemPoints}
+                redemption={redemption}
+                pointsEarned={pointsEarned}
                 customerName={customerName}
                 setCustomerName={setCustomerName}
                 customerPhone={customerPhone}
@@ -347,6 +450,12 @@ export default function CheckoutEnhanced() {
                 deliveryOption={deliveryOption}
                 onSelectDeliveryOption={handleSelectDeliveryOption}
                 onSubmit={goToConfirm}
+                preorderProductName={preorderProductName}
+                preorderDays={hasPreorderItem ? preorderDays : undefined}
+                preorderMinDate={preorderMinDate}
+                deliveryDate={deliveryDate}
+                setDeliveryDate={setDeliveryDate}
+                deliveryDateError={deliveryDateError}
               />
             )}
           </motion.div>

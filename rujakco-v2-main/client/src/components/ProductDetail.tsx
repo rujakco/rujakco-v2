@@ -9,8 +9,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, Flame, ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { formatCurrency } from "@/data/products";
-import type { Product, ProductVariant } from "@/contexts/CartContext";
+import type { Product, ProductVariant, CustomBowlSelection } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import { validateCustomBowlSelection } from "@/data/orderValidation";
 
 interface ProductDetailProps {
   product: Product | null;
@@ -23,6 +24,8 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
   const [qty, setQty] = useState(1);
   const [spiceLevel, setSpiceLevel] = useState(product?.spiceLevel?.default || 3);
   const [variantId, setVariantId] = useState(product?.variants?.[0]?.id);
+  const [selectedFruits, setSelectedFruits] = useState<string[]>([]);
+  const [selectedSauce, setSelectedSauce] = useState<string | undefined>(undefined);
 
   // BUG FIX: this modal is kept mounted (see Products.tsx) and only
   // toggled via `isOpen`, so `useState(product?.foo)` above only runs
@@ -35,19 +38,41 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
     setQty(1);
     setSpiceLevel(product.spiceLevel?.default || 3);
     setVariantId(product.variants?.[0]?.id);
+    setSelectedFruits([]);
+    setSelectedSauce(undefined);
   }, [product]);
 
   if (!product) return null;
 
   const selectedVariant: ProductVariant | undefined = product.variants?.find((v) => v.id === variantId) || product.variants?.[0];
 
+  const toggleFruit = (fruit: string) => {
+    setSelectedFruits((prev) => (prev.includes(fruit) ? prev.filter((f) => f !== fruit) : [...prev, fruit]));
+  };
+
+  // Custom Bowl requires at least one fruit and exactly one sauce picked,
+  // and both must be within the product's allowed lists — delegated to the
+  // shared commerce rule in orderValidation.ts rather than re-implemented
+  // here, so this stays in sync with anything else that validates a bowl
+  // (e.g. a future server-side check).
+  const customBowlCheck = product.customOptions
+    ? validateCustomBowlSelection(selectedFruits, selectedSauce ?? "", product.customOptions.fruits, product.customOptions.sauces)
+    : null;
+  const isCustomBowlIncomplete = !!customBowlCheck && (!customBowlCheck.validFruit || !customBowlCheck.validSauce);
+
   const handleAddToCart = () => {
-    addToCart(product, qty, spiceLevel, selectedVariant);
+    if (isCustomBowlIncomplete) return;
+    const customSelection: CustomBowlSelection | undefined = product.customOptions
+      ? { fruits: selectedFruits, sauce: selectedSauce! }
+      : undefined;
+    addToCart(product, qty, spiceLevel, selectedVariant, customSelection);
     toast.success(`${product.name} ditambahkan ke reservasi`);
     onClose();
     setQty(1);
     setSpiceLevel(product.spiceLevel?.default || 3);
     setVariantId(product.variants?.[0]?.id);
+    setSelectedFruits([]);
+    setSelectedSauce(undefined);
   };
 
   return (
@@ -69,7 +94,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-            className="fixed inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 z-50 w-full max-w-2xl bg-white rounded-[24px] elevation-4 overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="fixed inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 z-50 w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E5E0] sticky top-0 bg-white z-10">
@@ -140,11 +165,56 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
 
               {product.customOptions && (
                 <div className="mb-6 p-4 rounded-xl border border-[#E8E5E0]">
-                  <p className="text-sm font-medium text-ink mb-2">Pilihan buah</p>
-                  <p className="text-sm text-ink-muted">{product.customOptions.fruits.join(" · ")}</p>
-                  <p className="text-sm font-medium text-ink mt-3 mb-1">Pilihan sambal</p>
-                  <p className="text-sm text-ink-muted">{product.customOptions.sauces.join(" · ")}</p>
-                  <p className="text-xs text-ink-muted mt-2">{product.customOptions.pricingNote}</p>
+                  <label className="text-sm font-medium text-ink mb-1 block">
+                    Pilih buah <span className="text-chili">*</span>
+                  </label>
+                  <p className="text-xs text-ink-muted mb-3">Boleh pilih lebih dari satu</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {product.customOptions.fruits.map((fruit) => {
+                      const active = selectedFruits.includes(fruit);
+                      return (
+                        <button
+                          key={fruit}
+                          type="button"
+                          onClick={() => toggleFruit(fruit)}
+                          className={`px-3 py-2 rounded-full border text-sm transition-all ${
+                            active ? "border-forest bg-forest/10 text-forest font-medium" : "border-[#E8E5E0] bg-white text-ink hover:border-forest/30"
+                          }`}
+                        >
+                          {fruit}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <label className="text-sm font-medium text-ink mb-1 block">
+                    Pilih sambal <span className="text-chili">*</span>
+                  </label>
+                  <p className="text-xs text-ink-muted mb-3">Pilih satu</p>
+                  <div className="flex flex-wrap gap-2">
+                    {product.customOptions.sauces.map((sauce) => {
+                      const active = selectedSauce === sauce;
+                      return (
+                        <button
+                          key={sauce}
+                          type="button"
+                          onClick={() => setSelectedSauce(sauce)}
+                          className={`px-3 py-2 rounded-full border text-sm transition-all ${
+                            active ? "border-forest bg-forest/10 text-forest font-medium" : "border-[#E8E5E0] bg-white text-ink hover:border-forest/30"
+                          }`}
+                        >
+                          {sauce}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {product.customOptions.pricingNote && (
+                    <p className="text-xs text-ink-muted mt-3">{product.customOptions.pricingNote}</p>
+                  )}
+                  {isCustomBowlIncomplete && (
+                    <p className="text-xs text-chili mt-3">Pilih minimal 1 buah dan 1 sambal sebelum menambah ke reservasi.</p>
+                  )}
                 </div>
               )}
 
@@ -208,7 +278,8 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                 </div>
                 <button
                   onClick={handleAddToCart}
-                  className="btn-premium-forest text-[15px]"
+                  disabled={isCustomBowlIncomplete}
+                  className="flex items-center gap-2 px-6 py-3 bg-forest text-white rounded-full font-semibold hover:bg-forest-light transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Tambah ke Reservasi

@@ -11,11 +11,16 @@
  * downloaded, and sent to Telegram.
  */
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, ScanLine, MessageCircle, Loader2, Check } from "lucide-react";
+import { Download, ScanLine, MessageCircle, Loader2, Check, Clock } from "lucide-react";
 import { formatCurrency } from "@/data/products";
 
 const QRIS_IMAGE_URL = "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/QrisCrop.webp";
+// Same 15-minute window Fore shows on their QRIS screen — gives the
+// customer a clear deadline without being unreasonably short for a
+// manual bank-transfer + upload-bukti flow.
+const PAYMENT_WINDOW_SECONDS = 15 * 60;
 
 interface QrisPaymentProps {
   total: number;
@@ -29,7 +34,28 @@ const GUIDE_STEPS = [
   { icon: MessageCircle, label: "3. Kabari" },
 ] as const;
 
+function useCountdown(totalSeconds: number) {
+  const [remaining, setRemaining] = useState(totalSeconds);
+
+  useEffect(() => {
+    if (remaining <= 0) return;
+    const id = window.setInterval(() => {
+      setRemaining((s) => Math.max(0, s - 1));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [remaining]);
+
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
+  return { remaining, label: `${minutes}:${String(seconds).padStart(2, "0")}` };
+}
+
 export default function QrisPayment({ total, isLoading, onValidate }: QrisPaymentProps) {
+  // Mount-once timer: the checkout modal is unmounted/remounted between
+  // steps via CheckoutEnhanced's conditional render, so this naturally
+  // resets if the customer leaves and comes back to a fresh order.
+  const { label: countdownLabel } = useCountdown(PAYMENT_WINDOW_SECONDS);
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 16 }}
@@ -38,9 +64,17 @@ export default function QrisPayment({ total, isLoading, onValidate }: QrisPaymen
       transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
     >
       <div className="px-6 py-5 max-h-[65vh] overflow-y-auto">
+        {/* Countdown banner — ala "Selesaikan pembayaran dalam 14:57" Fore */}
+        <div className="flex items-center justify-center gap-2 mb-4 py-2.5 px-4 rounded-xl bg-chili/10 text-chili text-sm font-medium">
+          <Clock className="w-4 h-4" />
+          <span>
+            Selesaikan pembayaran dalam <span className="font-semibold tabular-nums">{countdownLabel}</span>
+          </span>
+        </div>
+
         {/* QRIS frame */}
         <div className="flex justify-center mb-4">
-          <div className="rounded-2xl border border-[#E8E5E0] p-3 bg-white shadow-sm">
+          <div className="rounded-2xl border border-paper-border p-3 bg-white shadow-sm">
             <img
               src={QRIS_IMAGE_URL}
               alt="QRIS RUJAK.Co"
@@ -65,7 +99,7 @@ export default function QrisPayment({ total, isLoading, onValidate }: QrisPaymen
               <div key={label} className="flex-1 flex flex-col items-center gap-1.5 text-center">
                 <div
                   className={`w-11 h-11 rounded-full border flex items-center justify-center ${
-                    isLast ? "bg-forest/10 border-forest" : "bg-[#FEFDF8] border-[#E8E5E0]"
+                    isLast ? "bg-forest/10 border-forest" : "bg-paper border-paper-border"
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isLast ? "text-forest" : "text-ink-muted"}`} />
@@ -80,7 +114,7 @@ export default function QrisPayment({ total, isLoading, onValidate }: QrisPaymen
       </div>
 
       {/* Footer — single CTA, does both the WhatsApp handoff and the DB save */}
-      <div className="px-6 py-4 border-t border-[#E8E5E0] bg-[#FEFDF8]">
+      <div className="px-6 py-4 border-t border-paper-border bg-paper">
         <button
           onClick={onValidate}
           disabled={isLoading}
