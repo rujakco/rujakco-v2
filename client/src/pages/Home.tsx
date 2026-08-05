@@ -18,6 +18,7 @@ import {
   Share2,
   PackageSearch,
   Plus,
+  Bell,
 } from "lucide-react";
 
 // Hero carousel slides — reuses existing product photography (no new
@@ -115,6 +116,7 @@ export default function Home() {
       subtitle: "Kirim kesegaran ke orang terdekat",
       iconBg: "bg-sage",
       iconColor: "text-forest",
+      badge: "Baru",
       onClick: () => {},
     },
   ];
@@ -123,9 +125,9 @@ export default function Home() {
     <div className="min-h-screen bg-cream text-ink font-sans pb-24">
       <Header />
 
-      <main className="pt-20 md:pt-24 max-w-md md:max-w-2xl mx-auto px-4">
+      <main className="pt-3 md:pt-24 max-w-md md:max-w-2xl mx-auto px-4">
         {/* Hero banner — auto-rotating carousel ala Fore, foto produk asli */}
-        <section className="mt-2 mb-4">
+        <section id="hero" className="mt-2 relative scroll-mt-24">
           <div className="relative rounded-3xl overflow-hidden min-h-[220px] shadow-sm">
             <AnimatePresence mode="wait">
               <motion.div
@@ -147,7 +149,15 @@ export default function Home() {
               </motion.div>
             </AnimatePresence>
 
-            <div className="relative p-6 min-h-[220px] flex flex-col justify-end text-white">
+            {/* Floating notification bell, ala Fore — decorative, no notification system wired yet */}
+            <button
+              aria-label="Notifikasi"
+              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-ink/25 backdrop-blur-md flex items-center justify-center text-white hover:bg-ink/35 transition-colors"
+            >
+              <Bell className="w-4 h-4" />
+            </button>
+
+            <div className="relative p-6 pb-10 min-h-[220px] flex flex-col justify-end text-white">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-medium tracking-wide uppercase text-mango mb-2 w-fit">
                 <Sparkles className="w-3.5 h-3.5" />
                 {heroSlides[heroIndex].eyebrow}
@@ -172,59 +182,84 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
 
-        {/* Greeting card */}
-        <section className="mb-6">
-          <div className="bg-white rounded-2xl border border-paper-border p-5 shadow-sm">
-            <p className="font-display text-lg font-medium text-ink">
-              {userName ? `Hai, ${userName}!` : "Selamat datang!"}
-            </p>
-            <p className="text-sm text-ink-muted mt-0.5">Mau rujak segar yang mana hari ini?</p>
+          {/* Greeting card — sengaja menumpuk di tepi bawah hero, ala Fore */}
+          <div className="relative z-10 -mt-8 mx-2">
+            <div className="bg-white rounded-2xl border border-paper-border p-5 shadow-md">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-display text-lg font-medium text-ink">
+                    {userName ? `Hai, ${userName}!` : "Selamat datang!"}
+                  </p>
+                  <p className="text-sm text-ink-muted mt-0.5">Mau rujak segar yang mana hari ini?</p>
+                </div>
+                <span className="text-2xl shrink-0" aria-hidden="true">🥭</span>
+              </div>
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-paper-border">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-xs font-medium text-forest">
+                  <Gift className="w-3.5 h-3.5" />
+                  Poin &amp; Reward
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-paper-border text-xs font-medium text-ink-soft">
+                  <Sparkles className="w-3.5 h-3.5 text-mango" />
+                  RUJAK.Plan
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Quick actions ala Pick Up / Delivery Fore */}
-        <section className="mb-8">
+        <section className="mt-6 mb-8">
           <h2 className="font-display text-base font-semibold text-ink mb-3">Pesan RUJAK.Co Sekarang?</h2>
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}
-              className="text-left rounded-2xl border border-sage bg-sage/20 p-4 hover:bg-sage/30 transition-colors"
+              className="relative overflow-hidden text-left rounded-2xl border border-sage bg-gradient-to-br from-sage/50 to-mango/10 p-4 hover:from-sage/60 transition-colors"
             >
-              <div className="w-9 h-9 rounded-full bg-forest/10 flex items-center justify-center mb-3">
+              <Truck className="absolute -bottom-3 -right-3 w-16 h-16 text-forest/15" aria-hidden="true" />
+              <div className="relative w-9 h-9 rounded-full bg-forest/10 flex items-center justify-center mb-3">
                 <Truck className="w-4.5 h-4.5 text-forest" />
               </div>
-              <p className="font-semibold text-sm text-ink">Antar ke Rumah</p>
-              <p className="text-xs text-ink-muted mt-0.5">Diantar segar &amp; tepat waktu</p>
+              <p className="relative font-semibold text-sm text-ink">Antar ke Rumah</p>
+              <p className="relative text-xs text-ink-muted mt-0.5">Diantar segar &amp; tepat waktu</p>
             </button>
             <button
               onClick={() => navigate("/lacak")}
-              className="text-left rounded-2xl border border-paper-border bg-white p-4 hover:bg-paper transition-colors"
+              className="relative overflow-hidden text-left rounded-2xl border border-chili/20 bg-gradient-to-br from-chili/10 to-mango/10 p-4 hover:from-chili/15 transition-colors"
             >
-              <div className="w-9 h-9 rounded-full bg-mango/15 flex items-center justify-center mb-3">
-                <PackageSearch className="w-4.5 h-4.5 text-mango" />
+              <PackageSearch className="absolute -bottom-3 -right-3 w-16 h-16 text-chili/15" aria-hidden="true" />
+              <div className="relative w-9 h-9 rounded-full bg-chili/10 flex items-center justify-center mb-3">
+                <PackageSearch className="w-4.5 h-4.5 text-chili" />
               </div>
-              <p className="font-semibold text-sm text-ink">Lacak Pesanan</p>
-              <p className="text-xs text-ink-muted mt-0.5">Cek status pesananmu</p>
+              <p className="relative font-semibold text-sm text-ink">Lacak Pesanan</p>
+              <p className="relative text-xs text-ink-muted mt-0.5">Cek status pesananmu</p>
             </button>
           </div>
         </section>
 
-        {/* Spesial Untukmu — feature grid ala Fore */}
+        {/* Spesial Untukmu — feature grid ala Fore, pola 2-2-1 */}
         <section className="mb-8">
           <h2 className="font-display text-base font-semibold text-ink mb-3">Spesial Untukmu di RUJAK.Co</h2>
           <div className="grid grid-cols-2 gap-3">
-            {featureGrid.map((f) => {
+            {featureGrid.map((f, i) => {
               const Icon = f.icon;
+              const isLastOdd = i === featureGrid.length - 1 && featureGrid.length % 2 === 1;
               return (
                 <button
                   key={f.title}
                   onClick={f.onClick}
-                  className="text-left rounded-2xl border border-paper-border bg-white p-4 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                  className={`relative text-left rounded-2xl border border-paper-border bg-white p-4 hover:shadow-md hover:-translate-y-0.5 transition-all ${
+                    isLastOdd ? "col-span-2" : ""
+                  }`}
                 >
-                  <div className={`w-9 h-9 rounded-full ${f.iconBg} flex items-center justify-center mb-3`}>
-                    <Icon className={`w-4.5 h-4.5 ${f.iconColor}`} />
+                  {f.badge && (
+                    <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-chili text-white text-[10px] font-semibold tracking-wide">
+                      {f.badge}
+                    </span>
+                  )}
+                  <div className={`w-11 h-11 rounded-2xl ${f.iconBg} flex items-center justify-center mb-3`}>
+                    <Icon className={`w-5 h-5 ${f.iconColor}`} />
                   </div>
                   <p className="font-semibold text-sm text-ink leading-snug">{f.title}</p>
                   <p className="text-xs text-ink-muted mt-0.5 leading-snug">{f.subtitle}</p>
