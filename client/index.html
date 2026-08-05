@@ -10,16 +10,17 @@
     <link rel="apple-touch-icon" href="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <!-- Plus Jakarta Sans: geometric sans modern — karakter UI app (mirip Fore) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
     <div id="root"></div>
-    <!-- CHANGED: /src/main.tsx → ./src/main.tsx -->
     <script type="module" src="./src/main.tsx"></script>
-    
-    <!-- Analytics: only inject if env vars are set -->
+
     <script type="module">
       const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
       const websiteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
