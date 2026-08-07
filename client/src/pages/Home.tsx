@@ -5,9 +5,10 @@ import CartDrawer from "@/components/CartDrawer";
 import CheckoutEnhanced from "@/components/CheckoutEnhanced";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
-import { products, formatCurrency, getProductById } from "@/data/products";
+import { products, formatCurrency, getProductById, getBadgeLabel } from "@/data/products";
 import { homepageConfig } from "@/data/homepage";
 import { useCart } from "@/contexts/CartContext";
+import { getLoyaltyPoints } from "@/lib/supabase-client";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
   ShieldCheck,
@@ -31,16 +32,6 @@ import {
   Percent,
 } from "lucide-react";
 
-/* ===========================================================
-   NOTE ON DATA SHAPE
-   This file expects the Product type (data/products.ts) to carry:
-     bestSeller?: boolean
-     discount?: number   // percent, e.g. 10
-   Add those two optional fields to the Product type and to the
-   relevant entries in the products array — badges below are
-   rendered from that data instead of index math.
-   =========================================================== */
-
 const CATEGORIES = [
   { id: "all", label: "Semua" },
   { id: "rujak", label: "Rujak Buah" },
@@ -55,7 +46,8 @@ const fadeIn: Variants = {
 };
 
 // Brand-color hero slides — solid background, floating product, dominant type.
-// Colors are drawn only from the established token set (forest / mango / chili).
+// Colors are drawn only from the established token set (forest / mango / chili),
+// so nothing here depends on an undefined Tailwind class like bg-gold.
 const heroSlides = [
   {
     image: getProductById("rujak-segar")?.image,
@@ -95,10 +87,24 @@ export default function Home() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showVoucher, setShowVoucher] = useState(false);
+  const [points, setPoints] = useState(0);
   const { addToCart, toggleCart, state } = useCart();
   const userName = state.userName && state.userName !== "Tamu" ? state.userName : null;
-  // Falls back to 0 until CartContext exposes a real points field.
-  const points = state.points ?? 0;
+
+  // Real loyalty balance — there's no login, so identity is the phone number
+  // remembered from a previous checkout (see CheckoutEnhanced, which writes
+  // "rujak-phone" to localStorage after an order goes through). No phone
+  // remembered yet just means 0 poin, same as a first-time guest.
+  useEffect(() => {
+    let phone = "";
+    try {
+      phone = localStorage.getItem("rujak-phone") || "";
+    } catch {
+      // private browsing / storage disabled — fall back to 0
+    }
+    if (!phone) return;
+    getLoyaltyPoints(phone).then(setPoints);
+  }, []);
 
   // Fixed interval, no dependency on heroIndex — avoids re-creating the timer every slide.
   useEffect(() => {
@@ -218,8 +224,9 @@ export default function Home() {
     );
   }, [activeCategory, searchQuery]);
 
-  // Data-driven instead of slice(0, 3) — flows from the product's own flag.
-  const bestSellers = useMemo(() => products.filter((p) => p.bestSeller), []);
+  // Data-driven — reads the `tag` that already exists on every product
+  // (see data/products.ts / getBadgeLabel) instead of slicing or index math.
+  const bestSellers = useMemo(() => products.filter((p) => p.tag === "best-seller"), []);
 
   const waUrl = homepageConfig.social.whatsapp.url + "?text=" + encodeURIComponent("Halo RUJAK.Co, saya butuh bantuan.");
   const slide = heroSlides[heroIndex];
@@ -286,7 +293,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Greeting card — points read from CartContext */}
+          {/* Greeting card — points read from real loyalty balance */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
@@ -350,7 +357,7 @@ export default function Home() {
             </div>
           </section>
 
-          {/* ============ Best Seller — data-driven ============ */}
+          {/* ============ Best Seller — data-driven from product.tag ============ */}
           {bestSellers.length > 0 && (
             <section className="mb-8">
               <div className="flex items-center justify-between mb-3">
@@ -366,7 +373,7 @@ export default function Home() {
                     <div className="h-[120px] bg-sage/20 relative">
                       <div className="absolute top-2 left-2">
                         <span className="bg-white/90 px-2 py-0.5 rounded-full text-[10px] font-bold text-chili flex items-center gap-0.5">
-                          <Flame className="w-3 h-3" /> Bestseller
+                          <Flame className="w-3 h-3" /> {getBadgeLabel(product.tag)}
                         </span>
                       </div>
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover" loading="lazy" />
@@ -389,8 +396,10 @@ export default function Home() {
           <section id="products" className="scroll-mt-24 mb-10">
             <h2 className="text-[16px] font-bold text-ink tracking-tight mb-3">Eksplor Menu</h2>
 
-            {/* Sticky search + category so they stay reachable while scrolling the grid */}
-            <div className="sticky top-16 z-20 bg-[#F7F7F7] -mx-4 px-4 pb-3 pt-1">
+            {/* Sticky search + category so they stay reachable while scrolling the grid.
+                Header is `hidden md:block` (mobile has no fixed header), so the sticky
+                offset is 0 on mobile and only accounts for Header's height from md up. */}
+            <div className="sticky top-0 md:top-16 lg:top-20 z-20 bg-[#F7F7F7] -mx-4 px-4 pb-3 pt-1">
               <div className="relative mb-3">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <input
@@ -442,17 +451,10 @@ export default function Home() {
                         decoding="async"
                         className="w-full h-full object-cover"
                       />
-                      {product.bestSeller && (
+                      {product.tag && getBadgeLabel(product.tag) && (
                         <div className="absolute left-2 top-2">
                           <span className="bg-white/90 px-2 py-0.5 rounded-full text-[10px] font-bold text-chili flex items-center gap-0.5">
-                            <Flame className="w-3 h-3" /> Best Seller
-                          </span>
-                        </div>
-                      )}
-                      {!!product.discount && (
-                        <div className="absolute right-2 top-2">
-                          <span className="bg-chili px-2 py-0.5 rounded-full text-[10px] font-bold text-white">
-                            {product.discount}%
+                            <Flame className="w-3 h-3" /> {getBadgeLabel(product.tag)}
                           </span>
                         </div>
                       )}
