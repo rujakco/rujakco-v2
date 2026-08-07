@@ -5,6 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 export default function BottomNav() {
   const [location, navigate] = useLocation();
   const { itemCount, toggleCart } = useCart();
+  const hasItems = itemCount > 0;
 
   const items = [
     {
@@ -26,7 +27,8 @@ export default function BottomNav() {
       label: "Pesanan",
       icon: Receipt,
       active: location === "/lacak",
-      badge: itemCount > 0 ? itemCount : undefined,
+      // Badge only renders once the cart actually has items.
+      badge: hasItems ? itemCount : undefined,
       onClick: () => toggleCart(true), // Atau navigate("/lacak")
     },
     {
@@ -47,13 +49,14 @@ export default function BottomNav() {
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = item.active;
-          
+
           return (
             <button
               key={item.id}
               onClick={item.onClick}
+              aria-label={item.label}
               className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${
-                isActive ? "text-[#6C7C3F]" : "text-gray-400"
+                isActive ? "text-forest" : "text-gray-400"
               }`}
             >
               <div className="relative">
@@ -62,19 +65,13 @@ export default function BottomNav() {
                     isActive ? "fill-current stroke-current" : "stroke-[1.8px] fill-transparent"
                   }`}
                 />
-                {item.badge && (
-                  <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-[#C84B31] border border-white text-white text-[9px] font-bold flex items-center justify-center">
+                {item.badge !== undefined && (
+                  <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-chili border border-white text-white text-[9px] font-bold flex items-center justify-center">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span
-                className={`text-[11px] ${
-                  isActive ? "font-bold" : "font-medium"
-                }`}
-              >
-                {item.label}
-              </span>
+              <span className={`text-[11px] ${isActive ? "font-bold" : "font-medium"}`}>{item.label}</span>
             </button>
           );
         })}
