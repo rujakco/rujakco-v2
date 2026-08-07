@@ -87,14 +87,14 @@
   /* ===========================
      COLORS
      =========================== */
-  --bg: #F7F7F4;
+  --bg: #F7F7F7;
   --surface: #FFFFFF;
   --surface-soft: #FCFCFA;
 
-  --green: #145A3A;
-  --green-600: #1B6A49;
-  --green-500: #2F8A5E;
-  --green-100: #EEF7F1;
+  --green: #6C7C3F;
+  --green-600: #5A6934;
+  --green-500: #869157;
+  --green-100: #EEF1E4;
 
   --gold: #C89A43;
   --orange: #E89B43;
@@ -117,8 +117,8 @@
      =========================== */
   --radius-xs: 10px;
   --radius-sm: 14px;
-  --radius-md: 18px;
-  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-lg: 18px;
   --radius-xl: 28px;
 
   /* Tailwind radius mengikuti --radius-md */
@@ -127,10 +127,10 @@
   /* ===========================
      SHADOW
      =========================== */
-  --shadow-xs: 0 1px 4px rgba(0,0,0,.03);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
-  --shadow-md: 0 8px 24px rgba(0,0,0,.06);
-  --shadow-lg: 0 16px 40px rgba(0,0,0,.08);
+  --shadow-xs: 0 1px 3px rgba(0,0,0,.05);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.08);
+  --shadow-md: 0 2px 8px rgba(0,0,0,.08);
+  --shadow-lg: 0 4px 14px rgba(0,0,0,.10);
 
   /* ===========================
      SPACING
@@ -210,11 +210,11 @@
     font-weight: 700;
     border: none;
     cursor: pointer;
-    transition: 0.2s;
+    transition: transform 0.15s ease;
   }
 
   button:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
 }
 
@@ -243,29 +243,25 @@
     }
   }
 
-  /* Global card */
+  /* Global card — radius & shadow tipis ala Fore */
   .card {
     position: relative;
     background: white;
-    border-radius: 20px;
+    border-radius: 16px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
-    transition: transform 0.25s, box-shadow 0.25s;
-  }
-
-  .card:hover {
-    box-shadow: var(--shadow-md);
+    transition: transform 0.15s ease;
   }
 
   .card:active {
-    transform: scale(0.985);
+    transform: scale(0.98);
   }
 
   /* Chip component */
   .chip {
-    height: 42px;
-    padding: 0 18px;
+    height: 36px;
+    padding: 0 16px;
     border-radius: 999px;
     background: white;
     border: 1px solid var(--border);
@@ -273,18 +269,18 @@
     align-items: center;
     gap: 8px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
   }
 
-  /* Fade-up animation */
+  /* Fade-up animation — dipakai hemat, bukan default di semua elemen */
   .fade-up {
-    animation: fadeUp 0.45s ease;
+    animation: fadeUp 0.35s ease;
   }
 
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(18px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
@@ -304,14 +300,14 @@
    SECTION & GRID (global)
    =========================== */
 section {
-  padding-top: 32px;
-  padding-bottom: 12px;
+  padding-top: 24px;
+  padding-bottom: 8px;
 }
 
 /* Grid override khusus untuk yang tidak pakai Tailwind */
 .grid {
   display: grid;
-  gap: 18px;
+  gap: 12px;
 }
 
 /* ===========================
