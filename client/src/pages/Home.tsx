@@ -25,6 +25,11 @@ import {
   Bike,
 } from "lucide-react";
 
+// Satu konstanta padding kiri-kanan dipakai di SEMUA section supaya
+// marginnya konsisten dari atas ke bawah (dulu campur px-4 / -mx-4 / dsb).
+const PAGE_PAD = "px-5";
+const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
+
 const CATEGORIES = [
   { id: "all", label: "Semua" },
   { id: "rujak", label: "Rujak Buah" },
@@ -67,9 +72,22 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [heroIndex, setHeroIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const { addToCart, toggleCart, state } = useCart();
-  const displayName = state.userName && state.userName !== "Tamu" ? state.userName : "Rujakers";
+  const { addToCart, toggleCart, state, setUserName } = useCart();
+
+  // Belum login = belum ada nama tersimpan (state awal, sebelum onboarding
+  // mengisi nama atau memilih "Tamu").
+  const isLoggedIn = Boolean(state.userName) && state.userName !== "Tamu";
   const points = 0;
+
+  // Belum ada halaman/modal login terpisah di project ini — untuk sementara
+  // "Login Sekarang" memakai prompt nama sederhana lewat CartContext yang
+  // sudah tersedia (setUserName). Ganti dengan flow auth asli saat sudah ada.
+  const handleLogin = useCallback(() => {
+    const name = window.prompt("Masukkan nama kamu untuk login:");
+    if (name && name.trim()) {
+      setUserName(name.trim());
+    }
+  }, [setUserName]);
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -197,12 +215,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-ink font-sans pb-[110px]">
+      {/* Header disembunyikan di mobile (hidden md:block) — di layar HP,
+          hero langsung jadi elemen paling atas, menembus sampai ujung layar. */}
       <Header />
 
       <main className="md:pt-24">
-        {/* ============ HERO — foto produk asli + teks overlay ============ */}
+        {/* ============ HERO — full-bleed, nempel ke top layar ============ */}
         <section id="hero" className="relative w-full">
-          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 rounded-b-[28px] md:max-w-2xl md:mx-auto md:rounded-[28px]">
+          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 rounded-b-[28px] md:max-w-2xl md:mx-auto md:rounded-[28px] md:mt-6">
             <AnimatePresence mode="wait">
               <motion.img
                 key={heroIndex}
@@ -222,7 +242,7 @@ export default function Home() {
             {/* Gradasi gelap supaya teks tetap terbaca di atas foto apa pun */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />
 
-            <div className="absolute left-6 top-10 z-20 max-w-[62%]">
+            <div className={`absolute left-0 top-10 z-20 max-w-[62%] ${PAGE_PAD}`}>
               <p className="text-white text-[22px] font-[800] leading-tight tracking-tight">
                 {slide.title}
               </p>
@@ -232,10 +252,12 @@ export default function Home() {
               </p>
             </div>
 
+            {/* Bell — diberi jarak aman dari status bar (safe-area-inset-top) */}
             <button
               type="button"
               aria-label="Notifikasi"
-              className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white"
+              style={{ top: "max(1rem, env(safe-area-inset-top))" }}
+              className="absolute right-5 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white"
             >
               <Bell className="w-4.5 h-4.5" />
             </button>
@@ -252,36 +274,57 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kartu sapaan — nama, poin, plan */}
+          {/* Kartu sapaan — nama + tombol Login (jika belum login), lalu poin & plan */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className="relative z-20 -mt-[64px] max-w-md md:max-w-2xl mx-auto px-4"
+            className={`relative z-20 -mt-[64px] ${PAGE_WIDTH} ${PAGE_PAD}`}
           >
             <div className="bg-white rounded-[20px] border border-[#ECECEC] px-6 pt-5 pb-4 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
-                  Hai {displayName}!
-                </h1>
-                <Coins className="w-6 h-6 text-mango" strokeWidth={2} />
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
+                    {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
+                  </h1>
+                  {!isLoggedIn && (
+                    <p className="text-[13px] text-ink-muted mt-0.5 font-medium">
+                      Berbagai rasa siap menemani harimu
+                    </p>
+                  )}
+                </div>
+
+                {isLoggedIn ? (
+                  <Coins className="w-6 h-6 text-mango shrink-0" strokeWidth={2} />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleLogin}
+                    className="shrink-0 px-4 py-2 rounded-full bg-forest text-white text-[13px] font-bold active:scale-95 transition-transform"
+                  >
+                    Login Sekarang
+                  </button>
+                )}
               </div>
 
-              <div className="border-t border-dashed border-[#E2E2E2] my-3" />
-
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
-                  <Coins className="w-3.5 h-3.5" /> {points} Poin
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mango/10 text-[12px] font-bold text-mango">
-                  <Crown className="w-3.5 h-3.5" /> RUJAK Plan
-                </span>
-              </div>
+              {isLoggedIn && (
+                <>
+                  <div className="border-t border-dashed border-[#E2E2E2] my-3" />
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
+                      <Coins className="w-3.5 h-3.5" /> {points} Poin
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mango/10 text-[12px] font-bold text-mango">
+                      <Crown className="w-3.5 h-3.5" /> RUJAK Plan
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </motion.div>
         </section>
 
-        <div className="max-w-md md:max-w-2xl mx-auto px-4">
+        <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           {/* ============ Pesan Sekarang (Quick Action) ============ */}
           <section className="mt-8 mb-8" aria-label="Pesan Sekarang">
             <h2 className="text-[18px] font-bold text-ink tracking-tight mb-3">
@@ -340,16 +383,16 @@ export default function Home() {
 
           {/* ============ Search, Kategori, Grid Produk ============ */}
           <section id="products" className="scroll-mt-24 mb-8">
-            <div className="sticky top-0 z-20 bg-[#F5F5F5] -mx-4 px-4 pb-3 pt-1">
+            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-5 ${PAGE_PAD} pb-3 pt-1`}>
               <div className="relative mb-4">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari menu..."
                   aria-label="Cari menu"
-                  className="w-full h-11 pl-10 pr-4 rounded-full bg-white border border-[#ECECEC] text-[16px] font-medium text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-forest/30"
+                  className="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-[#ECECEC] text-[16px] font-medium text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-forest/30"
                 />
               </div>
 
