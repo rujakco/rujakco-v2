@@ -17,6 +17,7 @@ import {
   MessageCircle,
   ChevronRight,
   Coins,
+  Crown,
   Star,
   Flame,
   Salad,
@@ -24,6 +25,11 @@ import {
   Users,
   Gift,
   Share2,
+  Store,
+  Bike,
+  Search,
+  Ticket,
+  Percent,
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -40,14 +46,43 @@ const fadeIn: Variants = {
 };
 
 const heroSlides = [
-  { image: getProductById("rujak-segar")?.image, alt: "Rujak Segar", duration: 4000 },
-  { image: getProductById("rujak-gaco")?.image, alt: "Rujak Gaco", duration: 4000 },
-  { image: getProductById("tampah-nusantara")?.image, alt: "Tampah Nusantara", duration: 4000 },
+  {
+    image: getProductById("rujak-segar")?.image,
+    alt: "Rujak Segar",
+    title: "Beli Rujak Apapun",
+    subtitle: "Diskon spesial hari ini",
+    badge: "25%",
+    duration: 4000,
+  },
+  {
+    image: getProductById("rujak-gaco")?.image,
+    alt: "Rujak Gaco",
+    title: "Gratis Sambal Premium",
+    subtitle: "Setiap pembelian Tampah",
+    badge: "FREE",
+    duration: 4000,
+  },
+  {
+    image: getProductById("tampah-nusantara")?.image,
+    alt: "Tampah Nusantara",
+    title: "Tampah Nusantara",
+    subtitle: "Pas untuk acara bersama",
+    badge: "NEW",
+    duration: 4000,
+  },
+] as const;
+
+const promoStrip = [
+  { icon: Bike, label: "Gratis Ongkir" },
+  { icon: Crown, label: "Diskon Member" },
+  { icon: Percent, label: "Cashback 10%" },
+  { icon: Ticket, label: "Voucher Baru" },
 ] as const;
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [heroIndex, setHeroIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const { addToCart, toggleCart, state } = useCart();
   const userName = state.userName && state.userName !== "Tamu" ? state.userName : null;
 
@@ -62,6 +97,32 @@ export default function Home() {
   const scrollToProducts = useCallback(() => {
     document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
+
+  const quickActions = useMemo(
+    () => [
+      {
+        icon: Store,
+        title: "Pick Up",
+        subtitle: "Ambil di store tanpa antre",
+        bg: "bg-[#F2F6ED]",
+        iconColor: "text-forest",
+        titleColor: "text-forest",
+        subtitleColor: "text-forest/60",
+        onClick: scrollToProducts,
+      },
+      {
+        icon: Bike,
+        title: "Delivery",
+        subtitle: "Diantar sampai rumah",
+        bg: "bg-[#FDF4EA]",
+        iconColor: "text-mango",
+        titleColor: "text-mango",
+        subtitleColor: "text-mango/70",
+        onClick: scrollToProducts,
+      },
+    ],
+    [scrollToProducts]
+  );
 
   const featureGrid = useMemo(
     () => [
@@ -95,6 +156,14 @@ export default function Home() {
         },
       },
       {
+        icon: Crown,
+        title: "RUJAK Plan",
+        subtitle: "Langganan, hemat tiap hari",
+        iconBg: "bg-gold/10",
+        iconColor: "text-mango",
+        onClick: () => {},
+      },
+      {
         icon: Share2,
         title: "RUJAKferral",
         subtitle: "Bagi kode, dapat saldo",
@@ -110,14 +179,26 @@ export default function Home() {
         iconColor: "text-forest",
         onClick: () => {},
       },
+      {
+        icon: Users,
+        title: "Corporate Order",
+        subtitle: "Untuk acara & kantor",
+        iconBg: "bg-forest/10",
+        iconColor: "text-forest",
+        onClick: () => {},
+      },
     ],
     [addToCart, toggleCart]
   );
 
-  const filteredProducts = useMemo(
-    () => (activeCategory === "all" ? products : products.filter((p) => p.type === activeCategory)),
-    [activeCategory]
-  );
+  const filteredProducts = useMemo(() => {
+    const byCategory = activeCategory === "all" ? products : products.filter((p) => p.type === activeCategory);
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return byCategory;
+    return byCategory.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+    );
+  }, [activeCategory, searchQuery]);
 
   const bestSellers = products.slice(0, 3);
   const waUrl = homepageConfig.social.whatsapp.url + "?text=" + encodeURIComponent("Halo RUJAK.Co, saya butuh bantuan.");
@@ -127,7 +208,7 @@ export default function Home() {
       <Header />
 
       <main className="md:pt-24">
-        {/* ============ HERO — 300px, no text overlay, product-first ============ */}
+        {/* ============ HERO — promo banner with text overlay ============ */}
         <section id="hero" className="relative w-full">
           <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 rounded-b-[28px] md:max-w-2xl md:mx-auto md:rounded-[28px]">
             {heroSlides.map((slide, i) => (
@@ -142,6 +223,22 @@ export default function Home() {
                 decoding="async"
               />
             ))}
+
+            {/* Darkening gradient so overlay text stays legible on any photo */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />
+
+            {/* Promo text overlay */}
+            <div className="absolute left-6 top-10 z-20 max-w-[62%]">
+              <p className="text-white text-[22px] font-[800] leading-tight tracking-tight">
+                {heroSlides[heroIndex].title}
+              </p>
+              <p className="text-white/85 text-[13px] font-medium mt-1.5">
+                {heroSlides[heroIndex].subtitle}
+              </p>
+              <p className="text-white text-[44px] font-[900] leading-none tracking-tight mt-2">
+                {heroSlides[heroIndex].badge}
+              </p>
+            </div>
 
             {/* Notification bell — static, no ring animation, no heavy blur */}
             <button
@@ -168,7 +265,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Greeting card — thin, near-flat, -84px overlap */}
+          {/* Greeting card — points + membership pills */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
@@ -176,17 +273,18 @@ export default function Home() {
             className="relative z-20 -mt-[84px] max-w-md md:max-w-2xl mx-auto px-4"
           >
             <div className="bg-white rounded-[20px] border border-[#ECECEC] px-[22px] py-[18px] shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-              <div className="flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
-                    {userName ? `Hai ${userName}!` : "Hai Rujakers!"}
-                  </p>
-                  <p className="text-[13px] text-ink-muted mt-0.5 font-medium">
-                    Kumpulkan poin & nikmati kesegarannya.
-                  </p>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest shrink-0">
+              <p className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
+                {userName ? `Hai ${userName}!` : "Hai Rujakers!"}
+              </p>
+              <p className="text-[13px] text-ink-muted mt-0.5 font-medium">
+                Kumpulkan poin & nikmati kesegarannya.
+              </p>
+              <div className="flex items-center gap-2 mt-3">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
                   <Coins className="w-3.5 h-3.5" /> 120 Poin
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mango/10 text-[12px] font-bold text-mango">
+                  <Crown className="w-3.5 h-3.5" /> RUJAK Plan
                 </div>
               </div>
             </div>
@@ -194,33 +292,39 @@ export default function Home() {
         </section>
 
         <div className="max-w-md md:max-w-2xl mx-auto px-4">
-          {/* ============ Quick Action — Pesan Sekarang, 116px ============ */}
-          <section className="mt-6 mb-8">
+          {/* ============ Promo Strip ============ */}
+          <section className="mt-5 mb-2">
+            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {promoStrip.map((p) => (
+                <div
+                  key={p.label}
+                  className="flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-full bg-white border border-[#ECECEC] text-[12px] font-semibold text-ink-soft"
+                >
+                  <p.icon className="w-3.5 h-3.5 text-forest" />
+                  {p.label}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ============ Quick Action — Pick Up / Delivery ============ */}
+          <section className="mt-4 mb-8">
             <h2 className="text-[16px] font-bold text-ink tracking-tight mb-3">Pesan Sekarang</h2>
             <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={scrollToProducts}
-                className="relative text-left rounded-[16px] border border-[#ECECEC] bg-[#F2F6ED] p-4 h-[116px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:scale-[0.98] transition-transform"
-              >
-                <Salad className="absolute bottom-3 right-3 w-10 h-10 text-forest/25" strokeWidth={1.5} />
-                <div className="relative z-10">
-                  <p className="font-bold text-[15px] text-forest tracking-tight leading-tight">Rujak Segar</p>
-                  <p className="text-[12px] font-medium text-forest/60 mt-1">Ambil di store</p>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={scrollToProducts}
-                className="relative text-left rounded-[16px] border border-[#ECECEC] bg-[#FDF4EA] p-4 h-[116px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:scale-[0.98] transition-transform"
-              >
-                <Blend className="absolute bottom-3 right-3 w-10 h-10 text-mango/30" strokeWidth={1.5} />
-                <div className="relative z-10">
-                  <p className="font-bold text-[15px] text-mango tracking-tight leading-tight">Racik Sendiri</p>
-                  <p className="text-[12px] font-medium text-mango/70 mt-1">Custom bowl</p>
-                </div>
-              </button>
+              {quickActions.map((qa) => (
+                <button
+                  key={qa.title}
+                  type="button"
+                  onClick={qa.onClick}
+                  className={`relative text-left rounded-[16px] border border-[#ECECEC] ${qa.bg} p-4 h-[116px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] active:scale-[0.98] transition-transform`}
+                >
+                  <qa.icon className={`absolute bottom-3 right-3 w-10 h-10 ${qa.iconColor} opacity-25`} strokeWidth={1.5} />
+                  <div className="relative z-10">
+                    <p className={`font-bold text-[15px] ${qa.titleColor} tracking-tight leading-tight`}>{qa.title}</p>
+                    <p className={`text-[12px] font-medium ${qa.subtitleColor} mt-1`}>{qa.subtitle}</p>
+                  </div>
+                </button>
+              ))}
             </div>
           </section>
 
@@ -260,6 +364,19 @@ export default function Home() {
           {/* ============ Menu ============ */}
           <section id="products" className="scroll-mt-24 mb-10">
             <h2 className="text-[16px] font-bold text-ink tracking-tight mb-3">Eksplor Menu</h2>
+
+            {/* Search */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari menu..."
+                className="w-full h-11 pl-10 pr-4 rounded-full bg-white border border-[#ECECEC] text-[13.5px] font-medium text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-forest/30"
+              />
+            </div>
+
             <div className="flex gap-2 overflow-x-auto pb-3 mb-1 no-scrollbar">
               {CATEGORIES.map((cat) => (
                 <button
@@ -277,47 +394,67 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mt-2">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-[18px] border border-[#ECECEC] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
-                >
-                  <div className="h-[140px] bg-sage/30 relative">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute bottom-2 right-2">
-                      <span className="bg-black/55 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-white flex items-center gap-1">
-                        <Star className="w-2.5 h-2.5 fill-mango text-mango" /> 4.9
-                      </span>
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-10">
+                <p className="text-[13.5px] font-medium text-ink-muted">Menu tidak ditemukan.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                {filteredProducts.map((product, idx) => (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-[18px] border border-[#ECECEC] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                  >
+                    <div className="h-[140px] bg-sage/30 relative">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover"
+                      />
+                      {idx % 3 === 0 && (
+                        <div className="absolute left-2 top-2">
+                          <span className="bg-white/90 px-2 py-0.5 rounded-full text-[10px] font-bold text-chili flex items-center gap-0.5">
+                            <Flame className="w-3 h-3" /> Best Seller
+                          </span>
+                        </div>
+                      )}
+                      {idx % 4 === 1 && (
+                        <div className="absolute right-2 top-2">
+                          <span className="bg-chili px-2 py-0.5 rounded-full text-[10px] font-bold text-white">
+                            10%
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute bottom-2 right-2">
+                        <span className="bg-black/55 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-white flex items-center gap-1">
+                          <Star className="w-2.5 h-2.5 fill-mango text-mango" /> 4.9
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-3.5">
+                      <p className="font-bold text-[13.5px] text-ink truncate">{product.name}</p>
+                      <p className="text-[11.5px] font-medium text-ink-muted mt-0.5 line-clamp-1">{product.category}</p>
+                      <div className="flex items-center justify-between mt-3">
+                        <span className="text-[14px] font-bold text-forest">{formatCurrency(product.price)}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            addToCart(product);
+                            toggleCart(true);
+                          }}
+                          aria-label={`Tambah ${product.name}`}
+                          className="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center active:scale-90 transition-transform"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-3.5">
-                    <p className="font-bold text-[13.5px] text-ink truncate">{product.name}</p>
-                    <p className="text-[11.5px] font-medium text-ink-muted mt-0.5 line-clamp-1">{product.category}</p>
-                    <div className="flex items-center justify-between mt-3">
-                      <span className="text-[14px] font-bold text-forest">{formatCurrency(product.price)}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          addToCart(product);
-                          toggleCart(true);
-                        }}
-                        aria-label={`Tambah ${product.name}`}
-                        className="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center active:scale-90 transition-transform"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* ============ Feature Grid — 16 radius, 22 padding, 56px icon ============ */}
@@ -389,6 +526,16 @@ export default function Home() {
         <FAQ />
         <Footer />
       </main>
+
+      {/* ============ Floating Voucher ============ */}
+      <button
+        type="button"
+        aria-label="Voucher saya"
+        className="fixed right-4 bottom-[104px] z-30 flex items-center gap-1.5 pl-3 pr-3.5 h-11 rounded-full bg-forest text-white shadow-[0_4px_14px_rgba(0,0,0,0.18)] active:scale-95 transition-transform"
+      >
+        <Ticket className="w-4 h-4" />
+        <span className="text-[12.5px] font-bold">Voucher</span>
+      </button>
 
       <BottomNav />
       <CartDrawer />
