@@ -4,7 +4,7 @@ import BottomNav from "@/components/BottomNav";
 import CartDrawer from "@/components/CartDrawer";
 import CheckoutEnhanced from "@/components/CheckoutEnhanced";
 import Footer from "@/components/Footer";
-import { products, formatCurrency } from "@/data/products";
+import { products, formatCurrency, getProductById } from "@/data/products";
 import { homepageConfig } from "@/data/homepage";
 import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence, Variants } from "framer-motion";
@@ -16,10 +16,13 @@ import {
   Blend,
   Users,
   Crown,
+  Share2,
   Gift,
   ShieldCheck,
   Search,
   Coins,
+  Store,
+  Bike,
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -34,63 +37,39 @@ const fadeIn: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
 };
 
-// Full-bleed banner images — text/badges are baked into the image itself,
-// matching the reference (image carries the promo copy, not an overlay).
+// Hero pakai foto produk yang sudah ada di data/products.ts (blob storage),
+// bukan file gambar khayalan — jadi tidak akan pernah tampil kosong.
 const heroSlides = [
   {
-    image: "/images/rujak-segar-banner.png",
-    alt: "Diskon 25% Rujak Apapun",
+    image: getProductById("rujak-segar")?.image,
+    alt: "Rujak Segar",
+    title: "Beli Rujak Apapun",
+    subtitle: "Diskon spesial hari ini",
+    badge: "25%",
   },
   {
-    image: "/images/rujak-gaco-banner.png",
-    alt: "Gratis Sambal Premium",
+    image: getProductById("rujak-gaco")?.image,
+    alt: "Rujak Gaco",
+    title: "Gratis Sambal Premium",
+    subtitle: "Setiap pembelian Tampah",
+    badge: "FREE",
   },
   {
-    image: "/images/tampah-nusantara-banner.png",
+    image: getProductById("tampah-nusantara")?.image,
     alt: "Tampah Nusantara",
+    title: "Tampah Nusantara",
+    subtitle: "Pas untuk acara bersama",
+    badge: "NEW",
   },
 ] as const;
-
-// Character-style illustrations (matches the two-tone flat illustration
-// used in the reference Pick Up / Delivery cards).
-const PickUpIllustration = () => (
-  <svg width="86" height="86" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="43" cy="43" r="40" fill="#F4E9C1" opacity="0.6" />
-    <rect x="26" y="34" width="34" height="30" rx="4" fill="#2F5D42" />
-    <rect x="31" y="24" width="24" height="14" rx="6" fill="#2F5D42" opacity="0.85" />
-    <circle cx="34" cy="60" r="4" fill="#F4E9C1" />
-    <circle cx="52" cy="60" r="4" fill="#F4E9C1" />
-  </svg>
-);
-
-const DeliveryIllustration = () => (
-  <svg width="86" height="86" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="43" cy="43" r="40" fill="#F6D9C7" opacity="0.6" />
-    <circle cx="30" cy="60" r="7" fill="#B5401E" />
-    <circle cx="56" cy="60" r="7" fill="#B5401E" />
-    <rect x="24" y="42" width="38" height="12" rx="3" fill="#B5401E" />
-    <rect x="46" y="30" width="16" height="12" rx="3" fill="#B5401E" opacity="0.85" />
-    <path d="M24 42 L14 56" stroke="#B5401E" strokeWidth="4" strokeLinecap="round" />
-  </svg>
-);
-
-// Flat illustration icons for the "Spesial Untukmu" grid — replaces the
-// lucide icon-in-circle treatment so cards match the reference's
-// character/illustration style.
-const featureIllustrations: Record<string, JSX.Element> = {
-  custom: (
-    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-      <circle cx="28" cy="28" r="26" fill="#F4E9C1" />
-      <Blend x={16} y={16} width={24} height={24} color="#C98A1B" strokeWidth={2} />
-    </svg>
-  ),
-};
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [heroIndex, setHeroIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const { addToCart, toggleCart } = useCart();
+  const { addToCart, toggleCart, state } = useCart();
+  const displayName = state.userName && state.userName !== "Tamu" ? state.userName : "Rujakers";
+  const points = 0;
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -103,10 +82,41 @@ export default function Home() {
     document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
+  const quickActions = useMemo(
+    () => [
+      {
+        icon: Store,
+        title: "Pick Up",
+        subtitle: "Ambil di store tanpa antre",
+        bg: "bg-mango/10",
+        border: "border-mango/30",
+        color: "text-forest",
+        colorMuted: "text-forest/70",
+        onClick: scrollToProducts,
+      },
+      {
+        icon: Bike,
+        title: "Delivery",
+        subtitle: "Diantar sampai rumah",
+        bg: "bg-chili/10",
+        border: "border-chili/30",
+        color: "text-chili",
+        colorMuted: "text-chili/70",
+        onClick: scrollToProducts,
+      },
+    ],
+    [scrollToProducts]
+  );
+
+  // Ikon lucide (bukan ilustrasi gambar) supaya tidak ada slot kosong —
+  // sama seperti pola yang sudah dipakai di Header/BottomNav project ini.
   const featureGrid = useMemo(
     () => [
       {
         key: "custom-bowl",
+        icon: Blend,
+        iconBg: "bg-mango/10",
+        iconColor: "text-mango",
         title: "Custom Bowl",
         subtitle: "Racik sesuai seleramu",
         badge: null as string | null,
@@ -120,6 +130,9 @@ export default function Home() {
       },
       {
         key: "tampah",
+        icon: Users,
+        iconBg: "bg-forest/10",
+        iconColor: "text-forest",
         title: "Tampah Rujak",
         subtitle: "Pas untuk 8-10 orang",
         badge: "Baru",
@@ -133,6 +146,9 @@ export default function Home() {
       },
       {
         key: "plan",
+        icon: Crown,
+        iconBg: "bg-gold/10",
+        iconColor: "text-mango",
         title: "RUJAK Plan",
         subtitle: "Langganan, hemat tiap hari",
         badge: null,
@@ -140,6 +156,9 @@ export default function Home() {
       },
       {
         key: "referral",
+        icon: Share2,
+        iconBg: "bg-chili/10",
+        iconColor: "text-chili",
         title: "RUJAKferral",
         subtitle: "Bagikan kode, dapatkan hadiah",
         badge: null,
@@ -147,6 +166,9 @@ export default function Home() {
       },
       {
         key: "gift",
+        icon: Gift,
+        iconBg: "bg-sage/40",
+        iconColor: "text-forest",
         title: "RUJAK.Gift",
         subtitle: "Berbagi kebahagiaan ke orang terdekat",
         badge: null,
@@ -173,18 +195,14 @@ export default function Home() {
 
   const slide = heroSlides[heroIndex];
 
-  // Placeholder until real auth/user context is wired up.
-  const displayName = "SOBAT RUJAK";
-  const points = 0;
-
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-ink font-sans pb-[110px]">
       <Header />
 
       <main className="md:pt-24">
-        {/* ============ HERO — full-bleed banner carousel ============ */}
+        {/* ============ HERO — foto produk asli + teks overlay ============ */}
         <section id="hero" className="relative w-full">
-          <div className="relative w-full aspect-[4/3] max-h-[420px] overflow-hidden md:max-w-2xl md:mx-auto md:rounded-b-[28px]">
+          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 rounded-b-[28px] md:max-w-2xl md:mx-auto md:rounded-[28px]">
             <AnimatePresence mode="wait">
               <motion.img
                 key={heroIndex}
@@ -201,10 +219,23 @@ export default function Home() {
               />
             </AnimatePresence>
 
+            {/* Gradasi gelap supaya teks tetap terbaca di atas foto apa pun */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />
+
+            <div className="absolute left-6 top-10 z-20 max-w-[62%]">
+              <p className="text-white text-[22px] font-[800] leading-tight tracking-tight">
+                {slide.title}
+              </p>
+              <p className="text-white/85 text-[13px] font-medium mt-1.5">{slide.subtitle}</p>
+              <p className="text-white text-[44px] font-[900] leading-none tracking-tight mt-2">
+                {slide.badge}
+              </p>
+            </div>
+
             <button
               type="button"
               aria-label="Notifikasi"
-              className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/25 flex items-center justify-center text-white backdrop-blur-sm"
+              className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white"
             >
               <Bell className="w-4.5 h-4.5" />
             </button>
@@ -221,16 +252,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Welcome / greeting card — name, points chip, plan chip */}
+          {/* Kartu sapaan — nama, poin, plan */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className="relative z-20 max-w-md md:max-w-2xl mx-auto px-4 -mt-1"
+            className="relative z-20 -mt-[64px] max-w-md md:max-w-2xl mx-auto px-4"
           >
-            <div className="bg-white rounded-b-[20px] border border-t-0 border-[#ECECEC] px-6 pt-5 pb-4 shadow-sm">
+            <div className="bg-white rounded-[20px] border border-[#ECECEC] px-6 pt-5 pb-4 shadow-sm">
               <div className="flex items-center justify-between">
-                <h1 className="text-[22px] font-bold tracking-tight text-ink">
+                <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
                   Hai {displayName}!
                 </h1>
                 <Coins className="w-6 h-6 text-mango" strokeWidth={2} />
@@ -239,15 +270,11 @@ export default function Home() {
               <div className="border-t border-dashed border-[#E2E2E2] my-3" />
 
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#ECECEC] text-[13px] font-semibold text-ink">
-                  <span className="w-4 h-4 rounded-full bg-forest/10 flex items-center justify-center text-forest text-[10px]">
-                    ●
-                  </span>
-                  {points} Poin
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
+                  <Coins className="w-3.5 h-3.5" /> {points} Poin
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#ECECEC] text-[13px] font-semibold text-ink">
-                  <Crown className="w-3.5 h-3.5 text-forest" />
-                  RUJAK Plan
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mango/10 text-[12px] font-bold text-mango">
+                  <Crown className="w-3.5 h-3.5" /> RUJAK Plan
                 </span>
               </div>
             </div>
@@ -257,45 +284,30 @@ export default function Home() {
         <div className="max-w-md md:max-w-2xl mx-auto px-4">
           {/* ============ Pesan Sekarang (Quick Action) ============ */}
           <section className="mt-8 mb-8" aria-label="Pesan Sekarang">
-            <h2 className="text-[22px] font-bold text-ink tracking-tight mb-4">
+            <h2 className="text-[18px] font-bold text-ink tracking-tight mb-3">
               Pesan Rujak Sekarang?
             </h2>
             <div className="grid grid-cols-2 gap-4">
-              {/* Pick Up */}
-              <button
-                type="button"
-                onClick={scrollToProducts}
-                className="relative text-left rounded-[20px] border border-mango/30 bg-mango/10 p-5 h-[130px] active:scale-[0.98] transition-transform overflow-hidden"
-              >
-                <div className="relative z-10">
-                  <p className="text-[20px] font-bold text-forest leading-tight">Pick Up</p>
-                  <p className="text-[13px] text-forest/70 mt-1">Ambil di store tanpa antre</p>
-                </div>
-                <div className="absolute -bottom-2 -right-2">
-                  <PickUpIllustration />
-                </div>
-              </button>
-
-              {/* Delivery */}
-              <button
-                type="button"
-                onClick={scrollToProducts}
-                className="relative text-left rounded-[20px] border border-chili/30 bg-chili/10 p-5 h-[130px] active:scale-[0.98] transition-transform overflow-hidden"
-              >
-                <div className="relative z-10">
-                  <p className="text-[20px] font-bold text-chili leading-tight">Delivery</p>
-                  <p className="text-[13px] text-chili/70 mt-1">Diantar sampai rumah</p>
-                </div>
-                <div className="absolute -bottom-2 -right-2">
-                  <DeliveryIllustration />
-                </div>
-              </button>
+              {quickActions.map((qa) => (
+                <button
+                  key={qa.title}
+                  type="button"
+                  onClick={qa.onClick}
+                  className={`relative text-left rounded-[20px] border ${qa.border} ${qa.bg} p-5 h-[130px] active:scale-[0.98] transition-transform overflow-hidden`}
+                >
+                  <qa.icon className={`absolute bottom-3 right-3 w-12 h-12 ${qa.color} opacity-25`} strokeWidth={1.5} />
+                  <div className="relative z-10">
+                    <p className={`text-[20px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
+                    <p className={`text-[13px] ${qa.colorMuted} mt-1`}>{qa.subtitle}</p>
+                  </div>
+                </button>
+              ))}
             </div>
           </section>
 
           {/* ============ Spesial Untukmu (Feature Grid, 5 item) ============ */}
           <section className="mb-8" aria-label="Spesial Untukmu">
-            <h2 className="text-[22px] font-bold text-ink tracking-tight mb-4">
+            <h2 className="text-[18px] font-bold text-ink tracking-tight mb-3">
               Spesial Untukmu di RUJAK.Co
             </h2>
             <div className="grid grid-cols-2 gap-4">
@@ -312,17 +324,13 @@ export default function Home() {
                       {f.badge}
                     </span>
                   )}
-                  <div className="w-14 h-14 mb-3">
-                    {featureIllustrations[f.key] ?? (
-                      <div className="w-14 h-14 rounded-full bg-sage/40 flex items-center justify-center">
-                        <Users className="w-6 h-6 text-forest" strokeWidth={2} />
-                      </div>
-                    )}
+                  <div className={`w-14 h-14 rounded-full ${f.iconBg} flex items-center justify-center mb-3`}>
+                    <f.icon className={`w-6 h-6 ${f.iconColor}`} strokeWidth={2} />
                   </div>
-                  <p className="text-[16px] font-bold text-ink leading-snug tracking-tight">
+                  <p className="text-[15px] font-bold text-ink leading-snug tracking-tight">
                     {f.title}
                   </p>
-                  <p className="text-[13px] font-normal text-ink-muted mt-1 leading-snug">
+                  <p className="text-[12.5px] font-medium text-ink-muted mt-0.5 leading-snug">
                     {f.subtitle}
                   </p>
                 </button>
@@ -415,7 +423,7 @@ export default function Home() {
 
           {/* ============ Butuh Bantuan? ============ */}
           <section className="mb-8">
-            <h2 className="text-[22px] font-bold text-ink mb-2">Butuh Bantuan?</h2>
+            <h2 className="text-[18px] font-bold text-ink mb-2">Butuh Bantuan?</h2>
             <a
               href={waUrl}
               target="_blank"
