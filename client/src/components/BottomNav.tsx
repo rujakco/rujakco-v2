@@ -40,10 +40,10 @@ export default function BottomNav() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#F0F0F0]"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#ECECEC]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="max-w-md md:max-w-2xl mx-auto h-[64px] flex items-center justify-around px-2">
+      <div className="max-w-md md:max-w-2xl mx-auto h-[82px] flex items-center justify-around px-2 pb-2">
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = item.active;
@@ -53,12 +53,12 @@ export default function BottomNav() {
               key={item.id}
               onClick={item.onClick}
               className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${
-                isActive ? "text-[#1A5C4A]" : "text-gray-400 hover:text-gray-600"
+                isActive ? "text-[#6C7C3F]" : "text-gray-400"
               }`}
             >
               <div className="relative">
                 <Icon
-                  className={`w-[22px] h-[22px] ${
+                  className={`w-5 h-5 ${
                     isActive ? "fill-current stroke-current" : "stroke-[1.8px] fill-transparent"
                   }`}
                 />
@@ -69,8 +69,8 @@ export default function BottomNav() {
                 )}
               </div>
               <span
-                className={`text-[10px] ${
-                  isActive ? "font-bold" : "font-semibold"
+                className={`text-[11px] ${
+                  isActive ? "font-bold" : "font-medium"
                 }`}
               >
                 {item.label}
