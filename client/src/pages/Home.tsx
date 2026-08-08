@@ -25,9 +25,11 @@ import {
   Bike,
 } from "lucide-react";
 
-// Satu konstanta padding kiri-kanan dipakai di SEMUA section supaya
-// marginnya konsisten dari atas ke bawah (dulu campur px-4 / -mx-4 / dsb).
-const PAGE_PAD = "px-5";
+// SATU sumber kebenaran untuk margin kiri-kanan halaman. Dipakai di teks
+// hero, judul section, dan grid kartu, supaya semuanya sejajar persis —
+// sebelumnya hero (px kecil), kartu sapaan (mengambang lebar), dan section
+// di bawahnya masing-masing punya margin berbeda.
+const PAGE_PAD = "px-4";
 const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
 
 const CATEGORIES = [
@@ -42,8 +44,7 @@ const fadeIn: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
 };
 
-// Hero pakai foto produk yang sudah ada di data/products.ts (blob storage),
-// bukan file gambar khayalan — jadi tidak akan pernah tampil kosong.
+// Hero pakai foto produk yang sudah ada di data/products.ts (blob storage).
 const heroSlides = [
   {
     image: getProductById("rujak-segar")?.image,
@@ -74,14 +75,9 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const { addToCart, toggleCart, state, setUserName } = useCart();
 
-  // Belum login = belum ada nama tersimpan (state awal, sebelum onboarding
-  // mengisi nama atau memilih "Tamu").
   const isLoggedIn = Boolean(state.userName) && state.userName !== "Tamu";
   const points = 0;
 
-  // Belum ada halaman/modal login terpisah di project ini — untuk sementara
-  // "Login Sekarang" memakai prompt nama sederhana lewat CartContext yang
-  // sudah tersedia (setUserName). Ganti dengan flow auth asli saat sudah ada.
   const handleLogin = useCallback(() => {
     const name = window.prompt("Masukkan nama kamu untuk login:");
     if (name && name.trim()) {
@@ -126,8 +122,6 @@ export default function Home() {
     [scrollToProducts]
   );
 
-  // Ikon lucide (bukan ilustrasi gambar) supaya tidak ada slot kosong —
-  // sama seperti pola yang sudah dipakai di Header/BottomNav project ini.
   const featureGrid = useMemo(
     () => [
       {
@@ -215,14 +209,16 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-ink font-sans pb-[110px]">
-      {/* Header disembunyikan di mobile (hidden md:block) — di layar HP,
-          hero langsung jadi elemen paling atas, menembus sampai ujung layar. */}
+      {/* Header: hidden md:block — betul-betul tanpa tinggi di mobile
+          (display:none), jadi hero adalah elemen paling atas. Kalau di versi
+          live masih ada celah/gap di atas hero, itu tandanya build yang
+          ter-deploy belum pakai file Home.tsx ini — perlu redeploy. */}
       <Header />
 
       <main className="md:pt-24">
-        {/* ============ HERO — full-bleed, nempel ke top layar ============ */}
+        {/* ============ HERO — foto asli, edge-to-edge, tanpa rounded ============ */}
         <section id="hero" className="relative w-full">
-          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 rounded-b-[28px] md:max-w-2xl md:mx-auto md:rounded-[28px] md:mt-6">
+          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
             <AnimatePresence mode="wait">
               <motion.img
                 key={heroIndex}
@@ -239,9 +235,9 @@ export default function Home() {
               />
             </AnimatePresence>
 
-            {/* Gradasi gelap supaya teks tetap terbaca di atas foto apa pun */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />
 
+            {/* Teks promo pakai PAGE_PAD yang sama dengan section di bawah */}
             <div className={`absolute left-0 top-10 z-20 max-w-[62%] ${PAGE_PAD}`}>
               <p className="text-white text-[22px] font-[800] leading-tight tracking-tight">
                 {slide.title}
@@ -252,12 +248,11 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Bell — diberi jarak aman dari status bar (safe-area-inset-top) */}
             <button
               type="button"
               aria-label="Notifikasi"
               style={{ top: "max(1rem, env(safe-area-inset-top))" }}
-              className="absolute right-5 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white"
+              className={`absolute right-4 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white`}
             >
               <Bell className="w-4.5 h-4.5" />
             </button>
@@ -274,14 +269,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kartu sapaan — nama + tombol Login (jika belum login), lalu poin & plan */}
+          {/* Kartu sapaan — EDGE-TO-EDGE, nempel langsung di bawah hero
+              (bukan kartu mengambang dengan gap kiri-kanan), sudut atas
+              membulat "menggigit" ke foto hero, persis pola referensi. */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className={`relative z-20 -mt-[64px] ${PAGE_WIDTH} ${PAGE_PAD}`}
+            className="relative z-20 -mt-6 w-full bg-white rounded-t-[24px] shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
           >
-            <div className="bg-white rounded-[20px] border border-[#ECECEC] px-6 pt-5 pb-4 shadow-sm">
+            <div className={`pt-6 pb-4 ${PAGE_PAD}`}>
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
@@ -324,13 +321,14 @@ export default function Home() {
           </motion.div>
         </section>
 
+        {/* Semua section di bawah pakai PAGE_WIDTH + PAGE_PAD yang SAMA */}
         <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           {/* ============ Pesan Sekarang (Quick Action) ============ */}
-          <section className="mt-8 mb-8" aria-label="Pesan Sekarang">
+          <section className="mt-7 mb-8" aria-label="Pesan Sekarang">
             <h2 className="text-[18px] font-bold text-ink tracking-tight mb-3">
               Pesan Rujak Sekarang?
             </h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {quickActions.map((qa) => (
                 <button
                   key={qa.title}
@@ -353,7 +351,7 @@ export default function Home() {
             <h2 className="text-[18px] font-bold text-ink tracking-tight mb-3">
               Spesial Untukmu di RUJAK.Co
             </h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {featureGrid.map((f) => (
                 <button
                   key={f.key}
@@ -383,16 +381,16 @@ export default function Home() {
 
           {/* ============ Search, Kategori, Grid Produk ============ */}
           <section id="products" className="scroll-mt-24 mb-8">
-            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-5 ${PAGE_PAD} pb-3 pt-1`}>
+            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-4 ${PAGE_PAD} pb-3 pt-1`}>
               <div className="relative mb-4">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari menu..."
                   aria-label="Cari menu"
-                  className="w-full h-11 pl-11 pr-4 rounded-full bg-white border border-[#ECECEC] text-[16px] font-medium text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-forest/30"
+                  className="w-full h-11 pl-10 pr-4 rounded-full bg-white border border-[#ECECEC] text-[16px] font-medium text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-forest/30"
                 />
               </div>
 
@@ -421,7 +419,7 @@ export default function Home() {
                 <p className="text-[16px] font-medium text-ink-muted">Menu tidak ditemukan.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-2 gap-3 mt-4">
                 {filteredProducts.map((product) => (
                   <div
                     key={product.id}
