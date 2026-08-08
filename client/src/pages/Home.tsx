@@ -25,8 +25,9 @@ import {
   Bike,
 } from "lucide-react";
 
-// Margin kiri-kanan halaman — dibikin SEMPIT (bukan px-4/px-5 seperti
-// sebelumnya) supaya proporsinya lebih dekat ke referensi Fore.
+// Margin kiri-kanan section (bukan kartu sapaan — itu edge-to-edge).
+// Diukur langsung dari pixel screenshot Fore: ~38px pada layar 1080px
+// fisik ≈ 12-14px CSS pada device pixel ratio umum. px-3 = 12px.
 const PAGE_PAD = "px-3";
 const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
 
@@ -209,9 +210,9 @@ export default function Home() {
       <Header />
 
       <main className="md:pt-24">
-        {/* ============ HERO — foto asli, edge-to-edge, rounded bawah ============ */}
+        {/* ============ HERO — foto asli, edge-to-edge, tanpa rounded ============ */}
         <section id="hero" className="relative w-full">
-          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 rounded-b-[24px] md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
+          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
             <AnimatePresence mode="wait">
               <motion.img
                 key={heroIndex}
@@ -261,16 +262,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kartu sapaan — MELAYANG (floating): ada margin kiri-kanan dari
-              tepi layar, rounded di keempat sudut, overlap ke hero pakai
-              negative margin. Bukan lagi edge-to-edge. */}
+          {/* Kartu sapaan — EDGE-TO-EDGE (dikonfirmasi lewat pixel check:
+              kartu Fore full-width x=0..1079, sudut atas cuma "menggigit"
+              ~15-20px ke foto hero, bukan margin permanen). */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className={`relative z-20 -mt-10 ${PAGE_WIDTH} ${PAGE_PAD}`}
+            className="relative z-20 -mt-6 w-full bg-white rounded-t-[24px] shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
           >
-            <div className="bg-white rounded-[20px] border border-[#ECECEC] shadow-sm px-5 pt-5 pb-4">
+            <div className={`pt-6 pb-4 ${PAGE_PAD}`}>
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
