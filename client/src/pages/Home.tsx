@@ -371,16 +371,16 @@ export default function Home() {
                   type="button"
                   onClick={f.onClick}
                   aria-label={f.title}
-                  className="relative text-left rounded-[18px] border border-[#ECECEC] bg-white p-5 shadow-sm active:scale-[0.98] transition-transform"
+                  className="relative flex flex-col items-center text-center overflow-hidden rounded-[18px] border border-[#ECECEC] bg-white p-5 shadow-sm active:scale-[0.98] transition-transform"
                 >
                   {f.badge && (
-                    // Badge "Baru" nongol keluar dari tepi kartu, bukan cuma
-                    // sudut kepotong di dalam padding.
-                    <span className="absolute -top-2 -right-2 bg-chili text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+                    // Referensi: badge "Baru" rata nempel di pojok kartu
+                    // (ribbon terpotong sudut), bukan pill melayang di luar kartu.
+                    <span className="absolute top-0 right-0 bg-chili text-white text-[10px] font-bold px-2.5 py-1 rounded-bl-xl rounded-tr-[18px]">
                       {f.badge}
                     </span>
                   )}
-                  <div className={`w-14 h-14 rounded-full ${f.iconBg} flex items-center justify-center mb-3`}>
+                  <div className={`w-14 h-14 rounded-full ${f.iconBg} flex items-center justify-center mb-2`}>
                     <f.icon className={`w-6 h-6 ${f.iconColor}`} strokeWidth={2} />
                   </div>
                   <p className="text-[15px] font-bold text-ink leading-snug tracking-tight">
@@ -479,12 +479,12 @@ export default function Home() {
 
           {/* ============ Butuh Bantuan? ============ */}
           <section className="mb-8">
-            <h2 className="text-[18px] font-bold text-ink mb-2">Butuh Bantuan?</h2>
+            <h2 className="text-[18px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
             <a
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 py-3 border-b border-gray-200 active:bg-gray-50 transition-colors"
+              className="flex items-center gap-3 rounded-2xl border border-[#ECECEC] bg-white px-4 py-3.5 active:bg-gray-50 transition-colors"
             >
               <MessageCircle className="w-5 h-5 text-[#25D366]" strokeWidth={2} />
               <span className="flex-1 text-[15px] font-medium text-ink">
@@ -518,6 +518,9 @@ export default function Home() {
                   WhatsApp Dirjen PKTN: 0853-1111-1010
                 </p>
               </div>
+              {/* Slot foto kanan — di referensi Fore ada foto produk kecil
+                  di sini. Ganti bg-sage/40 ini dengan <img> begitu asetnya ada. */}
+              <div className="w-14 h-11 rounded-lg bg-sage/40 shrink-0 mt-0.5" aria-hidden="true" />
             </div>
           </div>
         </div>
