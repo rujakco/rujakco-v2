@@ -28,7 +28,7 @@ import {
 // Margin section (bukan kartu sapaan — itu edge-to-edge, sudah diverifikasi
 // lewat pixel-trace: margin 0 dari y=860 s/d bawah kartu, cuma ~40-90px
 // paling atas yang punya "margin" karena lengkungan sudut rounded).
-const PAGE_PAD = "px-3";
+const PAGE_PAD = "px-4";
 const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
 
 const CATEGORIES = [
@@ -290,16 +290,9 @@ export default function Home() {
               </div>
 
               <div className="flex items-center justify-between gap-3">
-                <div>
-                  <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
-                    {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
-                  </h1>
-                  {!isLoggedIn && (
-                    <p className="text-[13px] text-ink-muted mt-0.5 font-medium">
-                      Berbagai rasa siap menemani harimu
-                    </p>
-                  )}
-                </div>
+                <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
+                  {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
+                </h1>
 
                 {isLoggedIn ? null : (
                   <button
@@ -312,18 +305,23 @@ export default function Home() {
                 )}
               </div>
 
-              {isLoggedIn && (
-                <>
-                  <div className="border-t border-dashed border-[#E2E2E2] my-3" />
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
-                      <Coins className="w-3.5 h-3.5" /> {points} Poin
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mango/10 text-[12px] font-bold text-mango">
-                      <Crown className="w-3.5 h-3.5" /> RUJAK Plan
-                    </span>
-                  </div>
-                </>
+              {/* Referensi: dashed divider SELALU ada di sini, bukan cuma
+                  saat isLoggedIn. Kontennya di bawah yang berganti. */}
+              <div className="border-t border-dashed border-[#E2E2E2] my-3" />
+
+              {isLoggedIn ? (
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
+                    <Coins className="w-3.5 h-3.5" /> {points} Poin
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mango/10 text-[12px] font-bold text-mango">
+                    <Crown className="w-3.5 h-3.5" /> RUJAK Plan
+                  </span>
+                </div>
+              ) : (
+                <p className="text-[13px] text-ink-muted font-medium">
+                  Berbagai rasa siap menemani harimu
+                </p>
               )}
             </div>
           </motion.div>
@@ -332,7 +330,7 @@ export default function Home() {
         <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           {/* ============ Pesan Sekarang (Quick Action) ============ */}
           <section className="mt-7 mb-8" aria-label="Pesan Sekarang">
-            <h2 className="text-[18px] font-bold text-ink tracking-tight mb-3">
+            <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3">
               Pesan Rujak Sekarang?
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -341,7 +339,7 @@ export default function Home() {
                   key={qa.title}
                   type="button"
                   onClick={qa.onClick}
-                  className={`relative text-left rounded-[16px] border ${qa.border} ${qa.bg} p-5 h-[130px] active:scale-[0.98] transition-transform overflow-hidden`}
+                  className={`relative text-left rounded-2xl border ${qa.border} ${qa.bg} p-4 h-[130px] active:scale-[0.98] transition-transform overflow-hidden`}
                 >
                   {/* Referensi map: icon adalah lingkaran SOLID dengan bobot
                       visual jelas, bukan watermark transparan tipis. */}
@@ -349,8 +347,8 @@ export default function Home() {
                     <qa.icon className={`w-8 h-8 ${qa.color}`} strokeWidth={1.75} />
                   </div>
                   <div className="relative z-10">
-                    <p className={`text-[20px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
-                    <p className={`text-[13px] ${qa.colorMuted} mt-1 pr-16`}>{qa.subtitle}</p>
+                    <p className={`text-[18px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
+                    <p className={`text-[12px] ${qa.colorMuted} mt-1 pr-14 leading-snug`}>{qa.subtitle}</p>
                   </div>
                 </button>
               ))}
@@ -360,12 +358,12 @@ export default function Home() {
 
         {/* Divider abu-abu tebal antar-section — detail yang ada di Fore asli
             (bukan cuma border 1px), full-bleed selebar layar. */}
-        <div className="h-2.5 bg-[#EDEDED] my-1" />
+        <div className="h-2 bg-[#EDEDED] mt-6" />
 
         <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           {/* ============ Spesial Untukmu (Feature Grid, 5 item) ============ */}
           <section className="mt-7 mb-8" aria-label="Spesial Untukmu">
-            <h2 className="text-[18px] font-bold text-ink tracking-tight mb-3">
+            <h2 className="text-[19px] font-bold text-ink tracking-tight mb-3">
               Spesial Untukmu di RUJAK.Co
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -375,22 +373,24 @@ export default function Home() {
                   type="button"
                   onClick={f.onClick}
                   aria-label={f.title}
-                  className="relative flex flex-col items-center text-center overflow-hidden rounded-[18px] border border-[#ECECEC] bg-white p-5 shadow-sm active:scale-[0.98] transition-transform"
+                  className="relative flex flex-col items-center text-center overflow-hidden rounded-2xl border border-[#ECECEC] bg-white p-4 shadow-sm active:scale-[0.98] transition-transform"
                 >
                   {f.badge && (
                     // Referensi: badge "Baru" rata nempel di pojok kartu
                     // (ribbon terpotong sudut), bukan pill melayang di luar kartu.
-                    <span className="absolute top-0 right-0 bg-chili text-white text-[10px] font-bold px-2.5 py-1 rounded-bl-xl rounded-tr-[18px]">
+                    <span className="absolute top-0 right-0 bg-chili text-white text-[10px] font-semibold px-2 py-1 rounded-bl-xl rounded-tr-2xl">
                       {f.badge}
                     </span>
                   )}
-                  <div className={`w-14 h-14 rounded-full ${f.iconBg} flex items-center justify-center mb-2`}>
-                    <f.icon className={`w-6 h-6 ${f.iconColor}`} strokeWidth={2} />
+                  {/* Referensi map: slot icon w-14 h-14 (56px), flat tanpa
+                      lingkaran warna di belakangnya. */}
+                  <div className="w-14 h-14 flex items-center justify-center mb-2">
+                    <f.icon className={`w-7 h-7 ${f.iconColor}`} strokeWidth={1.75} />
                   </div>
-                  <p className="text-[15px] font-bold text-ink leading-snug tracking-tight">
+                  <p className="text-[14px] font-bold text-ink leading-snug tracking-tight">
                     {f.title}
                   </p>
-                  <p className="text-[12.5px] font-medium text-ink-muted mt-0.5 leading-snug">
+                  <p className="text-[11px] font-medium text-ink-muted mt-1 leading-snug">
                     {f.subtitle}
                   </p>
                 </button>
@@ -483,7 +483,7 @@ export default function Home() {
 
           {/* ============ Butuh Bantuan? ============ */}
           <section className="mb-8">
-            <h2 className="text-[18px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
+            <h2 className="text-[19px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
             <a
               href={waUrl}
               target="_blank"
@@ -491,40 +491,40 @@ export default function Home() {
               className="flex items-center gap-3 rounded-2xl border border-[#ECECEC] bg-white px-4 py-3.5 active:bg-gray-50 transition-colors"
             >
               <MessageCircle className="w-5 h-5 text-[#25D366]" strokeWidth={2} />
-              <span className="flex-1 text-[15px] font-medium text-ink">
+              <span className="flex-1 text-[14px] font-medium text-ink">
                 RUJAK.Co Customer Service (chat only)
               </span>
-              <ChevronRight className="w-5 h-5 text-ink-muted" />
+              <ChevronRight className="w-[18px] h-[18px] text-ink-muted" />
             </a>
           </section>
 
           {/* ============ Informasi Halal & Kementerian ============ */}
-          <div className="mb-8">
+          <div className="mt-6 mb-8">
             <a
               href="#"
-              className="flex items-center gap-3 py-3 border-b border-gray-200 active:bg-gray-50 transition-colors"
+              className="flex items-center gap-3 py-3 border-t border-gray-200 active:bg-gray-50 transition-colors"
             >
-              <ShieldCheck className="w-6 h-6 text-forest shrink-0" strokeWidth={2} />
-              <span className="flex-1 text-[14px] font-medium text-ink">
+              <ShieldCheck className="w-8 h-8 text-forest shrink-0" strokeWidth={1.75} />
+              <span className="flex-1 text-[12px] text-ink-muted">
                 RUJAK.Co sudah tersertifikasi halal oleh MUI
               </span>
-              <ChevronRight className="w-5 h-5 text-ink-muted shrink-0" />
+              <ChevronRight className="w-4 h-4 text-ink-muted shrink-0" />
             </a>
 
-            <div className="flex items-start gap-3 py-4 border-b border-gray-200">
-              <ShieldCheck className="w-6 h-6 text-forest shrink-0 mt-0.5" strokeWidth={2} />
-              <div className="flex-1">
-                <p className="text-[13px] font-medium text-ink leading-snug">
+            <div className="flex items-start gap-3 py-3 border-t border-gray-200">
+              <ShieldCheck className="w-8 h-8 text-forest shrink-0 mt-0.5" strokeWidth={1.75} />
+              <div className="flex-1 text-[11px] text-ink-muted leading-snug">
+                <p>
                   Dirjen Perlindungan Konsumen dan Tata Tertib Niaga, Kementerian Perdagangan
                   Republik Indonesia
                 </p>
-                <p className="text-[13px] font-bold text-ink mt-2">
+                <p className="font-semibold text-ink mt-1">
                   WhatsApp Dirjen PKTN: 0853-1111-1010
                 </p>
               </div>
               {/* Slot foto kanan — di referensi Fore ada foto produk kecil
                   di sini. Ganti bg-sage/40 ini dengan <img> begitu asetnya ada. */}
-              <div className="w-14 h-11 rounded-lg bg-sage/40 shrink-0 mt-0.5" aria-hidden="true" />
+              <div className="w-14 h-11 rounded-lg bg-sage/40 shrink-0" aria-hidden="true" />
             </div>
           </div>
         </div>
