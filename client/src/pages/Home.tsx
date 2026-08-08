@@ -343,10 +343,14 @@ export default function Home() {
                   onClick={qa.onClick}
                   className={`relative text-left rounded-[16px] border ${qa.border} ${qa.bg} p-5 h-[130px] active:scale-[0.98] transition-transform overflow-hidden`}
                 >
-                  <qa.icon className={`absolute bottom-3 right-3 w-12 h-12 ${qa.color} opacity-25`} strokeWidth={1.5} />
+                  {/* Referensi map: icon adalah lingkaran SOLID dengan bobot
+                      visual jelas, bukan watermark transparan tipis. */}
+                  <div className="absolute bottom-3 right-3 w-16 h-16 rounded-full bg-white/70 flex items-center justify-center shadow-sm">
+                    <qa.icon className={`w-8 h-8 ${qa.color}`} strokeWidth={1.75} />
+                  </div>
                   <div className="relative z-10">
                     <p className={`text-[20px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
-                    <p className={`text-[13px] ${qa.colorMuted} mt-1`}>{qa.subtitle}</p>
+                    <p className={`text-[13px] ${qa.colorMuted} mt-1 pr-16`}>{qa.subtitle}</p>
                   </div>
                 </button>
               ))}
