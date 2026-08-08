@@ -25,11 +25,9 @@ import {
   Bike,
 } from "lucide-react";
 
-// SATU sumber kebenaran untuk margin kiri-kanan halaman. Dipakai di teks
-// hero, judul section, dan grid kartu, supaya semuanya sejajar persis —
-// sebelumnya hero (px kecil), kartu sapaan (mengambang lebar), dan section
-// di bawahnya masing-masing punya margin berbeda.
-const PAGE_PAD = "px-4";
+// Margin kiri-kanan halaman — dibikin SEMPIT (bukan px-4/px-5 seperti
+// sebelumnya) supaya proporsinya lebih dekat ke referensi Fore.
+const PAGE_PAD = "px-3";
 const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
 
 const CATEGORIES = [
@@ -44,7 +42,6 @@ const fadeIn: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
 };
 
-// Hero pakai foto produk yang sudah ada di data/products.ts (blob storage).
 const heroSlides = [
   {
     image: getProductById("rujak-segar")?.image,
@@ -209,16 +206,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-ink font-sans pb-[110px]">
-      {/* Header: hidden md:block — betul-betul tanpa tinggi di mobile
-          (display:none), jadi hero adalah elemen paling atas. Kalau di versi
-          live masih ada celah/gap di atas hero, itu tandanya build yang
-          ter-deploy belum pakai file Home.tsx ini — perlu redeploy. */}
       <Header />
 
       <main className="md:pt-24">
-        {/* ============ HERO — foto asli, edge-to-edge, tanpa rounded ============ */}
+        {/* ============ HERO — foto asli, edge-to-edge, rounded bawah ============ */}
         <section id="hero" className="relative w-full">
-          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
+          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 rounded-b-[24px] md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
             <AnimatePresence mode="wait">
               <motion.img
                 key={heroIndex}
@@ -237,7 +230,6 @@ export default function Home() {
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />
 
-            {/* Teks promo pakai PAGE_PAD yang sama dengan section di bawah */}
             <div className={`absolute left-0 top-10 z-20 max-w-[62%] ${PAGE_PAD}`}>
               <p className="text-white text-[22px] font-[800] leading-tight tracking-tight">
                 {slide.title}
@@ -252,7 +244,7 @@ export default function Home() {
               type="button"
               aria-label="Notifikasi"
               style={{ top: "max(1rem, env(safe-area-inset-top))" }}
-              className={`absolute right-4 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white`}
+              className="absolute right-4 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white"
             >
               <Bell className="w-4.5 h-4.5" />
             </button>
@@ -269,16 +261,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kartu sapaan — EDGE-TO-EDGE, nempel langsung di bawah hero
-              (bukan kartu mengambang dengan gap kiri-kanan), sudut atas
-              membulat "menggigit" ke foto hero, persis pola referensi. */}
+          {/* Kartu sapaan — MELAYANG (floating): ada margin kiri-kanan dari
+              tepi layar, rounded di keempat sudut, overlap ke hero pakai
+              negative margin. Bukan lagi edge-to-edge. */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className="relative z-20 -mt-6 w-full bg-white rounded-t-[24px] shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
+            className={`relative z-20 -mt-10 ${PAGE_WIDTH} ${PAGE_PAD}`}
           >
-            <div className={`pt-6 pb-4 ${PAGE_PAD}`}>
+            <div className="bg-white rounded-[20px] border border-[#ECECEC] shadow-sm px-5 pt-5 pb-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
@@ -321,7 +313,6 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* Semua section di bawah pakai PAGE_WIDTH + PAGE_PAD yang SAMA */}
         <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           {/* ============ Pesan Sekarang (Quick Action) ============ */}
           <section className="mt-7 mb-8" aria-label="Pesan Sekarang">
@@ -381,7 +372,7 @@ export default function Home() {
 
           {/* ============ Search, Kategori, Grid Produk ============ */}
           <section id="products" className="scroll-mt-24 mb-8">
-            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-4 ${PAGE_PAD} pb-3 pt-1`}>
+            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-3 ${PAGE_PAD} pb-3 pt-1`}>
               <div className="relative mb-4">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <input
