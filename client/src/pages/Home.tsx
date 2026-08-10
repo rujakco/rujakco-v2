@@ -26,8 +26,10 @@ import {
   Building2,
 } from "lucide-react";
 
-const PAGE_PAD = "px-3";
-const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
+// Wrapper section yang SAMA PERSIS dengan greeting card (lebar, margin, max-width)
+const SECTION_WRAPPER = "w-[calc(100%-24px)] mx-3 md:max-w-2xl md:mx-auto";
+// Padding horizontal untuk konten di dalam wrapper (12px) agar sejajar dengan teks greeting
+const SECTION_PADDING = "px-3";
 
 const CATEGORIES = [
   { id: "all", label: "Semua" },
@@ -234,7 +236,7 @@ export default function Home() {
               />
             </AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />
-            <div className={`absolute left-0 top-10 z-20 max-w-[62%] ${PAGE_PAD}`}>
+            <div className={`absolute left-0 top-10 z-20 max-w-[62%] ${SECTION_PADDING}`}>
               <p className="text-white text-[22px] font-[800] leading-tight tracking-tight">
                 {slide.title}
               </p>
@@ -243,7 +245,7 @@ export default function Home() {
                 {slide.badge}
               </p>
             </div>
-            <p className={`absolute bottom-8 left-0 z-20 text-white/80 text-[10px] font-bold ${PAGE_PAD}`}>
+            <p className={`absolute bottom-8 left-0 z-20 text-white/80 text-[10px] font-bold ${SECTION_PADDING}`}>
               S&K Berlaku
             </p>
             <div className="absolute bottom-8 right-3 z-20 flex items-center gap-1 bg-black/25 rounded-full px-2 py-1">
@@ -270,12 +272,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Greeting Card */}
+          {/* Greeting Card (wrapper sudah ada di dalam motion.div) */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className="relative z-20 -mt-11 w-[calc(100%-24px)] mx-3 bg-white rounded-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
+            className={`relative z-20 -mt-11 ${SECTION_WRAPPER} bg-white rounded-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:rounded-[20px] md:mt-4 md:shadow-sm`}
           >
             <div className="relative">
               <div className="absolute top-5 right-3 flex items-center gap-1 opacity-90 pointer-events-none">
@@ -283,7 +285,7 @@ export default function Home() {
                 <span className="w-2 h-2 rounded-full bg-mango/70 -mt-2" />
                 <Coins className="w-5 h-5 text-mango ml-0.5" strokeWidth={2} />
               </div>
-              <div className={`flex items-center justify-between gap-3 pt-4 pb-3 ${PAGE_PAD}`}>
+              <div className={`flex items-center justify-between gap-3 pt-4 pb-3 ${SECTION_PADDING}`}>
                 <h1 className="text-[17px] font-bold text-ink leading-tight">
                   {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
                 </h1>
@@ -297,9 +299,9 @@ export default function Home() {
                   </button>
                 )}
               </div>
-              <div className={`border-t border-dashed border-[#D0D0D0] ${PAGE_PAD}`} />
+              <div className={`border-t border-dashed border-[#D0D0D0] ${SECTION_PADDING}`} />
               {isLoggedIn ? (
-                <div className={`flex items-center gap-2 py-3 ${PAGE_PAD}`}>
+                <div className={`flex items-center gap-2 py-3 ${SECTION_PADDING}`}>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
                     <Coins className="w-3.5 h-3.5" /> {points} Poin
                   </span>
@@ -308,7 +310,7 @@ export default function Home() {
                   </span>
                 </div>
               ) : (
-                <p className={`text-[13px] text-ink-muted py-3 ${PAGE_PAD}`}>
+                <p className={`text-[13px] text-ink-muted py-3 ${SECTION_PADDING}`}>
                   Berbagai rasa siap menemani harimu
                 </p>
               )}
@@ -316,15 +318,12 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* ============ PESAN SEKARANG – SEJAJAR GREETING ============ */}
-        {/* Container: mobile pakai px-3 (12px) agar ada jarak seperti greeting,
-            desktop tanpa padding agar grid selebar 672px penuh, sejajar greeting */}
-        <div className={`${PAGE_WIDTH} mt-7 mb-8 px-3 md:px-0`}>
-          <section aria-label="Pesan Sekarang">
+        {/* ============ PESAN SEKARANG (Pick Up & Delivery) ============ */}
+        <div className={`${SECTION_WRAPPER} mt-7 mb-8`}>
+          <section aria-label="Pesan Sekarang" className={SECTION_PADDING}>
             <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3">
               Pesan Rujak Sekarang?
             </h2>
-            {/* Grid tanpa padding tambahan – tepi tombol lurus dengan greeting */}
             <div className="grid grid-cols-2 gap-3">
               {quickActions.map((qa) => (
                 <button
@@ -353,8 +352,8 @@ export default function Home() {
         <div className="h-2 bg-[#EDEDED] mt-6" />
 
         {/* ============ SPESIAL UNTUKMU ============ */}
-        <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
-          <section className="mt-7 mb-8" aria-label="Spesial Untukmu">
+        <div className={`${SECTION_WRAPPER} mt-7 mb-8`}>
+          <section aria-label="Spesial Untukmu" className={SECTION_PADDING}>
             <h2 className="text-[19px] font-bold text-ink tracking-tight mb-3">
               Spesial Untukmu di RUJAK.Co
             </h2>
@@ -389,10 +388,13 @@ export default function Home() {
               ))}
             </div>
           </section>
+        </div>
 
-          {/* ============ PRODUK ============ */}
-          <section id="products" className="scroll-mt-24 mb-8">
-            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-3 ${PAGE_PAD} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
+        {/* ============ PRODUK ============ */}
+        <div className={`${SECTION_WRAPPER} mb-8`}>
+          <section id="products" className="scroll-mt-24">
+            {/* Sticky bar tetap di luar padding agar bisa full width di dalam wrapper */}
+            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-3 ${SECTION_PADDING} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
               <div className="relative mb-4">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <input
@@ -424,56 +426,60 @@ export default function Home() {
               </div>
             </div>
 
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-10">
-                <p className="text-[16px] font-medium text-ink-muted">Menu tidak ditemukan.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                {filteredProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white rounded-[16px] border border-[#ECECEC] overflow-hidden shadow-sm"
-                  >
-                    <div className="h-[115px] bg-sage/30 relative">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <p className="font-bold text-[16px] text-ink truncate">{product.name}</p>
-                      <p className="text-[14px] font-medium text-ink-muted mt-0.5 line-clamp-1">
-                        {product.category}
-                      </p>
-                      <div className="flex items-center justify-between mt-3">
-                        <span className="text-[16px] font-bold text-forest">
-                          {formatCurrency(product.price)}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            addToCart(product);
-                            toggleCart(true);
-                          }}
-                          aria-label={`Tambah ${product.name}`}
-                          className="w-[34px] h-[34px] rounded-full bg-forest text-white flex items-center justify-center active:scale-90 transition-transform"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
+            <div className={SECTION_PADDING}>
+              {filteredProducts.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-[16px] font-medium text-ink-muted">Menu tidak ditemukan.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {filteredProducts.map((product) => (
+                    <div
+                      key={product.id}
+                      className="bg-white rounded-[16px] border border-[#ECECEC] overflow-hidden shadow-sm"
+                    >
+                      <div className="h-[115px] bg-sage/30 relative">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-3">
+                        <p className="font-bold text-[16px] text-ink truncate">{product.name}</p>
+                        <p className="text-[14px] font-medium text-ink-muted mt-0.5 line-clamp-1">
+                          {product.category}
+                        </p>
+                        <div className="flex items-center justify-between mt-3">
+                          <span className="text-[16px] font-bold text-forest">
+                            {formatCurrency(product.price)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              addToCart(product);
+                              toggleCart(true);
+                            }}
+                            aria-label={`Tambah ${product.name}`}
+                            className="w-[34px] h-[34px] rounded-full bg-forest text-white flex items-center justify-center active:scale-90 transition-transform"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
+        </div>
 
-          {/* ============ BUTUH BANTUAN? ============ */}
-          <section className="mb-8">
+        {/* ============ BUTUH BANTUAN? ============ */}
+        <div className={`${SECTION_WRAPPER} mb-8`}>
+          <section className={SECTION_PADDING}>
             <h2 className="text-[19px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
             <a
               href={waUrl}
@@ -488,9 +494,11 @@ export default function Home() {
               <ChevronRight className="w-[18px] h-[18px] text-ink-muted" />
             </a>
           </section>
+        </div>
 
-          {/* ============ INFORMASI HALAL & KEMENTERIAN ============ */}
-          <div className="mt-6 mb-8">
+        {/* ============ INFORMASI HALAL & KEMENTERIAN ============ */}
+        <div className={`${SECTION_WRAPPER} mt-6 mb-8`}>
+          <div className={SECTION_PADDING}>
             <a
               href="#"
               className="flex items-center gap-3 py-3 border-t border-gray-200 active:bg-gray-50 transition-colors"
