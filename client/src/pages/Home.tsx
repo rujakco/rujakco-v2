@@ -212,14 +212,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-ink font-sans pb-[110px]">
-      {/* Sembunyikan Header di mobile agar Hero langsung mentok ke atas */}
       <div className="hidden md:block">
         <Header />
       </div>
       
-      <main className="md:pt-24">
-        {/* ============ HERO ============ */}
-        <section id="hero" className="relative w-full">
+      <main className="pt-0 md:pt-24">
+        {/* ============ HERO - sekarang menempel ke atas ============ */}
+        <section id="hero" className="relative w-full mt-0 !pt-0 !pb-0">
           <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
             <AnimatePresence mode="wait">
               <motion.img
