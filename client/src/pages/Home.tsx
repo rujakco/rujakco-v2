@@ -319,7 +319,6 @@ export default function Home() {
           <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3 pl-3">
             Pesan Rujak Sekarang?
           </h2>
-          {/* TIDAK ADA px-3 di grid wrapper ini */}
           <div className="grid grid-cols-2 gap-3">
             {quickActions.map((qa) => (
               <button
@@ -386,38 +385,36 @@ export default function Home() {
 
         {/* ============ PRODUK ============ */}
         <section id="products" className="scroll-mt-24 mb-8">
-          {/* Sticky search & kategori */}
-          <div className={`sticky top-0 z-20 bg-[#F5F5F5] ${SECTION_WRAPPER} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
-            <div className="px-3">
-              <div className="relative mb-4">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari menu..."
-                  aria-label="Cari menu"
-                  className="w-full h-11 pl-10 pr-4 rounded-full bg-white border border-[#ECECEC] text-[16px] font-medium text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-forest/30"
-                />
-              </div>
-              <div className="flex gap-2 overflow-x-auto no-scrollbar" role="tablist" aria-label="Kategori menu">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeCategory === cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={`px-4 py-2 rounded-full text-[14px] font-semibold whitespace-nowrap transition-colors ${
-                      activeCategory === cat.id
-                        ? "bg-forest text-white"
-                        : "bg-white text-ink-soft border border-[#ECECEC]"
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
+          {/* Sticky search & kategori – top disesuaikan agar tidak tertutup Header */}
+          <div className={`sticky top-14 md:top-24 z-20 bg-[#F5F5F5] ${SECTION_WRAPPER} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
+            <div className="relative mb-4">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari menu..."
+                aria-label="Cari menu"
+                className="w-full h-11 pl-10 pr-4 rounded-full bg-white border border-[#ECECEC] text-[16px] font-medium text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-forest/30"
+              />
+            </div>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar" role="tablist" aria-label="Kategori menu">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-4 py-2 rounded-full text-[14px] font-semibold whitespace-nowrap transition-colors ${
+                    activeCategory === cat.id
+                      ? "bg-forest text-white"
+                      : "bg-white text-ink-soft border border-[#ECECEC]"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -440,7 +437,7 @@ export default function Home() {
                         alt={product.name}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover rounded-t-[16px]"
                       />
                     </div>
                     <div className="pt-3 px-3">
@@ -474,57 +471,56 @@ export default function Home() {
 
         {/* ============ BUTUH BANTUAN? ============ */}
         <section className={`${SECTION_WRAPPER} mb-8`}>
-          <div className="px-3">
-            <h2 className="text-[19px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-2xl border border-[#ECECEC] bg-white px-4 py-3.5 active:bg-gray-50 transition-colors"
-            >
-              <MessageCircle className="w-6 h-6 text-[#25D366]" strokeWidth={1.75} />
-              <span className="flex-1 text-[14px] font-medium text-ink">
-                RUJAK.Co Customer Service (chat only)
-              </span>
-              <ChevronRight className="w-[18px] h-[18px] text-ink-muted" />
-            </a>
-          </div>
+          <h2 className="text-[19px] font-bold text-ink mb-3 pl-3">Butuh Bantuan?</h2>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-2xl border border-[#ECECEC] bg-white px-4 py-3.5 active:bg-gray-50 transition-colors"
+          >
+            <MessageCircle className="w-6 h-6 text-[#25D366]" strokeWidth={1.75} />
+            <span className="flex-1 text-[14px] font-medium text-ink">
+              RUJAK.Co Customer Service (chat only)
+            </span>
+            <ChevronRight className="w-[18px] h-[18px] text-ink-muted" />
+          </a>
         </section>
 
         {/* ============ INFORMASI HALAL & KEMENTERIAN ============ */}
         <div className={`${SECTION_WRAPPER} mt-6 mb-8`}>
-          <div className="px-3">
-            <a
-              href="#"
-              className="flex items-center gap-3 py-3 border-t border-gray-200 active:bg-gray-50 transition-colors"
-            >
-              <ShieldCheck className="w-8 h-8 text-forest shrink-0" strokeWidth={1.75} />
-              <span className="flex-1 text-[12px] text-ink-muted">
-                RUJAK.Co sudah tersertifikasi halal oleh MUI
-              </span>
-              <ChevronRight className="w-4 h-4 text-ink-muted shrink-0" />
-            </a>
+          <a
+            href="#"
+            className="flex items-center gap-3 py-3 border-t border-gray-200 active:bg-gray-50 transition-colors"
+          >
+            <ShieldCheck className="w-8 h-8 text-forest shrink-0" strokeWidth={1.75} />
+            <span className="flex-1 text-[12px] text-ink-muted">
+              RUJAK.Co sudah tersertifikasi halal oleh MUI
+            </span>
+            <ChevronRight className="w-4 h-4 text-ink-muted shrink-0" />
+          </a>
 
-            <div className="flex items-start gap-3 py-3 border-t border-gray-200">
-              <Building2 className="w-8 h-8 text-forest shrink-0 mt-0.5" strokeWidth={1.75} />
-              <div className="flex-1 text-[11px] text-ink-muted leading-snug">
-                <p>
-                  Dirjen Perlindungan Konsumen dan Tata Tertib Niaga, Kementerian Perdagangan
-                  Republik Indonesia
-                </p>
-                <p className="font-semibold text-ink mt-1">
-                  WhatsApp Dirjen PKTN: 0853-1111-1010
-                </p>
-              </div>
-              <div className="w-14 h-11 rounded-lg bg-sage/40 shrink-0 flex items-center justify-center" aria-hidden="true">
-                <Building2 className="w-6 h-6 text-forest/50" strokeWidth={1.5} />
-              </div>
+          <div className="flex items-start gap-3 py-3 border-t border-gray-200">
+            <Building2 className="w-8 h-8 text-forest shrink-0 mt-0.5" strokeWidth={1.75} />
+            <div className="flex-1 text-[11px] text-ink-muted leading-snug">
+              <p>
+                Dirjen Perlindungan Konsumen dan Tata Tertib Niaga, Kementerian Perdagangan
+                Republik Indonesia
+              </p>
+              <p className="font-semibold text-ink mt-1">
+                WhatsApp Dirjen PKTN: 0853-1111-1010
+              </p>
+            </div>
+            <div className="w-14 h-11 rounded-lg bg-sage/40 shrink-0 flex items-center justify-center" aria-hidden="true">
+              <Building2 className="w-6 h-6 text-forest/50" strokeWidth={1.5} />
             </div>
           </div>
         </div>
       </main>
 
-      <Footer />
+      {/* Footer dibungkus wrapper agar sejajar */}
+      <div className={SECTION_WRAPPER}>
+        <Footer />
+      </div>
       <BottomNav />
       <CartDrawer />
       <CheckoutEnhanced />
