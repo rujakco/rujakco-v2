@@ -26,7 +26,6 @@ import {
   Building2,
 } from "lucide-react";
 
-// Wrapper tanpa padding – padding diatur manual di elemen dalam
 const SECTION_WRAPPER = "w-[calc(100%-24px)] mx-3 md:max-w-2xl md:mx-auto";
 
 const CATEGORIES = [
@@ -217,9 +216,9 @@ export default function Home() {
       </div>
       
       <main className="pt-0 md:pt-24">
-        {/* ============ HERO - sekarang menempel ke atas ============ */}
-        <section id="hero" className="relative w-full mt-0 !pt-0 !pb-0">
-          <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
+        {/* ============ HERO (SQUARE 1:1) ============ */}
+        <section id="hero" className="relative w-full p-0">
+          <div className="relative w-full aspect-square overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
             <AnimatePresence mode="wait">
               <motion.img
                 key={heroIndex}
@@ -235,44 +234,56 @@ export default function Home() {
                 decoding="async"
               />
             </AnimatePresence>
+
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 pointer-events-none" />
-            <div className={`absolute left-0 top-10 z-20 max-w-[62%] px-3`}>
+
+            <div className="absolute left-0 top-10 z-20 max-w-[62%] px-3">
               <p className="text-white text-[22px] font-[800] leading-tight tracking-tight">
                 {slide.title}
               </p>
-              <p className="text-white/85 text-[13px] font-medium mt-1.5">{slide.subtitle}</p>
+              <p className="text-white/85 text-[13px] font-medium mt-1.5">
+                {slide.subtitle}
+              </p>
               <p className="text-white text-[44px] font-[900] leading-none tracking-tight mt-2">
                 {slide.badge}
               </p>
             </div>
-            <p className={`absolute bottom-8 left-0 z-20 text-white/80 text-[10px] font-bold px-3`}>
+
+            <p className="absolute bottom-8 left-0 z-20 text-white/80 text-[10px] font-bold px-3">
               S&K Berlaku
             </p>
+
             <div className="absolute bottom-8 right-3 z-20 flex items-center gap-1 bg-black/25 rounded-full px-2 py-1">
               <ShieldCheck className="w-3 h-3 text-white" strokeWidth={2.5} />
               <span className="text-white text-[9px] font-bold">Halal</span>
             </div>
+
             <button
               type="button"
               aria-label="Notifikasi"
-              style={{ top: "max(3.5rem, calc(env(safe-area-inset-top) + 1rem))" }}
+              style={{
+                top: "max(3.5rem, calc(env(safe-area-inset-top) + 1rem))",
+              }}
               className="absolute right-4 z-20 w-11 h-11 rounded-full bg-black/70 flex items-center justify-center text-white"
             >
               <Bell className="w-[18px] h-[18px]" />
             </button>
+
             <div className="absolute bottom-7 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-30">
               {heroSlides.map((_, i) => (
                 <span
                   key={i}
                   className={`rounded-full transition-all ${
-                    i === heroIndex ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"
+                    i === heroIndex
+                      ? "w-5 h-1.5 bg-white"
+                      : "w-1.5 h-1.5 bg-white/50"
                   }`}
                 />
               ))}
             </div>
           </div>
 
-          {/* GREETING CARD (satu‑satunya card putih) */}
+          {/* GREETING CARD */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
@@ -345,7 +356,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Divider abu‑abu full‑bleed */}
         <div className="h-2 bg-[#EDEDED] mt-6" />
 
         {/* ============ SPESIAL UNTUKMU ============ */}
@@ -387,7 +397,6 @@ export default function Home() {
 
         {/* ============ PRODUK ============ */}
         <section id="products" className="scroll-mt-24 mb-8">
-          {/* Sticky search & kategori – top disesuaikan agar tidak tertutup Header */}
           <div className={`sticky top-14 md:top-24 z-20 bg-[#F5F5F5] ${SECTION_WRAPPER} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
             <div className="relative mb-4">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
@@ -420,7 +429,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Daftar produk */}
           <div className={`${SECTION_WRAPPER} mt-4`}>
             {filteredProducts.length === 0 ? (
               <div className="text-center py-10">
@@ -519,7 +527,6 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer dibungkus wrapper dan diberi rounded agar melengkung rapi */}
       <div className={`${SECTION_WRAPPER} overflow-hidden rounded-2xl mb-6`}>
         <Footer />
       </div>
