@@ -280,14 +280,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kartu sapaan — edge-to-edge secara horizontal (margin kiri-kanan 0),
-              tapi overlap ke hero secara vertikal (nutupin sebagian gambar hero,
-              bukan cuma lengkungan sudut tipis). */}
+          {/* Kartu sapaan — dikasih margin 12px kiri-kanan (dikonversi dari
+              hasil pixel-scan Fore asli), bukan edge-to-edge, dan overlap
+              ~43px ke hero (rounded-2xl di 4 sisi karena udah nggak nempel tepi). */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className="relative z-20 -mt-10 w-full bg-white rounded-t-[24px] shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
+            className="relative z-20 -mt-11 w-[calc(100%-24px)] mx-3 bg-white rounded-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
           >
             <div className="relative">
               {/* Ornamen koin dekoratif — beberapa lingkaran kecil, bukan cuma 1 ikon */}
