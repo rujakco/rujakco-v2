@@ -26,7 +26,7 @@ import {
   Building2,
 } from "lucide-react";
 
-// WRAPPER YANG SAMA PERSIS DENGAN GREETING CARD
+// Wrapper identik untuk semua section (lebar, margin, padding horizontal)
 const SECTION_WRAPPER = "w-[calc(100%-24px)] mx-3 md:max-w-2xl md:mx-auto px-3";
 
 const CATEGORIES = [
@@ -277,13 +277,11 @@ export default function Home() {
             animate="show"
             className={`relative z-20 -mt-11 ${SECTION_WRAPPER} bg-white rounded-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:rounded-[20px] md:mt-4 md:shadow-sm py-4`}
           >
-            {/* Ornamen koin */}
             <div className="absolute top-5 right-3 flex items-center gap-1 opacity-90 pointer-events-none">
               <span className="w-1.5 h-1.5 rounded-full bg-mango/40" />
               <span className="w-2 h-2 rounded-full bg-mango/70 -mt-2" />
               <Coins className="w-5 h-5 text-mango ml-0.5" strokeWidth={2} />
             </div>
-
             <div className="flex items-center justify-between gap-3 pt-4 pb-3">
               <h1 className="text-[17px] font-bold text-ink leading-tight">
                 {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
@@ -298,9 +296,7 @@ export default function Home() {
                 </button>
               )}
             </div>
-
             <div className="border-t border-dashed border-[#D0D0D0] my-3" />
-
             {isLoggedIn ? (
               <div className="flex items-center gap-2 pb-1">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
@@ -318,7 +314,7 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* ============ PESAN SEKARANG – Pick Up & Delivery (tanpa card tambahan) ============ */}
+        {/* ============ PESAN SEKARANG – Pick Up & Delivery ============ */}
         <section aria-label="Pesan Sekarang" className={`${SECTION_WRAPPER} mt-7 mb-8`}>
           <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3">
             Pesan Rujak Sekarang?
@@ -347,7 +343,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Divider abu‑abu tebal, full‑bleed */}
+        {/* Divider abu‑abu full‑bleed */}
         <div className="h-2 bg-[#EDEDED] mt-6" />
 
         {/* ============ SPESIAL UNTUKMU ============ */}
@@ -389,7 +385,7 @@ export default function Home() {
 
         {/* ============ PRODUK ============ */}
         <section id="products" className="scroll-mt-24 mb-8">
-          {/* Sticky bar (search & kategori) di luar wrapper agar full‑width sticky */}
+          {/* Sticky bar (search & kategori) juga pakai wrapper yang sama */}
           <div className={`sticky top-0 z-20 bg-[#F5F5F5] ${SECTION_WRAPPER} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
             <div className="relative mb-4">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
@@ -422,7 +418,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Daftar produk, tetap dalam wrapper yang sama agar sejajar */}
+          {/* Daftar produk */}
           <div className={`${SECTION_WRAPPER} mt-4`}>
             {filteredProducts.length === 0 ? (
               <div className="text-center py-10">
