@@ -26,7 +26,7 @@ import {
   Building2,
 } from "lucide-react";
 
-// Wrapper identik untuk semua section (lebar, margin, padding horizontal)
+// WRAPPER YANG SAMA PERSIS UNTUK SEMUA SECTION
 const SECTION_WRAPPER = "w-[calc(100%-24px)] mx-3 md:max-w-2xl md:mx-auto px-3";
 
 const CATEGORIES = [
