@@ -29,10 +29,6 @@ import {
 const PAGE_PAD = "px-3";
 const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
 
-// Kartu putih seragam – sama seperti greeting card
-const CARD_SECTION =
-  "bg-white rounded-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.04)] mx-3 md:max-w-2xl md:mx-auto p-4";
-
 const CATEGORIES = [
   { id: "all", label: "Semua" },
   { id: "rujak", label: "Rujak Buah" },
@@ -274,7 +270,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kartu sapaan – tetap orisinal */}
+          {/* Greeting Card */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
@@ -320,85 +316,80 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* ============ PESAN SEKARANG – kartu putih ============ */}
-        <div className={PAGE_WIDTH}>
+        {/* ============ PESAN SEKARANG – SEJAJAR DENGAN GREETING ============ */}
+        <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           <section className="mt-7 mb-8" aria-label="Pesan Sekarang">
-            <div className={CARD_SECTION}>
-              <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3">
-                Pesan Rujak Sekarang?
-              </h2>
-              <div className="grid grid-cols-2 gap-3">
-                {quickActions.map((qa) => (
-                  <button
-                    key={qa.title}
-                    type="button"
-                    onClick={qa.onClick}
-                    className={`relative text-left rounded-2xl border ${qa.border} ${qa.bg} p-4 h-[130px] active:scale-[0.98] transition-transform overflow-hidden`}
-                  >
-                    <div className="absolute bottom-3 right-3 w-16 h-16 rounded-full bg-white/70 flex items-center justify-center shadow-sm overflow-hidden">
-                      {qa.illustration ? (
-                        <img src={qa.illustration} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <qa.icon className={`w-8 h-8 ${qa.color}`} strokeWidth={1.75} />
-                      )}
-                    </div>
-                    <div className="relative z-10">
-                      <p className={`text-[18px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
-                      <p className={`text-[12px] ${qa.colorMuted} mt-1 pr-14 leading-snug`}>{qa.subtitle}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
+            <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3">
+              Pesan Rujak Sekarang?
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {quickActions.map((qa) => (
+                <button
+                  key={qa.title}
+                  type="button"
+                  onClick={qa.onClick}
+                  className={`relative text-left rounded-2xl border ${qa.border} ${qa.bg} p-4 h-[130px] active:scale-[0.98] transition-transform overflow-hidden`}
+                >
+                  <div className="absolute bottom-3 right-3 w-16 h-16 rounded-full bg-white/70 flex items-center justify-center shadow-sm overflow-hidden">
+                    {qa.illustration ? (
+                      <img src={qa.illustration} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <qa.icon className={`w-8 h-8 ${qa.color}`} strokeWidth={1.75} />
+                    )}
+                  </div>
+                  <div className="relative z-10">
+                    <p className={`text-[18px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
+                    <p className={`text-[12px] ${qa.colorMuted} mt-1 pr-14 leading-snug`}>{qa.subtitle}</p>
+                  </div>
+                </button>
+              ))}
             </div>
           </section>
         </div>
 
         <div className="h-2 bg-[#EDEDED] mt-6" />
 
-        {/* ============ SPESIAL UNTUKMU – kartu putih ============ */}
-        <div className={PAGE_WIDTH}>
+        {/* ============ SPESIAL UNTUKMU (kembali ke asli) ============ */}
+        <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           <section className="mt-7 mb-8" aria-label="Spesial Untukmu">
-            <div className={CARD_SECTION}>
-              <h2 className="text-[19px] font-bold text-ink tracking-tight mb-3">
-                Spesial Untukmu di RUJAK.Co
-              </h2>
-              <div className="grid grid-cols-2 gap-3">
-                {featureGrid.map((f) => (
-                  <button
-                    key={f.key}
-                    type="button"
-                    onClick={f.onClick}
-                    aria-label={f.title}
-                    className="relative flex flex-col items-center text-center overflow-hidden rounded-2xl border border-[#ECECEC] bg-white p-4 shadow-sm active:scale-[0.98] transition-transform"
-                  >
-                    {f.badge && (
-                      <span className="absolute top-0 right-0 bg-chili text-white text-[10px] font-semibold px-2 py-1 rounded-bl-xl rounded-tr-2xl">
-                        {f.badge}
-                      </span>
+            <h2 className="text-[19px] font-bold text-ink tracking-tight mb-3">
+              Spesial Untukmu di RUJAK.Co
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {featureGrid.map((f) => (
+                <button
+                  key={f.key}
+                  type="button"
+                  onClick={f.onClick}
+                  aria-label={f.title}
+                  className="relative flex flex-col items-center text-center overflow-hidden rounded-2xl border border-[#ECECEC] bg-white p-4 shadow-sm active:scale-[0.98] transition-transform"
+                >
+                  {f.badge && (
+                    <span className="absolute top-0 right-0 bg-chili text-white text-[10px] font-semibold px-2 py-1 rounded-bl-xl rounded-tr-2xl">
+                      {f.badge}
+                    </span>
+                  )}
+                  <div className="w-14 h-14 flex items-center justify-center mb-2">
+                    {f.illustration ? (
+                      <img src={f.illustration} alt="" className="w-full h-full object-contain" />
+                    ) : (
+                      <f.icon className={`w-7 h-7 ${f.iconColor}`} strokeWidth={1.75} />
                     )}
-                    <div className="w-14 h-14 flex items-center justify-center mb-2">
-                      {f.illustration ? (
-                        <img src={f.illustration} alt="" className="w-full h-full object-contain" />
-                      ) : (
-                        <f.icon className={`w-7 h-7 ${f.iconColor}`} strokeWidth={1.75} />
-                      )}
-                    </div>
-                    <p className="text-[14px] font-bold text-ink leading-snug tracking-tight">
-                      {f.title}
-                    </p>
-                    <p className="text-[11px] font-medium text-ink-muted mt-1 leading-snug">
-                      {f.subtitle}
-                    </p>
-                  </button>
-                ))}
-              </div>
+                  </div>
+                  <p className="text-[14px] font-bold text-ink leading-snug tracking-tight">
+                    {f.title}
+                  </p>
+                  <p className="text-[11px] font-medium text-ink-muted mt-1 leading-snug">
+                    {f.subtitle}
+                  </p>
+                </button>
+              ))}
             </div>
           </section>
 
-          {/* ============ PRODUK – search bar tetap sticky di luar, produk di dalam kartu ============ */}
+          {/* ============ PRODUK ============ */}
           <section id="products" className="scroll-mt-24 mb-8">
-            {/* Sticky bar – di luar kartu */}
-            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-3 ${PAGE_PAD} pb-3 pt-1`}>
+            <div className={`sticky top-0 z-20 bg-[#F5F5F5] -mx-3 ${PAGE_PAD} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
               <div className="relative mb-4">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <input
@@ -430,104 +421,97 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Kartu produk */}
-            <div className={CARD_SECTION}>
-              {filteredProducts.length === 0 ? (
-                <div className="text-center py-10">
-                  <p className="text-[16px] font-medium text-ink-muted">Menu tidak ditemukan.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredProducts.map((product) => (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-[16px] border border-[#ECECEC] overflow-hidden shadow-sm"
-                    >
-                      <div className="h-[115px] bg-sage/30 relative">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="p-3">
-                        <p className="font-bold text-[16px] text-ink truncate">{product.name}</p>
-                        <p className="text-[14px] font-medium text-ink-muted mt-0.5 line-clamp-1">
-                          {product.category}
-                        </p>
-                        <div className="flex items-center justify-between mt-3">
-                          <span className="text-[16px] font-bold text-forest">
-                            {formatCurrency(product.price)}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              addToCart(product);
-                              toggleCart(true);
-                            }}
-                            aria-label={`Tambah ${product.name}`}
-                            className="w-[34px] h-[34px] rounded-full bg-forest text-white flex items-center justify-center active:scale-90 transition-transform"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-10">
+                <p className="text-[16px] font-medium text-ink-muted">Menu tidak ditemukan.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                {filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-[16px] border border-[#ECECEC] overflow-hidden shadow-sm"
+                  >
+                    <div className="h-[115px] bg-sage/30 relative">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-3">
+                      <p className="font-bold text-[16px] text-ink truncate">{product.name}</p>
+                      <p className="text-[14px] font-medium text-ink-muted mt-0.5 line-clamp-1">
+                        {product.category}
+                      </p>
+                      <div className="flex items-center justify-between mt-3">
+                        <span className="text-[16px] font-bold text-forest">
+                          {formatCurrency(product.price)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            addToCart(product);
+                            toggleCart(true);
+                          }}
+                          aria-label={`Tambah ${product.name}`}
+                          className="w-[34px] h-[34px] rounded-full bg-forest text-white flex items-center justify-center active:scale-90 transition-transform"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
-          {/* ============ BUTUH BANTUAN – kartu putih ============ */}
+          {/* ============ BUTUH BANTUAN? ============ */}
           <section className="mb-8">
-            <div className={CARD_SECTION}>
-              <h2 className="text-[19px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-2xl border border-[#ECECEC] bg-white px-4 py-3.5 active:bg-gray-50 transition-colors"
-              >
-                <MessageCircle className="w-6 h-6 text-[#25D366]" strokeWidth={1.75} />
-                <span className="flex-1 text-[14px] font-medium text-ink">
-                  RUJAK.Co Customer Service (chat only)
-                </span>
-                <ChevronRight className="w-[18px] h-[18px] text-ink-muted" />
-              </a>
-            </div>
+            <h2 className="text-[19px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-2xl border border-[#ECECEC] bg-white px-4 py-3.5 active:bg-gray-50 transition-colors"
+            >
+              <MessageCircle className="w-6 h-6 text-[#25D366]" strokeWidth={1.75} />
+              <span className="flex-1 text-[14px] font-medium text-ink">
+                RUJAK.Co Customer Service (chat only)
+              </span>
+              <ChevronRight className="w-[18px] h-[18px] text-ink-muted" />
+            </a>
           </section>
 
-          {/* ============ INFORMASI HALAL & KEMENTERIAN – kartu putih ============ */}
+          {/* ============ INFORMASI HALAL & KEMENTERIAN ============ */}
           <div className="mt-6 mb-8">
-            <div className={CARD_SECTION}>
-              <a
-                href="#"
-                className="flex items-center gap-3 py-3 border-t border-gray-200 first:border-t-0 active:bg-gray-50 transition-colors"
-              >
-                <ShieldCheck className="w-8 h-8 text-forest shrink-0" strokeWidth={1.75} />
-                <span className="flex-1 text-[12px] text-ink-muted">
-                  RUJAK.Co sudah tersertifikasi halal oleh MUI
-                </span>
-                <ChevronRight className="w-4 h-4 text-ink-muted shrink-0" />
-              </a>
+            <a
+              href="#"
+              className="flex items-center gap-3 py-3 border-t border-gray-200 active:bg-gray-50 transition-colors"
+            >
+              <ShieldCheck className="w-8 h-8 text-forest shrink-0" strokeWidth={1.75} />
+              <span className="flex-1 text-[12px] text-ink-muted">
+                RUJAK.Co sudah tersertifikasi halal oleh MUI
+              </span>
+              <ChevronRight className="w-4 h-4 text-ink-muted shrink-0" />
+            </a>
 
-              <div className="flex items-start gap-3 py-3 border-t border-gray-200">
-                <Building2 className="w-8 h-8 text-forest shrink-0 mt-0.5" strokeWidth={1.75} />
-                <div className="flex-1 text-[11px] text-ink-muted leading-snug">
-                  <p>
-                    Dirjen Perlindungan Konsumen dan Tata Tertib Niaga, Kementerian Perdagangan
-                    Republik Indonesia
-                  </p>
-                  <p className="font-semibold text-ink mt-1">
-                    WhatsApp Dirjen PKTN: 0853-1111-1010
-                  </p>
-                </div>
-                <div className="w-14 h-11 rounded-lg bg-sage/40 shrink-0 flex items-center justify-center" aria-hidden="true">
-                  <Building2 className="w-6 h-6 text-forest/50" strokeWidth={1.5} />
-                </div>
+            <div className="flex items-start gap-3 py-3 border-t border-gray-200">
+              <Building2 className="w-8 h-8 text-forest shrink-0 mt-0.5" strokeWidth={1.75} />
+              <div className="flex-1 text-[11px] text-ink-muted leading-snug">
+                <p>
+                  Dirjen Perlindungan Konsumen dan Tata Tertib Niaga, Kementerian Perdagangan
+                  Republik Indonesia
+                </p>
+                <p className="font-semibold text-ink mt-1">
+                  WhatsApp Dirjen PKTN: 0853-1111-1010
+                </p>
+              </div>
+              <div className="w-14 h-11 rounded-lg bg-sage/40 shrink-0 flex items-center justify-center" aria-hidden="true">
+                <Building2 className="w-6 h-6 text-forest/50" strokeWidth={1.5} />
               </div>
             </div>
           </div>
