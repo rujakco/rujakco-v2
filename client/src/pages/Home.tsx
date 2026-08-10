@@ -296,14 +296,14 @@ export default function Home() {
               <Coins className="w-5 h-5 text-mango ml-0.5" strokeWidth={2} />
             </div>
             <div className="flex items-center justify-between gap-3 pt-4 pb-3">
-              <h1 className="text-[17px] font-bold text-ink leading-tight">
+              <h1 className="font-display text-[30px] font-extrabold text-ink leading-[1.1] tracking-[-0.8px]">
                 {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
               </h1>
               {isLoggedIn ? null : (
                 <button
                   type="button"
                   onClick={handleLogin}
-                  className="shrink-0 px-4 py-2 rounded-full bg-forest text-white text-[12px] font-semibold active:scale-95 transition-transform"
+                  className="shrink-0 px-4 py-2 rounded-full bg-forest text-white text-[16px] font-semibold active:scale-95 transition-transform"
                 >
                   Login Sekarang
                 </button>
@@ -329,7 +329,7 @@ export default function Home() {
 
         {/* ============ PESAN SEKARANG – Pick Up & Delivery ============ */}
         <section aria-label="Pesan Sekarang" className={`${SECTION_WRAPPER} mt-7 mb-8`}>
-          <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3 pl-3">
+          <h2 className="font-display text-[30px] font-extrabold text-ink tracking-[-0.8px] leading-[1.15] mb-5 pl-3">
             Pesan Rujak Sekarang?
           </h2>
           <div className="grid grid-cols-2 gap-3">
@@ -348,8 +348,12 @@ export default function Home() {
                   )}
                 </div>
                 <div className="relative z-10">
-                  <p className={`text-[18px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
-                  <p className={`text-[12px] ${qa.colorMuted} mt-1 pr-14 leading-snug`}>{qa.subtitle}</p>
+                  <p className={`font-display text-[28px] font-extrabold ${qa.color} leading-[1.05] tracking-[-0.5px]`}>
+                    {qa.title}
+                  </p>
+                  <p className={`text-[20px] font-medium ${qa.colorMuted} mt-2 pr-14 leading-[1.15]`}>
+                    {qa.subtitle}
+                  </p>
                 </div>
               </button>
             ))}
@@ -360,7 +364,7 @@ export default function Home() {
 
         {/* ============ SPESIAL UNTUKMU ============ */}
         <section aria-label="Spesial Untukmu" className={`${SECTION_WRAPPER} mt-7 mb-8`}>
-          <h2 className="text-[19px] font-bold text-ink tracking-tight mb-3 pl-3">
+          <h2 className="font-display text-[30px] font-extrabold text-ink tracking-[-0.8px] leading-[1.15] mb-5 pl-3">
             Spesial Untukmu di RUJAK.Co
           </h2>
           <div className="grid grid-cols-2 gap-3">
@@ -384,10 +388,10 @@ export default function Home() {
                     <f.icon className={`w-7 h-7 ${f.iconColor}`} strokeWidth={1.75} />
                   )}
                 </div>
-                <p className="text-[14px] font-bold text-ink leading-snug tracking-tight">
+                <p className="font-display text-[24px] font-extrabold text-ink leading-[1.15] tracking-[-0.5px]">
                   {f.title}
                 </p>
-                <p className="text-[11px] font-medium text-ink-muted mt-1 leading-snug">
+                <p className="text-[18px] font-medium text-ink-soft mt-2 leading-[1.2]">
                   {f.subtitle}
                 </p>
               </button>
@@ -481,7 +485,9 @@ export default function Home() {
 
         {/* ============ BUTUH BANTUAN? ============ */}
         <section className={`${SECTION_WRAPPER} mb-8`}>
-          <h2 className="text-[19px] font-bold text-ink mb-3 pl-3">Butuh Bantuan?</h2>
+          <h2 className="font-display text-[30px] font-extrabold text-ink tracking-[-0.8px] leading-[1.15] mb-5 pl-3">
+            Butuh Bantuan?
+          </h2>
           <a
             href={waUrl}
             target="_blank"
