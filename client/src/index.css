@@ -297,20 +297,6 @@
 }
 
 /* ===========================
-   SECTION & GRID (global)
-   =========================== */
-section {
-  padding-top: 24px;
-  padding-bottom: 8px;
-}
-
-/* Grid override khusus untuk yang tidak pakai Tailwind */
-.grid {
-  display: grid;
-  gap: 12px;
-}
-
-/* ===========================
    SCROLLBAR CUSTOM
    =========================== */
 ::-webkit-scrollbar {
