@@ -212,8 +212,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-ink font-sans pb-[110px]">
-      <Header />
-
+      {/* Sembunyikan Header di mobile agar Hero langsung mentok ke atas */}
+      <div className="hidden md:block">
+        <Header />
+      </div>
+      
       <main className="md:pt-24">
         {/* ============ HERO ============ */}
         <section id="hero" className="relative w-full">
@@ -517,8 +520,8 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer dibungkus wrapper agar sejajar */}
-      <div className={SECTION_WRAPPER}>
+      {/* Footer dibungkus wrapper dan diberi rounded agar melengkung rapi */}
+      <div className={`${SECTION_WRAPPER} overflow-hidden rounded-2xl mb-6`}>
         <Footer />
       </div>
       <BottomNav />
