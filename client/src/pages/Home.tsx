@@ -214,10 +214,10 @@ export default function Home() {
       <div className="hidden md:block">
         <Header />
       </div>
-      
+
       <main className="pt-0 md:pt-24">
         {/* ============ HERO (SQUARE 1:1) ============ */}
-        <section id="hero" className="relative w-full p-0">
+        <section id="hero" className="relative w-full !p-0">
           <div className="relative w-full aspect-square overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
             <AnimatePresence mode="wait">
               <motion.img
