@@ -10,13 +10,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* ---------- Radius ---------- */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* ---------- Warna (mapping ke variabel baru) ---------- */
   --color-background: var(--bg);
   --color-foreground: var(--text);
   --color-card: var(--surface);
@@ -50,7 +48,6 @@
   --color-sidebar-border: var(--border);
   --color-sidebar-ring: var(--green);
 
-  /* Utility warna kustom (biar komponen tetap jalan) */
   --color-forest: var(--green);
   --color-forest-light: var(--green-500);
   --color-mango: var(--orange);
@@ -64,11 +61,9 @@
   --color-ink-muted: var(--text-light);
   --color-success: var(--green-600);
 
-  /* Font */
   --font-display: var(--font-heading);
   --font-sans: var(--font-body);
 
-  /* Spacing tambahan (jika diperlukan) */
   --sp-1: var(--space-1);
   --sp-2: var(--space-2);
   --sp-3: var(--space-3);
@@ -84,57 +79,32 @@
 }
 
 :root {
-  /* ===========================
-     COLORS
-     =========================== */
   --bg: #F7F7F7;
   --surface: #FFFFFF;
   --surface-soft: #FCFCFA;
-
   --green: #6C7C3F;
   --green-600: #5A6934;
   --green-500: #869157;
   --green-100: #EEF1E4;
-
   --gold: #C89A43;
   --orange: #E89B43;
   --red: #D84B4B;
-
   --text: #1F1F1F;
   --text-soft: #666666;
   --text-light: #9B9B9B;
-
   --border: #ECECEC;
-
-  /* ===========================
-     FONT
-     =========================== */
   --font-heading: 'Manrope', sans-serif;
   --font-body: 'Inter', sans-serif;
-
-  /* ===========================
-     RADIUS
-     =========================== */
   --radius-xs: 10px;
   --radius-sm: 14px;
   --radius-md: 16px;
   --radius-lg: 18px;
   --radius-xl: 28px;
-
-  /* Tailwind radius mengikuti --radius-md */
   --radius: var(--radius-md);
-
-  /* ===========================
-     SHADOW
-     =========================== */
   --shadow-xs: 0 1px 3px rgba(0,0,0,.05);
   --shadow-sm: 0 2px 8px rgba(0,0,0,.08);
   --shadow-md: 0 2px 8px rgba(0,0,0,.08);
   --shadow-lg: 0 4px 14px rgba(0,0,0,.10);
-
-  /* ===========================
-     SPACING
-     =========================== */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -149,7 +119,6 @@
   * {
     @apply border-border outline-ring/50;
   }
-
   body {
     margin: 0;
     background: var(--bg);
@@ -160,7 +129,6 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
@@ -172,7 +140,6 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
-
   h1 {
     font-family: var(--font-heading);
     font-size: 40px;
@@ -181,7 +148,6 @@
     letter-spacing: -1px;
     margin: 0;
   }
-
   h2 {
     font-family: var(--font-heading);
     font-size: 30px;
@@ -189,22 +155,18 @@
     letter-spacing: -0.5px;
     margin: 0;
   }
-
   h3 {
     font-family: var(--font-heading);
     font-size: 22px;
     font-weight: 700;
     margin: 0;
   }
-
   p {
     margin: 0;
     font-size: 16px;
     color: var(--text-soft);
     line-height: 1.6;
   }
-
-  /* Global button reset */
   button {
     font-family: var(--font-body);
     font-weight: 700;
@@ -212,14 +174,12 @@
     cursor: pointer;
     transition: transform 0.15s ease;
   }
-
   button:active {
     transform: scale(0.98);
   }
 }
 
 @layer components {
-  /* Container utility (jika masih digunakan) */
   .container {
     width: 100%;
     margin-left: auto;
@@ -227,14 +187,12 @@
     padding-left: 1rem;
     padding-right: 1rem;
   }
-
   @media (min-width: 640px) {
     .container {
       padding-left: 1.5rem;
       padding-right: 1.5rem;
     }
   }
-
   @media (min-width: 1024px) {
     .container {
       padding-left: 2rem;
@@ -242,8 +200,6 @@
       max-width: 1280px;
     }
   }
-
-  /* Global card — radius & shadow tipis ala Fore */
   .card {
     position: relative;
     background: white;
@@ -253,12 +209,9 @@
     overflow: hidden;
     transition: transform 0.15s ease;
   }
-
   .card:active {
     transform: scale(0.98);
   }
-
-  /* Chip component */
   .chip {
     height: 36px;
     padding: 0 16px;
@@ -271,24 +224,13 @@
     font-weight: 600;
     font-size: 13px;
   }
-
-  /* Fade-up animation — dipakai hemat, bukan default di semua elemen */
   .fade-up {
     animation: fadeUp 0.35s ease;
   }
-
   @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
   }
-
-  /* Gambar responsif */
   img {
     display: block;
     width: 100%;
@@ -296,27 +238,19 @@
   }
 }
 
-/* ===========================
-   SCROLLBAR CUSTOM
-   =========================== */
 ::-webkit-scrollbar {
   width: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--bg);
 }
-
 ::-webkit-scrollbar-thumb {
   background: #DDD;
   border-radius: 20px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: #BBB;
 }
-
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
