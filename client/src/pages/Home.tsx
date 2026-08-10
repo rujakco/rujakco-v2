@@ -28,7 +28,7 @@ import {
 // Margin section (bukan kartu sapaan — itu edge-to-edge, sudah diverifikasi
 // lewat pixel-trace: margin 0 dari y=860 s/d bawah kartu, cuma ~40-90px
 // paling atas yang punya "margin" karena lengkungan sudut rounded).
-const PAGE_PAD = "px-4";
+const PAGE_PAD = "px-3";
 const PAGE_WIDTH = "max-w-md md:max-w-2xl mx-auto";
 
 const CATEGORIES = [
@@ -98,6 +98,7 @@ export default function Home() {
     () => [
       {
         icon: Store,
+        illustration: null as string | null, // TODO: ganti dengan ilustrasi Pick Up asli
         title: "Pick Up",
         subtitle: "Ambil di store tanpa antre",
         bg: "bg-mango/10",
@@ -108,6 +109,7 @@ export default function Home() {
       },
       {
         icon: Bike,
+        illustration: null as string | null, // TODO: ganti dengan ilustrasi Delivery asli
         title: "Delivery",
         subtitle: "Diantar sampai rumah",
         bg: "bg-chili/10",
@@ -125,6 +127,7 @@ export default function Home() {
       {
         key: "custom-bowl",
         icon: Blend,
+        illustration: null as string | null, // TODO: ganti dengan ilustrasi asli
         iconBg: "bg-mango/10",
         iconColor: "text-mango",
         title: "Custom Bowl",
@@ -141,6 +144,7 @@ export default function Home() {
       {
         key: "tampah",
         icon: Users,
+        illustration: null as string | null,
         iconBg: "bg-forest/10",
         iconColor: "text-forest",
         title: "Tampah Rujak",
@@ -157,6 +161,7 @@ export default function Home() {
       {
         key: "plan",
         icon: Crown,
+        illustration: null as string | null,
         iconBg: "bg-gold/10",
         iconColor: "text-mango",
         title: "RUJAK Plan",
@@ -167,6 +172,7 @@ export default function Home() {
       {
         key: "referral",
         icon: Share2,
+        illustration: null as string | null,
         iconBg: "bg-chili/10",
         iconColor: "text-chili",
         title: "RUJAKferral",
@@ -177,6 +183,7 @@ export default function Home() {
       {
         key: "gift",
         icon: Gift,
+        illustration: null as string | null,
         iconBg: "bg-sage/40",
         iconColor: "text-forest",
         title: "RUJAK.Gift",
@@ -273,13 +280,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kartu sapaan — EDGE-TO-EDGE (dikonfirmasi pixel-trace: margin 0
-              sepanjang tinggi kartu, cuma lengkungan sudut atas). */}
+          {/* Kartu sapaan — edge-to-edge secara horizontal (margin kiri-kanan 0),
+              tapi overlap ke hero secara vertikal (nutupin sebagian gambar hero,
+              bukan cuma lengkungan sudut tipis). */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className="relative z-20 -mt-6 w-full bg-white rounded-t-[24px] shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
+            className="relative z-20 -mt-10 w-full bg-white rounded-t-[24px] shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
           >
             <div className="relative">
               {/* Ornamen koin dekoratif — beberapa lingkaran kecil, bukan cuma 1 ikon */}
@@ -342,9 +350,14 @@ export default function Home() {
                   className={`relative text-left rounded-2xl border ${qa.border} ${qa.bg} p-4 h-[130px] active:scale-[0.98] transition-transform overflow-hidden`}
                 >
                   {/* Referensi map: icon adalah lingkaran SOLID dengan bobot
-                      visual jelas, bukan watermark transparan tipis. */}
-                  <div className="absolute bottom-3 right-3 w-16 h-16 rounded-full bg-white/70 flex items-center justify-center shadow-sm">
-                    <qa.icon className={`w-8 h-8 ${qa.color}`} strokeWidth={1.75} />
+                      visual jelas. Kalau qa.illustration udah ada asetnya,
+                      pakai <img> — sementara fallback ke icon. */}
+                  <div className="absolute bottom-3 right-3 w-16 h-16 rounded-full bg-white/70 flex items-center justify-center shadow-sm overflow-hidden">
+                    {qa.illustration ? (
+                      <img src={qa.illustration} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <qa.icon className={`w-8 h-8 ${qa.color}`} strokeWidth={1.75} />
+                    )}
                   </div>
                   <div className="relative z-10">
                     <p className={`text-[18px] font-bold ${qa.color} leading-tight`}>{qa.title}</p>
@@ -382,10 +395,15 @@ export default function Home() {
                       {f.badge}
                     </span>
                   )}
-                  {/* Referensi map: slot icon w-14 h-14 (56px), flat tanpa
-                      lingkaran warna di belakangnya. */}
+                  {/* Referensi map: slot icon w-14 h-14 (56px), flat. Kalau
+                      f.illustration udah ada asetnya, pakai <img> — sementara
+                      fallback ke icon. */}
                   <div className="w-14 h-14 flex items-center justify-center mb-2">
-                    <f.icon className={`w-7 h-7 ${f.iconColor}`} strokeWidth={1.75} />
+                    {f.illustration ? (
+                      <img src={f.illustration} alt="" className="w-full h-full object-contain" />
+                    ) : (
+                      <f.icon className={`w-7 h-7 ${f.iconColor}`} strokeWidth={1.75} />
+                    )}
                   </div>
                   <p className="text-[14px] font-bold text-ink leading-snug tracking-tight">
                     {f.title}
@@ -490,7 +508,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="flex items-center gap-3 rounded-2xl border border-[#ECECEC] bg-white px-4 py-3.5 active:bg-gray-50 transition-colors"
             >
-              <MessageCircle className="w-5 h-5 text-[#25D366]" strokeWidth={2} />
+              <MessageCircle className="w-6 h-6 text-[#25D366]" strokeWidth={1.75} />
               <span className="flex-1 text-[14px] font-medium text-ink">
                 RUJAK.Co Customer Service (chat only)
               </span>
@@ -504,6 +522,7 @@ export default function Home() {
               href="#"
               className="flex items-center gap-3 py-3 border-t border-gray-200 active:bg-gray-50 transition-colors"
             >
+              {/* TODO: ganti fallback ShieldCheck ini dengan <img src="/assets/halal.png" /> begitu asetnya ada */}
               <ShieldCheck className="w-8 h-8 text-forest shrink-0" strokeWidth={1.75} />
               <span className="flex-1 text-[12px] text-ink-muted">
                 RUJAK.Co sudah tersertifikasi halal oleh MUI
@@ -512,6 +531,7 @@ export default function Home() {
             </a>
 
             <div className="flex items-start gap-3 py-3 border-t border-gray-200">
+              {/* TODO: ganti fallback ShieldCheck ini dengan <img src="/assets/kemendag.png" /> begitu asetnya ada */}
               <ShieldCheck className="w-8 h-8 text-forest shrink-0 mt-0.5" strokeWidth={1.75} />
               <div className="flex-1 text-[11px] text-ink-muted leading-snug">
                 <p>
