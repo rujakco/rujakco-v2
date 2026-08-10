@@ -256,17 +256,17 @@ export default function Home() {
               type="button"
               aria-label="Notifikasi"
               style={{ top: "max(1rem, env(safe-area-inset-top))" }}
-              className="absolute right-4 z-20 w-9 h-9 rounded-full bg-black/35 flex items-center justify-center text-white"
+              className="absolute right-4 z-20 w-11 h-11 rounded-full bg-black/70 flex items-center justify-center text-white"
             >
-              <Bell className="w-4.5 h-4.5" />
+              <Bell className="w-[18px] h-[18px]" />
             </button>
 
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
               {heroSlides.map((_, i) => (
                 <span
                   key={i}
                   className={`rounded-full transition-all ${
-                    i === heroIndex ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"
+                    i === heroIndex ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"
                   }`}
                 />
               ))}
@@ -281,7 +281,7 @@ export default function Home() {
             animate="show"
             className="relative z-20 -mt-6 w-full bg-white rounded-t-[24px] shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:max-w-2xl md:mx-auto md:rounded-[20px] md:mt-4 md:shadow-sm"
           >
-            <div className={`relative pt-6 pb-4 ${PAGE_PAD}`}>
+            <div className="relative">
               {/* Ornamen koin dekoratif — beberapa lingkaran kecil, bukan cuma 1 ikon */}
               <div className="absolute top-5 right-3 flex items-center gap-1 opacity-90 pointer-events-none">
                 <span className="w-1.5 h-1.5 rounded-full bg-mango/40" />
@@ -289,8 +289,8 @@ export default function Home() {
                 <Coins className="w-5 h-5 text-mango ml-0.5" strokeWidth={2} />
               </div>
 
-              <div className="flex items-center justify-between gap-3">
-                <h1 className="text-[21px] font-[800] tracking-[-0.02em] text-ink leading-tight">
+              <div className={`flex items-center justify-between gap-3 pt-4 pb-3 ${PAGE_PAD}`}>
+                <h1 className="text-[17px] font-bold text-ink leading-tight">
                   {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
                 </h1>
 
@@ -298,7 +298,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={handleLogin}
-                    className="shrink-0 px-4 py-2 rounded-full bg-forest text-white text-[13px] font-bold active:scale-95 transition-transform"
+                    className="shrink-0 px-4 py-2 rounded-full bg-forest text-white text-[12px] font-semibold active:scale-95 transition-transform"
                   >
                     Login Sekarang
                   </button>
@@ -307,10 +307,10 @@ export default function Home() {
 
               {/* Referensi: dashed divider SELALU ada di sini, bukan cuma
                   saat isLoggedIn. Kontennya di bawah yang berganti. */}
-              <div className="border-t border-dashed border-[#E2E2E2] my-3" />
+              <div className={`border-t border-dashed border-[#E2E2E2] ${PAGE_PAD}`} />
 
               {isLoggedIn ? (
-                <div className="flex items-center gap-2">
+                <div className={`flex items-center gap-2 py-3 ${PAGE_PAD}`}>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
                     <Coins className="w-3.5 h-3.5" /> {points} Poin
                   </span>
@@ -319,7 +319,7 @@ export default function Home() {
                   </span>
                 </div>
               ) : (
-                <p className="text-[13px] text-ink-muted font-medium">
+                <p className={`text-[13px] text-ink-muted py-3 ${PAGE_PAD}`}>
                   Berbagai rasa siap menemani harimu
                 </p>
               )}
