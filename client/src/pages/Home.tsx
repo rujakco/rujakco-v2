@@ -215,7 +215,7 @@ export default function Home() {
       <Header />
 
       <main className="md:pt-24">
-        {/* ============ HERO (tetap sama) ============ */}
+        {/* ============ HERO ============ */}
         <section id="hero" className="relative w-full">
           <div className="relative w-full h-[300px] overflow-hidden bg-sage/30 md:max-w-2xl md:mx-auto md:mt-6 md:rounded-[28px]">
             <AnimatePresence mode="wait">
@@ -316,12 +316,15 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* ============ PESAN SEKARANG – SEJAJAR DENGAN GREETING ============ */}
-        <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
-          <section className="mt-7 mb-8" aria-label="Pesan Sekarang">
+        {/* ============ PESAN SEKARANG – SEJAJAR GREETING ============ */}
+        {/* Container: mobile pakai px-3 (12px) agar ada jarak seperti greeting,
+            desktop tanpa padding agar grid selebar 672px penuh, sejajar greeting */}
+        <div className={`${PAGE_WIDTH} mt-7 mb-8 px-3 md:px-0`}>
+          <section aria-label="Pesan Sekarang">
             <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3">
               Pesan Rujak Sekarang?
             </h2>
+            {/* Grid tanpa padding tambahan – tepi tombol lurus dengan greeting */}
             <div className="grid grid-cols-2 gap-3">
               {quickActions.map((qa) => (
                 <button
@@ -349,7 +352,7 @@ export default function Home() {
 
         <div className="h-2 bg-[#EDEDED] mt-6" />
 
-        {/* ============ SPESIAL UNTUKMU (kembali ke asli) ============ */}
+        {/* ============ SPESIAL UNTUKMU ============ */}
         <div className={`${PAGE_WIDTH} ${PAGE_PAD}`}>
           <section className="mt-7 mb-8" aria-label="Spesial Untukmu">
             <h2 className="text-[19px] font-bold text-ink tracking-tight mb-3">
