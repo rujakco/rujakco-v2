@@ -26,10 +26,8 @@ import {
   Building2,
 } from "lucide-react";
 
-// Lebar & posisi horizontal identik dengan greeting
-const SECTION_WRAPPER = "w-[calc(100%-24px)] mx-3 md:max-w-2xl md:mx-auto";
-// Card putih: background, rounded, shadow, padding dalam
-const CARD_SECTION = `${SECTION_WRAPPER} bg-white rounded-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:rounded-[20px] md:shadow-sm px-3 py-4`;
+// WRAPPER YANG SAMA PERSIS DENGAN GREETING CARD
+const SECTION_WRAPPER = "w-[calc(100%-24px)] mx-3 md:max-w-2xl md:mx-auto px-3";
 
 const CATEGORIES = [
   { id: "all", label: "Semua" },
@@ -272,18 +270,20 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Greeting Card – memakai CARD_SECTION + overlap */}
+          {/* GREETING CARD (satu‑satunya card putih) */}
           <motion.div
             variants={fadeIn}
             initial="hidden"
             animate="show"
-            className={`relative z-20 -mt-11 ${CARD_SECTION} md:mt-4`}
+            className={`relative z-20 -mt-11 ${SECTION_WRAPPER} bg-white rounded-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.04)] md:rounded-[20px] md:mt-4 md:shadow-sm py-4`}
           >
+            {/* Ornamen koin */}
             <div className="absolute top-5 right-3 flex items-center gap-1 opacity-90 pointer-events-none">
               <span className="w-1.5 h-1.5 rounded-full bg-mango/40" />
               <span className="w-2 h-2 rounded-full bg-mango/70 -mt-2" />
               <Coins className="w-5 h-5 text-mango ml-0.5" strokeWidth={2} />
             </div>
+
             <div className="flex items-center justify-between gap-3 pt-4 pb-3">
               <h1 className="text-[17px] font-bold text-ink leading-tight">
                 {isLoggedIn ? `Hai ${state.userName}!` : "Welcome to RUJAK.Co!"}
@@ -298,7 +298,9 @@ export default function Home() {
                 </button>
               )}
             </div>
+
             <div className="border-t border-dashed border-[#D0D0D0] my-3" />
+
             {isLoggedIn ? (
               <div className="flex items-center gap-2 pb-1">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage/40 text-[12px] font-bold text-forest">
@@ -316,8 +318,8 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* ============ PESAN SEKARANG – Card Pick Up & Delivery ============ */}
-        <section aria-label="Pesan Sekarang" className={`${CARD_SECTION} mt-7 mb-8`}>
+        {/* ============ PESAN SEKARANG – Pick Up & Delivery (tanpa card tambahan) ============ */}
+        <section aria-label="Pesan Sekarang" className={`${SECTION_WRAPPER} mt-7 mb-8`}>
           <h2 className="text-[17px] font-bold text-ink tracking-tight mb-3">
             Pesan Rujak Sekarang?
           </h2>
@@ -345,11 +347,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Divider abu-abu */}
+        {/* Divider abu‑abu tebal, full‑bleed */}
         <div className="h-2 bg-[#EDEDED] mt-6" />
 
-        {/* ============ SPESIAL UNTUKMU – Card ============ */}
-        <section aria-label="Spesial Untukmu" className={`${CARD_SECTION} mt-7 mb-8`}>
+        {/* ============ SPESIAL UNTUKMU ============ */}
+        <section aria-label="Spesial Untukmu" className={`${SECTION_WRAPPER} mt-7 mb-8`}>
           <h2 className="text-[19px] font-bold text-ink tracking-tight mb-3">
             Spesial Untukmu di RUJAK.Co
           </h2>
@@ -387,8 +389,8 @@ export default function Home() {
 
         {/* ============ PRODUK ============ */}
         <section id="products" className="scroll-mt-24 mb-8">
-          {/* Sticky bar tetap di luar card */}
-          <div className="sticky top-0 z-20 bg-[#F5F5F5] px-3 pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]">
+          {/* Sticky bar (search & kategori) di luar wrapper agar full‑width sticky */}
+          <div className={`sticky top-0 z-20 bg-[#F5F5F5] ${SECTION_WRAPPER} pb-3 pt-1 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}>
             <div className="relative mb-4">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
               <input
@@ -420,8 +422,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Card daftar produk */}
-          <div className={`${CARD_SECTION} mt-4`}>
+          {/* Daftar produk, tetap dalam wrapper yang sama agar sejajar */}
+          <div className={`${SECTION_WRAPPER} mt-4`}>
             {filteredProducts.length === 0 ? (
               <div className="text-center py-10">
                 <p className="text-[16px] font-medium text-ink-muted">Menu tidak ditemukan.</p>
@@ -471,8 +473,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ BUTUH BANTUAN? – Card ============ */}
-        <section className={`${CARD_SECTION} mb-8`}>
+        {/* ============ BUTUH BANTUAN? ============ */}
+        <section className={`${SECTION_WRAPPER} mb-8`}>
           <h2 className="text-[19px] font-bold text-ink mb-3">Butuh Bantuan?</h2>
           <a
             href={waUrl}
@@ -488,8 +490,8 @@ export default function Home() {
           </a>
         </section>
 
-        {/* ============ INFORMASI HALAL & KEMENTERIAN – Card ============ */}
-        <div className={`${CARD_SECTION} mt-6 mb-8`}>
+        {/* ============ INFORMASI HALAL & KEMENTERIAN ============ */}
+        <div className={`${SECTION_WRAPPER} mt-6 mb-8`}>
           <a
             href="#"
             className="flex items-center gap-3 py-3 border-t border-gray-200 active:bg-gray-50 transition-colors"
