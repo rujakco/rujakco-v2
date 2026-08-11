@@ -1,11 +1,8 @@
 import { useLocation } from "wouter";
 import { Home as HomeIcon, Ticket, Receipt, User } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
 
 export default function BottomNav() {
   const [location, navigate] = useLocation();
-  const { itemCount, toggleCart } = useCart();
-  const hasItems = itemCount > 0;
 
   const items = [
     {
@@ -27,9 +24,12 @@ export default function BottomNav() {
       label: "Pesanan",
       icon: Receipt,
       active: location === "/lacak",
-      // Badge only renders once the cart actually has items.
-      badge: hasItems ? itemCount : undefined,
-      onClick: () => toggleCart(true), // Atau navigate("/lacak")
+      // No aggregate "active order count" source exists yet (order lookup is
+      // per-code+PIN, not tied to a logged-in session), so this tab does not
+      // fabricate a badge. Do not reuse cart itemCount here — that's a
+      // different concept (items in cart) from orders placed.
+      badge: undefined,
+      onClick: () => navigate("/lacak"),
     },
     {
       id: "akun",
