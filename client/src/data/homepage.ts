@@ -12,7 +12,11 @@ export const homepageConfig = {
     description: "Rujak buah premium segar dengan sambal mete premium. Disiapkan seketika sebelum pengantaran untuk menjaga kesegaran.",
     established: "2024",
     location: "Bekasi, Indonesia",
-    logo: "/manus-storage/logo_52fd37f4.png",
+    // Single source of truth for the in-app logo (used post-load, e.g.
+    // Header/Footer/receipts). Splash/Onboarding/LoadingExperience
+    // intentionally use a local /assets/brand/logo.webp copy instead, so
+    // the very first paint doesn't depend on the CDN being reachable yet.
+    logo: "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp",
   },
 
   contact: {
