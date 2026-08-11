@@ -363,9 +363,9 @@ export default function Home() {
         <div className="h-2 bg-[#EDEDED] mt-6" />
 
         {/* ============ SPESIAL UNTUKMU ============ */}
-        <section aria-label="Spesial Untukmu" className={`${SECTION_WRAPPER} mt-7 mb-8`}>
+        <section aria-label="Pilihan Spesial" className={`${SECTION_WRAPPER} mt-7 mb-8`}>
           <h2 className="font-display text-[25px] font-extrabold text-ink tracking-[-0.8px] leading-[1.15] mb-5 pl-3">
-            Spesial Untukmu di RUJAK.Co
+            Pilihan Spesial RUJAK.Co
           </h2>
           <div className="grid grid-cols-2 gap-3">
             {featureGrid.map((f) => (
