@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="md:hidden max-w-md mx-auto px-4 py-8">
         <div className="flex items-center gap-2.5 mb-4">
           <img
-            src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp"
+            src={homepageConfig.brand.logo}
             alt="RUJAK.Co"
             className="w-9 h-9 rounded-xl object-cover"
           />
@@ -84,7 +84,7 @@ export default function Footer() {
             <div className="lg:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
                 <img
-                  src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp"
+                  src={homepageConfig.brand.logo}
                   alt="RUJAK.Co"
                   className="w-10 h-10 rounded-xl object-cover"
                 />
