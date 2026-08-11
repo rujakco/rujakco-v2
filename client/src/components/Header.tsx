@@ -1,5 +1,5 @@
 /*
- * RUJAK.Co — Experience Layer: Header
+ * RUJAK.Co â€” Experience Layer: Header
  * Bright, clean, with prominent brand mark.
  */
 
@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { homepageConfig } from "@/data/homepage";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -32,10 +33,10 @@ export default function Header() {
       }`}
     >
       <div className="container flex items-center justify-between h-16 lg:h-20">
-        {/* Logo — prominent brand mark */}
+        {/* Logo â€” prominent brand mark */}
         <button onClick={() => scrollTo("hero")} className="flex items-center gap-2.5 group">
           <img
-            src="https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp"
+            src={homepageConfig.brand.logo}
             alt="RUJAK.Co"
             className="w-9 h-9 rounded-xl object-cover group-hover:scale-105 transition-transform shadow-sm"
           />
@@ -64,7 +65,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {state.userName && (
             <div className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-forest/5 text-sm font-medium text-forest">
-              👋 {state.userName}
+              ðŸ‘‹ {state.userName}
             </div>
           )}
           <button
