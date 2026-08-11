@@ -9,9 +9,10 @@
  */
 
 import { formatCurrency } from "@/data/products";
+import { homepageConfig } from "@/data/homepage";
 import type { CartItem } from "@/contexts/CartContext";
 
-const LOGO_URL = "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/logo.webp";
+const LOGO_URL = homepageConfig.brand.logo;
 const QRIS_URL = "https://dk1tnyskaoive0dn.public.blob.vercel-storage.com/QrisCrop.webp";
 
 interface ReceiptTemplateProps {
